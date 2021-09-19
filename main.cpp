@@ -11,5 +11,11 @@ int main() {
     for(int i=0;i<12;++i)cout<<rg(rnd)<<' ';cout<<'\n';
     for(int i=0;i<12;++i)cout<<rk(rnd)<<' ';cout<<'\n';
     for(int i=0;i<12;++i)cout<<rk(rnd)<<' ';cout<<'\n';
+    cout<<"/**/";
     return 0;
 }
+/*
+ *
+ * //
+ * //
+ */

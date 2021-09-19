@@ -1,4 +1,6 @@
+!.gitignore
 cmake-build-debug/
 CMakeLists.txt
 .idea/
-
+jcc/*
+!/jcc/src/
