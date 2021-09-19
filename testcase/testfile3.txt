@@ -23,6 +23,7 @@ void var(int t[][D], int x[], int y[]) {
 }
 
 int main(){
+    printf("19375273\n");
     int x[D], y[D];
     int i=0;while(i<D) { x[i] = getint();i = i + 1; }
     i=0;while(i<D) { y[i] = getint();i = i + 1; }
@@ -30,7 +31,7 @@ int main(){
     var(z,x,y);
     i=0;while(i<10) { x[i] = getint();i = i + 1; }
     i=0;while(i<10) { y[i] = getint();i = i + 1; }
-    i=0;while(i<10) {
+    i=0;while(i<9) {
         printf("dot%d = %d\n", i+1, dot(z[x[i]], z[y[i]]));
         i = i + 1;
     }

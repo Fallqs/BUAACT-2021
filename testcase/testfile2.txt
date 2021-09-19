@@ -1,5 +1,5 @@
 const int D=3;
-int zro[D][3]; const int eye[D][D]={{1,0,0},{0,1,0},{0,0,1}};
+int zro[3][3]; const int eye[3][3]={{1,0,0},{0,1,0},{0,0,1}};
 int rst[3][3];
 const int arr[10] = {0, 1, 2, 18, 1023, 1000000007, 998244353, 2147483647, -1, 19260817};
 void mov(int u[][D], int v[][D]){
@@ -16,7 +16,7 @@ void mov(int u[][D], int v[][D]){
 }
 void mul(int t[][D], int x[][3], int y[][3]){
     int i=0,j=0,k;
-    int z[D][D];mov(zro,z);
+    int z[3][3];mov(zro,z);
     while(i<D){
         j = 0;
         while(j<D){
@@ -35,21 +35,25 @@ void mul(int t[][D], int x[][3], int y[][3]){
     }
     mov(z,t);
 }
-int ksm(int t[][D], int xx[][D], int p){
+int ksm(int tt[][D], int xx[][D], int p){
+    int t[D][D];
     t[0][0] = eye[0][0]; t[0][1] = eye[0][1]; t[0][2] = eye[0][2];
     t[1][0] = eye[1][0]; t[1][1] = eye[1][1]; t[1][2] = eye[1][2];
     t[2][0] = eye[2][0]; t[2][1] = eye[2][1]; t[2][2] = eye[2][2];
 //    mov(eye, t);
-    int x[D][D];mov(xx,x);
-    while(p) {
-        if(p%2)mul(t, t, x);
+   int x[D][D];mov(xx,x);
+   while(p) {
+       if(p%2!=0)mul(t, t, x);
         mul(x, x, x);
         p = p/2;
     }
+    mov(t, tt);
+    return 0;
 }
 
 int main(){
-    int n = 10, i = 0, x[D][D] = {
+    printf("19375273\n");
+    int n = 9, i = 0, x[3][3] = {
             {1,2,1},
             {1,0,0},
             {0,1,0}

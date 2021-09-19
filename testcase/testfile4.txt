@@ -1,15 +1,30 @@
 int main(){{{{{{{{{
-    int x, y, n=getint();
-    while(n){
+    printf("19375273\n");
+    int x, y, n; n=getint();
+    /*
+    while(n!=0){
         {n = n - 1;
         {{x = getint(); y = getint();}
         printf("(%d,%d) -> {%d,%d,%d,%d,%d,%d}\n", x,y, x<y, x>y, x<=y, x>=y, x!=y, x==y);}}
     }
-    n = getint();
-    while(n){
+    */
+    while(n!=0){
+        {n = n - 1;
+                {x = getint(); y = getint();
+                        {printf("(%d,%d) -> {", x,y);
+                                if(x<y)printf("1");else printf("0");
+                                if(x>y)printf(",1");else printf(",0");
+                                if(x<=y)printf(",1");else printf(",0");
+                                if(x>=y)printf(",1");else printf(",0");
+                                if(x!=y)printf(",1");else printf(",0");
+                                if(x==y)printf(",1");else printf(",0");
+                                printf("}\n");}}}
+    }
+    n = getint();n=n+1;
+    while(n!=0){
         n = n + 1;
         x = getint(); y = getint();
         printf("[%d, %d] -> {%d}\n",x, y, ((x+y)*(x-y)/ (x - 2*y) + (x+y)*(x+y)/ (2*x - y))*(3*y*x)%998244353);
     }
-    return 0;
-}}}}}}}}}
+    
+}}}}}}}}return 0;}

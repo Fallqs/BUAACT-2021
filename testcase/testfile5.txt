@@ -2,11 +2,12 @@ const int x = 998244353;
 const int y = 19260817, z = 19491001, w = 13;
 
 int main() {
+    printf("19375273\n");
     int t = x / y;
     printf("seed = %d\n",t);
     printf("mult1 = %d\n", t * t % z);
-    printf("mult2 + bool = %d\n", y / w + (y < z));
-    int i = 10, j = 7;
+    printf("mult2 + div = %d\n", y / w + (y / z));
+    int i = 10, j = 8;
     while (2) {
         printf("num*%d = %d\n", j, t * t % y);
         t = t * t % y;;;;
@@ -20,7 +21,8 @@ int main() {
         t = t * t % y;;;;
         (((t - y) + 1)+2)+3;
         j = j+1;
-        if(w==j)break;
+        if(w<=j)break;
     }
     printf("SOME+_- useless=_= STRING|/-?:;,.`<>`{}[]()~ ^*^ @!\n");
+    return 0;
 }
