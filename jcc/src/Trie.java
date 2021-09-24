@@ -131,26 +131,15 @@ public class Trie {
             } else {
                 Result r = root.ident(s, p);
                 int q = ident(s, p);
-                if (r.typ != WordTyp.Error) {
-                    if (q > r.p) {
-                        String text = dump(s, p, q);
-                        tokens.add(new Result(WordTyp.IDENFR, q, text));
-                        root.match(text.toCharArray(), 0, WordTyp.IDENFR);
-                        p = q;
-                    } else {
-                        r.text = dump(s, p, r.p);
-                        tokens.add(r);
-                        p = r.p;
-                    }
+                if(r.typ == WordTyp.Error || q > r.p) {
+                    String text = dump(s, p, q);
+                    tokens.add(new Result(WordTyp.IDENFR, q, text));
+                    root.match(text.toCharArray(), 0, WordTyp.IDENFR);
+                    p = q;
                 } else {
-                    if (p == q) {
-                        tokens.add(new Result(WordTyp.Error, p++));
-                    } else {
-                        String text = dump(s, p, q);
-                        root.match(text.toCharArray(), 0, WordTyp.IDENFR);
-                        tokens.add(new Result(WordTyp.IDENFR, q, text));
-                        p = q;
-                    }
+                    r.text = dump(s, p, r.p);
+                    tokens.add(r);
+                    p = r.p;
                 }
             }
         }
