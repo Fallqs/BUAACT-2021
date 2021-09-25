@@ -7,16 +7,16 @@ import static java.lang.Character.isDigit;
 
 public class Trie {
     private class Result {
-        public final WordTyp typ;
+        public final Typ typ;
         public final int p;
         public String text;
 
-        public Result(WordTyp t, int p) {
+        public Result(Typ t, int p) {
             typ = t;
             this.p = p;
         }
 
-        public Result(WordTyp t, int p, String s) {
+        public Result(Typ t, int p, String s) {
             text = s;
             typ = t;
             this.p = p;
@@ -25,11 +25,11 @@ public class Trie {
 
     private class Nd {
         private final Map<Character, Nd> mp;
-        private WordTyp typ;
+        private Typ typ;
         private final char c;
         private final Nd fa;
 
-        public Nd(char c, WordTyp typ, Nd fa) {
+        public Nd(char c, Typ typ, Nd fa) {
             mp = new HashMap<>();
             this.typ = typ;
             this.c = c;
@@ -40,14 +40,14 @@ public class Trie {
             return fa == null;
         }
 
-        public void match(char[] s, int p, WordTyp t) {
+        public void match(char[] s, int p, Typ t) {
             if (p >= s.length) {
                 typ = t;
                 return;
             }
             Nd ch = mp.get(s[p]);
             if (ch == null) {
-                ch = new Nd(s[p], p + 1 == s.length ? t : WordTyp.Error, this);
+                ch = new Nd(s[p], p + 1 == s.length ? t : Typ.Error, this);
                 mp.put(s[p], ch);
             }
             ch.match(s, p + 1, t);
@@ -86,7 +86,8 @@ public class Trie {
     }
 
     private final ArrayList<Result> tokens = new ArrayList<>();
-    private final Nd root = new Nd('^', WordTyp.Error, null);
+    private final ArrayList<Grid> grids;
+    private final Nd root = new Nd('^', Typ.Error, null);
 
     private static final String[] signal0 = {
             "main", "const", "int", "break", "continue", "if", "else",
@@ -95,25 +96,28 @@ public class Trie {
             "=", ";", ",", "(", ")", "[", "]", "{", "}"
     };
 
-    private static final WordTyp[] signal1 = {
-            WordTyp.MAINTK, WordTyp.CONSTTK, WordTyp.INTTK, WordTyp.BREAKTK,
-            WordTyp.CONTINUETK, WordTyp.IFTK, WordTyp.ELSETK,
+    private static final Typ[] signal1 = {
+            Typ.MAINTK, Typ.CONSTTK, Typ.INTTK, Typ.BREAKTK,
+            Typ.CONTINUETK, Typ.IFTK, Typ.ELSETK,
 
-            WordTyp.NOT, WordTyp.AND, WordTyp.OR, WordTyp.WHILETK, WordTyp.GETINTTK,
-            WordTyp.PRINTFTK, WordTyp.RETURNTK, WordTyp.PLUS, WordTyp.MINU, WordTyp.VOIDTK,
+            Typ.NOT, Typ.AND, Typ.OR, Typ.WHILETK, Typ.GETINTTK,
+            Typ.PRINTFTK, Typ.RETURNTK, Typ.PLUS, Typ.MINU, Typ.VOIDTK,
 
-            WordTyp.MULT, WordTyp.DIV, WordTyp.MOD, WordTyp.LSS, WordTyp.LEQ,
-            WordTyp.GRE, WordTyp.GEQ, WordTyp.EQL, WordTyp.NEQ,
+            Typ.MULT, Typ.DIV, Typ.MOD, Typ.LSS, Typ.LEQ,
+            Typ.GRE, Typ.GEQ, Typ.EQL, Typ.NEQ,
 
-            WordTyp.ASSIGN, WordTyp.SEMICN, WordTyp.COMMA, WordTyp.LPARENT,
-            WordTyp.RPARENT, WordTyp.LBRACK, WordTyp.RBRACK, WordTyp.LBRACE, WordTyp.RBRACE
+            Typ.ASSIGN, Typ.SEMICN, Typ.COMMA, Typ.LPARENT,
+            Typ.RPARENT, Typ.LBRACK, Typ.RBRACK, Typ.LBRACE, Typ.RBRACE
     };
 
-    public Trie(char[] s) {
+    public Trie(ArrayList<Grid> s) {
         for (int i = 0; i < signal0.length; ++i)
             root.match(signal0[i].toCharArray(), 0, signal1[i]);
-        // System.out.println(String.valueOf(s));
-        work(s);
+        grids = s;
+        char[] chars = new char[s.size()];
+        for (int i = 0; i < chars.length; ++i) chars[i] = s.get(i).c;
+        // System.out.println(String.valueOf(chars));
+        work(chars);
     }
 
     private void work(char[] s) {
@@ -121,20 +125,20 @@ public class Trie {
             if (s[p] == ' ') ++p;
             else if (s[p] == '"') {
                 int q = fmt(s, p);
-                if (q == p + 1) tokens.add(new Result(WordTyp.Error, p));
-                else tokens.add(new Result(WordTyp.STRCON, q, dump(s, p, q)));
+                if (q == p + 1) tokens.add(new Result(Typ.Error, p));
+                else tokens.add(new Result(Typ.STRCON, q, dump(s, p, q)));
                 p = q;
             } else if (isDigit(s[p])) {
                 int q = digit(s, p);
-                tokens.add(new Result(WordTyp.INTCON, q, dump(s, p, q)));
+                tokens.add(new Result(Typ.INTCON, q, dump(s, p, q)));
                 p = q;
             } else {
                 Result r = root.ident(s, p);
                 int q = ident(s, p);
-                if(r.typ == WordTyp.Error || q > r.p) {
+                if (r.typ == Typ.Error || q > r.p) {
                     String text = dump(s, p, q);
-                    tokens.add(new Result(WordTyp.IDENFR, q, text));
-                    root.match(text.toCharArray(), 0, WordTyp.IDENFR);
+                    tokens.add(new Result(Typ.IDENFR, q, text));
+                    root.match(text.toCharArray(), 0, Typ.IDENFR);
                     p = q;
                 } else {
                     r.text = dump(s, p, r.p);

@@ -3,97 +3,102 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static java.lang.Character.isWhitespace;
 
 public class File {
     private BufferedReader cin;
     private BufferedWriter cout;
+    private ArrayList<Grid> input;
 
-    public File(String i, String o){
+    public File(String i, String o) {
         try {
             cin = new BufferedReader(new FileReader(i));
             cout = new BufferedWriter(new FileWriter(o));
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        init();
     }
+
+    public ArrayList<Grid> read() {
+        return input;
+    }
+
     /*
-     * \ensures \result == file + '\n'
+     * \ensures input == file + '\n'
+     * \ensures A == grids
+     * \ensures B == empty
      */
-    public char[] read() {
-        StringBuilder ret = new StringBuilder();
-        ret.append(' ');
-        char[] ans;
+    private void init() {
+        ArrayList<Grid> v = new ArrayList<>();
+        v.add(new Grid('\n'));
         try {
             String str;
             while ((str = cin.readLine()) != null) {
-                ret.append(str);
-                ret.append("\n");
+                for (char i : str.toCharArray()) v.add(new Grid(i));
+                v.add(new Grid('\n'));
             }
             cin.close();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            ret.append('\n');
-            ans = new char[ret.length()];
-            ret.getChars(0, ret.length(), ans, 0);
+            v.add(new Grid('\n'));
         }
-        return del2(del1(ans));
+        input = del2(del1(v));
     }
 
     /*
      * \ensures \result == filter(u[0:-1]) + '\n'
      */
-    private char[] del1(char[] u) {
-        StringBuilder ret = new StringBuilder();
-        ret.append(' ');
+    private ArrayList<Grid> del1(ArrayList<Grid> u) {
+        ArrayList<Grid> v = new ArrayList<>();
+        v.add(u.get(0));
         boolean on = false;
         boolean format = false;
-        for (int i = 1; i + 1 < u.length; ++i) {
-            if (u[i] == '"') format = !format;
-            else if (u[i] == '/' && u[i + 1] == '*' && !on && !format) {
+        for (int i = 1; i + 1 < u.size(); ++i) {
+            if (u.get(i).c == '"') format = !format;
+            else if (u.get(i).c == '/' && u.get(i + 1).c == '*' && !on && !format) {
                 on = true;
                 ++i;
-            } else if (u[i] == '/' && u[i - 1] == '*' && on) {
+            } else if (u.get(i).c == '/' && u.get(i - 1).c == '*' && on) {
                 on = false;
-                u[i] = ' ';
+                u.get(i).c = ' ';
             }
-            if (!on) ret.append(u[i]);
+            if (!on) v.add(u.get(i));
         }
-        ret.append('\n');
-        char[] v = new char[ret.length()];
-        ret.getChars(0, ret.length(), v, 0);
+        v.add(u.get(u.size() - 1));
         // System.out.println("del1::");
         // System.out.println(String.valueOf(v));
         return v;
     }
 
     /* \ensures \result == ' ' + filter(u) + ' ' */
-    private char[] del2(char[] u) {
-        StringBuilder ret = new StringBuilder();
-        ret.append(' ');
+    private ArrayList<Grid> del2(ArrayList<Grid> u) {
+        ArrayList<Grid> v = new ArrayList<>();
+        v.add(u.get(0));
+
         boolean on = false;
         boolean format = false;
-        for (int i = 1; i + 1 < u.length; ++i) {
-            if (u[i] == '"') format = !format;
-            else if (u[i] == '/' && u[i + 1] == '/' && !on && !format) on = true;
-            else if (u[i] == '\n' && on) {
+        for (int i = 1; i + 1 < u.size(); ++i) {
+            if (u.get(i).c == '"') format = !format;
+            else if (u.get(i).c == '/' && u.get(i + 1).c == '/' && !on && !format) on = true;
+            else if (u.get(i).c == '\n' && on) {
                 on = false;
-                u[i] = ' ';
+                u.get(i).c = ' ';
             }
-            if (!on) ret.append(u[i]);
+            if (!on) v.add(u.get(i));
         }
-        char[] v = new char[ret.length()];
-        ret.getChars(0, ret.length(), v, 0);
-        for (int i = 0; i < v.length; ++i) if (isWhitespace(v[i])) v[i] = ' ';
+        v.add(u.get(u.size() - 1));
+        for (Grid g : v) if (isWhitespace(g.c)) g.c = ' ';
         // System.out.println("del2::");
         // System.out.println(String.valueOf(v));
         return v;
     }
 
     public void write(String s) {
-        try{
+        try {
             cout.write(s);
         } catch (IOException e) {
             e.printStackTrace();
