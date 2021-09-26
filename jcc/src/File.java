@@ -46,7 +46,7 @@ public class File {
         } finally {
             v.add(new Grid('\n'));
         }
-        input = del2(del1(v));
+        input = del1(v);
     }
 
     /*
@@ -55,20 +55,22 @@ public class File {
     private ArrayList<Grid> del1(ArrayList<Grid> u) {
         ArrayList<Grid> v = new ArrayList<>();
         v.add(u.get(0));
-        boolean on = false;
-        boolean format = false;
+        boolean bar = false, lin = false, format = false;
         for (int i = 1; i + 1 < u.size(); ++i) {
-            if (u.get(i).c == '"') format = !format;
-            else if (u.get(i).c == '/' && u.get(i + 1).c == '*' && !on && !format) {
-                on = true;
+            if (u.get(i).c == '"' && !bar && !lin) format = !format;
+            else if (u.get(i).c == '\n' && lin) lin = false;
+            else if (u.get(i).c == '/' && u.get(i + 1).c == '/' && !bar && !format && !lin) lin = true;
+            else if (u.get(i).c == '/' && u.get(i + 1).c == '*' && !bar && !format && !lin) {
+                bar = true;
                 ++i;
-            } else if (u.get(i).c == '/' && u.get(i - 1).c == '*' && on) {
-                on = false;
+            } else if (u.get(i).c == '/' && u.get(i - 1).c == '*' && bar) {
+                bar = false;
                 u.get(i).c = ' ';
             }
-            if (!on) v.add(u.get(i));
+            if (!bar && !lin) v.add(u.get(i));
         }
         v.add(u.get(u.size() - 1));
+        for (Grid g : v) if (isWhitespace(g.c)) g.c = ' ';
         // System.out.println("del1::");
         // System.out.println(String.valueOf(v));
         return v;

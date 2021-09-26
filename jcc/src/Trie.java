@@ -116,7 +116,7 @@ public class Trie {
         grids = s;
         char[] chars = new char[s.size()];
         for (int i = 0; i < chars.length; ++i) chars[i] = s.get(i).c;
-        // System.out.println(String.valueOf(chars));
+         System.out.println(String.valueOf(chars));
         work(chars);
     }
 

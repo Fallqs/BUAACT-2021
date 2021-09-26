@@ -12,4 +12,8 @@ public class Grid {
             col = 1;
         }
     }
+
+    public String toString() {
+        return "(" + c + "," + x + "," + y + ")";
+    }
 }
