@@ -39,14 +39,17 @@ public class File {
             while ((str = cin.readLine()) != null) {
                 for (char i : str.toCharArray()) v.add(new Grid(i));
                 v.add(new Grid('\n'));
+                cout.write(str);
+                cout.write('\n');
             }
             cin.close();
+            cout.close();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             v.add(new Grid('\n'));
         }
-        input = del2(del1(v));
+//        input = del2(del1(v));
     }
 
     /*
