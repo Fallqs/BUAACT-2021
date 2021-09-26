@@ -62,7 +62,7 @@ public class File {
             else if (u.get(i).c == '/' && u.get(i + 1).c == '/' && !bar && !format && !lin) lin = true;
             else if (u.get(i).c == '/' && u.get(i + 1).c == '*' && !bar && !format && !lin) {
                 bar = true;
-                ++i;
+                i += 2;
             } else if (u.get(i).c == '/' && u.get(i - 1).c == '*' && bar) {
                 bar = false;
                 u.get(i).c = ' ';
