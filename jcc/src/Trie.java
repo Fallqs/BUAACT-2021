@@ -6,6 +6,7 @@ import java.util.Map;
 
 import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isDigit;
+import static java.lang.Math.max;
 
 public class Trie {
     private class Result {
@@ -118,7 +119,7 @@ public class Trie {
         grids = s;
         char[] chars = new char[s.size()];
         for (int i = 0; i < chars.length; ++i) chars[i] = s.get(i).c;
-         System.out.println(String.valueOf(chars));
+//        System.out.println(String.valueOf(chars));
         work(chars);
     }
 
@@ -139,13 +140,13 @@ public class Trie {
                 int q = ident(s, p);
                 if (r.typ == Typ.Error || q > r.p) {
                     String text = dump(s, p, q);
-                    tokens.add(new Result(Typ.IDENFR, q, text));
+                    tokens.add(new Result(p == q ? Typ.Error : Typ.IDENFR, q, text));
 //                    root.match(text.toCharArray(), 0, Typ.IDENFR);
-                    p = q;
+                    p = max(q, p + 1);
                 } else {
                     r.text = dump(s, p, r.p);
                     tokens.add(r);
-                    p = r.p;
+                    p = max(r.p, p + 1);
                 }
             }
         }
