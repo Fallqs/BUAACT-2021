@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Character.isAlphabetic;
@@ -85,7 +87,7 @@ public class Trie {
         return ans.toString();
     }
 
-    private final ArrayList<Result> tokens = new ArrayList<>();
+    private final List<Result> tokens = new LinkedList<>();
     private final ArrayList<Grid> grids;
     private final Nd root = new Nd('^', Typ.Error, null);
 
@@ -138,7 +140,7 @@ public class Trie {
                 if (r.typ == Typ.Error || q > r.p) {
                     String text = dump(s, p, q);
                     tokens.add(new Result(Typ.IDENFR, q, text));
-                    root.match(text.toCharArray(), 0, Typ.IDENFR);
+//                    root.match(text.toCharArray(), 0, Typ.IDENFR);
                     p = q;
                 } else {
                     r.text = dump(s, p, r.p);
