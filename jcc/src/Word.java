@@ -8,7 +8,7 @@ import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isDigit;
 import static java.lang.Math.max;
 
-public class Trie {
+public class Word {
     private class Result {
         public final Typ typ;
         public final int p;
@@ -113,7 +113,7 @@ public class Trie {
             Typ.RPARENT, Typ.LBRACK, Typ.RBRACK, Typ.LBRACE, Typ.RBRACE
     };
 
-    public Trie(ArrayList<Grid> s) {
+    public Word(ArrayList<Grid> s) {
         for (int i = 0; i < signal0.length; ++i)
             root.match(signal0[i].toCharArray(), 0, signal1[i]);
         grids = s;
