@@ -1,9 +1,7 @@
-import node.Cursor;
-
-import java.util.List;
+import meta.Cursor;
 
 public class Lang {
-    private Cursor cursor;
+    private final Cursor cursor;
     public Lang(Word wd) {
         cursor = new Cursor(wd.tokens());
     }

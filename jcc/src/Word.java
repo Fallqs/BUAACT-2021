@@ -1,3 +1,7 @@
+import word.Grid;
+import word.Result;
+import word.Typ;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,23 +13,6 @@ import static java.lang.Character.isDigit;
 import static java.lang.Math.max;
 
 public class Word {
-    public static class Result {
-        public final Typ typ;
-        public final int p;
-        public String text;
-
-        public Result(Typ t, int p) {
-            typ = t;
-            this.p = p;
-        }
-
-        public Result(Typ t, int p, String s) {
-            text = s;
-            typ = t;
-            this.p = p;
-        }
-    }
-
     private static class Nd {
         private final Map<Character, Nd> mp;
         private Typ typ;
@@ -141,7 +128,7 @@ public class Word {
                 if (r.typ == Typ.Error || q > r.p) {
                     String text = dump(s, p, q);
                     tokens.add(new Result(p == q ? Typ.Error : Typ.IDENFR, q, text));
-//                    root.match(text.toCharArray(), 0, Typ.IDENFR);
+//                    root.match(text.toCharArray(), 0, word.Typ.IDENFR);
                     p = max(q, p + 1);
                 } else {
                     r.text = dump(s, p, r.p);

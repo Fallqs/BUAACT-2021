@@ -1,3 +1,5 @@
+import word.Grid;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -26,11 +28,7 @@ public class File {
         return input;
     }
 
-    /*
-     * \ensures input == file + '\n'
-     * \ensures A == grids
-     * \ensures B == empty
-     */
+    /* \ensures input == file + '\n' */
     private void init() {
         ArrayList<Grid> v = new ArrayList<>();
         v.add(new Grid('\n'));
@@ -49,9 +47,7 @@ public class File {
         input = clean(v);
     }
 
-    /*
-     * \ensures \result == filter(u[0:-1]) + '\n'
-     */
+    /* \ensures \result == filter(u[0:-1]) + '\n' */
     private ArrayList<Grid> clean(ArrayList<Grid> u) {
         ArrayList<Grid> v = new ArrayList<>();
         v.add(u.get(0));

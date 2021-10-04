@@ -1,3 +1,5 @@
+package word;
+
 public class Grid {
     public final int x, y;
     public char c;

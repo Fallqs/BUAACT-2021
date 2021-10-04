@@ -1,6 +1,6 @@
 package meta;
 
-import node.NTyp;
+import grammar.NTyp;
 
 public class Meta {
     public final NTyp opr;
