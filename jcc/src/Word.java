@@ -9,7 +9,7 @@ import static java.lang.Character.isDigit;
 import static java.lang.Math.max;
 
 public class Word {
-    private class Result {
+    public static class Result {
         public final Typ typ;
         public final int p;
         public String text;
@@ -26,7 +26,7 @@ public class Word {
         }
     }
 
-    private class Nd {
+    private static class Nd {
         private final Map<Character, Nd> mp;
         private Typ typ;
         private final char c;
@@ -158,6 +158,10 @@ public class Word {
             ret.append(u.typ).append(" ").append(u.text).append("\n");
         }
         return ret.toString();
+    }
+
+    public List<Result> tokens() {
+        return tokens;
     }
 }
 /*
