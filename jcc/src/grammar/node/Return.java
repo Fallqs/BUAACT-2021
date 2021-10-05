@@ -1,14 +1,19 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class Return extends Node {
-    public Return() {}
+    public Return() {
+        typ = NTyp.Return;
+    }
 
+    /* 'return' [Exp] ';' */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

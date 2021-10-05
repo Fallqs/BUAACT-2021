@@ -1,14 +1,18 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class VarDef extends Node {
-    public VarDef() {}
+    public VarDef() {
+        typ = NTyp.VarDef;
+    }
 
+    /* VarDef → Ident { '[' ConstExp ']' } | Ident { '[' ConstExp ']' } '=' InitVal */
     @Override
-    public void forward() {
-
+    public boolean forward() {
+        return false;
     }
 
     @Override

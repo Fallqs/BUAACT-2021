@@ -6,9 +6,11 @@ import meta.Meta;
 public class Printf extends Node {
     public Printf() {}
 
+    /* 'printf' '(' FormatString { ',' Exp } ')' ';' */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

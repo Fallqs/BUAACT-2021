@@ -3,15 +3,20 @@ package grammar.node;
 import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
+import word.Result;
+import word.Typ;
 
-public class BlockItem extends Node {
-    public BlockItem() {
-        typ = NTyp.BlockItem;
+public class Num extends Node {
+    Result cont;
+    public Num() {
+        typ = NTyp.Number;
     }
 
-    /* BlockItem → Decl | Stmt */
+    /* Number → IntConst */
     @Override
     public boolean forward() {
+        if(!cs.isTyp(Typ.INTCON))return false;
+        cont = cs.cont();
         return true;
     }
 

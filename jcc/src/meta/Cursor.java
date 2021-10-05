@@ -14,6 +14,20 @@ public class Cursor {
     }
 
     public boolean isTyp(Typ t) {
-        return token[p].isTyp(t);
+        return p >= token.length || token[p].isTyp(t);
+    }
+
+    public Cursor nex() {
+        p += (p < token.length) ? 1 : 0;
+        return this;
+    }
+
+    public Cursor las() {
+        p -= (p > 0) ? 1 : 0;
+        return this;
+    }
+
+    public Result cont() {
+        return p < 0 || p >= token.length ? null : token[p];
     }
 }

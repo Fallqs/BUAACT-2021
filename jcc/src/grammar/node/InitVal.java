@@ -1,14 +1,19 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class InitVal extends Node {
-    public InitVal() {}
+    public InitVal() {
+        typ = NTyp.InitVal;
+    }
 
+    /* InitVal → Exp | '{' [ InitVal { ',' InitVal } ] '}' */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

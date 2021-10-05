@@ -1,14 +1,19 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class FuncFParam extends Node {
-    public FuncFParam() {}
+    public FuncFParam() {
+        typ = NTyp.FuncFParam;
+    }
 
+    /* FuncFParam → BType Ident ['[' ']' { '[' ConstExp ']' }] */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

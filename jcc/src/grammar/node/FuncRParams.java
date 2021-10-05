@@ -1,14 +1,19 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class FuncRParams extends Node {
-    public FuncRParams() {}
+    public FuncRParams() {
+        typ = NTyp.FuncRParams;
+    }
 
+    /* FuncRParams → Exp { ',' Exp } */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

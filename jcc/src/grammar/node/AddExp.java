@@ -1,14 +1,19 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class AddExp extends Node {
-    public AddExp() {}
+    public AddExp() {
+        typ = NTyp.AddExp;
+    }
 
+    /* AddExp → MulExp { ('+' | '−') MulExp } */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

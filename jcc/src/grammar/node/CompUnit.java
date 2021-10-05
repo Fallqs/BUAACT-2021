@@ -12,22 +12,25 @@ public class CompUnit extends Node {
     private final ArrayList<Node> funcDef = new ArrayList<>();
     private Node mainFuncdef;
 
-    public CompUnit() {}
+    public CompUnit() {
+        typ = NTyp.CompUnit;
+    }
 
+    /* CompUnit → {Decl} {FuncDef} MainFuncDef */
     @Override
-    public Boolean forward() {
+    public boolean forward() {
         Node ch = New.typ(NTyp.Decl);
-        while (ch.forward()) {
+        while (ch.fwd()) {
             dcel.add(ch);
             ch = New.typ(NTyp.Decl);
         }
         ch = New.typ(NTyp.FuncDef);
-        while(ch.forward()) {
+        while(ch.fwd()) {
             funcDef.add(ch);
             ch = New.typ(NTyp.FuncDef);
         }
         mainFuncdef = New.typ(NTyp.MainFuncDef);
-        return mainFuncdef.forward();
+        return mainFuncdef.fwd();
     }
 
     @Override

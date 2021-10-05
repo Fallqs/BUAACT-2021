@@ -1,14 +1,19 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class VarDecl extends Node {
-    public VarDecl() {}
+    public VarDecl() {
+        typ = NTyp.VarDecl;
+    }
 
+    /* VarDecl → BType VarDef { ',' VarDef } ';' */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

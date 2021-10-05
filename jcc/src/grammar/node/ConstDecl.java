@@ -12,16 +12,26 @@ public class ConstDecl extends Node {
     private Node btype;
     private ArrayList<Node> constDef;
 
-    public ConstDecl() {}
+    public ConstDecl() {
+        typ = NTyp.ConstDecl;
+    }
 
+    /* ConstDecl → 'const' BType ConstDef { ',' ConstDef } ';' */
     @Override
-    public Boolean forward() {
+    public boolean forward() {
         if(!cs.isTyp(Typ.CONSTTK)) return false;
-        cs.p++;
+        cs.nex();
         btype = New.typ(NTyp.BType);
-        if(!btype.forward()) cs.p++;
+        if(!btype.fwd()) cs.nex();
         Node def = New.typ(NTyp.ConstDef);
-        if(!def.forward()){}
+        while(def.fwd()){
+            constDef.add(def);
+            if(!cs.isTyp(Typ.COMMA))break;
+            cs.nex();
+            def = New.typ(NTyp.ConstDef);
+        }
+        while(!cs.isTyp(Typ.SEMICN))cs.nex();
+        cs.nex();
         return true;
     }
 

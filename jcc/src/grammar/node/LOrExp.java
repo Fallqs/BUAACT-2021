@@ -1,14 +1,19 @@
 package grammar.node;
 
+import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 
 public class LOrExp extends Node {
-    public LOrExp() {}
+    public LOrExp() {
+        typ = NTyp.LOrExp;
+    }
 
+    /* LOrExp → LAndExp { '||' LAndExp } */
     @Override
-    public void forward() {
+    public boolean forward() {
 
+        return false;
     }
 
     @Override

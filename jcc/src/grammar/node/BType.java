@@ -3,16 +3,20 @@ package grammar.node;
 import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
+import word.Typ;
 
-public class LAndExp extends Node {
-    public LAndExp() {
-        typ = NTyp.LAndExp;
+public class BType extends Node {
+    public BType() {
+        typ = NTyp.BType;
     }
 
-    /* LAndExp → EqExp { '&&' EqExp } */
+    /* BType → 'int' */
     @Override
     public boolean forward() {
-
+        if(cs.isTyp(Typ.INTTK)){
+            cs.nex();
+            return true;
+        }
         return false;
     }
 

@@ -8,10 +8,13 @@ import meta.Meta;
 public class Decl extends Node {
     private Node decl;
 
-    public Decl() {}
+    public Decl() {
+        typ = NTyp.Decl;
+    }
 
+    /* Decl → ConstDecl | VarDecl */
     @Override
-    public Boolean forward() {
+    public boolean forward() {
         decl = New.typ(NTyp.ConstDecl);
         if (decl.forward()) return true;
         decl = New.typ(NTyp.VarDecl);

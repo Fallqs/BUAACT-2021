@@ -1,9 +1,6 @@
 package grammar;
 
-import grammar.NTyp;
-import grammar.Node;
 import grammar.node.*;
-import grammar.node.Number;
 
 public class New {
     public static Node typ(NTyp typ) {
@@ -11,7 +8,7 @@ public class New {
             case CompUnit -> new CompUnit();
             case Decl -> new Decl();
             case ConstDecl -> new ConstDecl();
-            case BType -> new Btype();
+            case BType -> new BType();
             case ConstDef -> new ConstDef();
             case ConstInitVal -> new ConstInitVal();
             case VarDecl -> new VarDecl();
@@ -35,7 +32,7 @@ public class New {
             case Cond -> new Cond();
             case LVal -> new LVal();
             case PrimaryExp -> new PrimaryExp();
-            case Number -> new Number();
+            case Number -> new Num();
             case UnaryExp -> new UnaryExp();
             case UnaryOp -> new UnaryOp();
             case MulExp -> new MulExp();
@@ -47,6 +44,7 @@ public class New {
             case ConstExp -> new ConstExp();
             case Getint -> new Getint();
             case Printf -> new Printf();
+            default -> null;
         };
     }
 }
