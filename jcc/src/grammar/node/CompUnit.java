@@ -1,15 +1,14 @@
 package grammar.node;
 
 import grammar.NTyp;
-import grammar.New;
 import grammar.Node;
+import grammar.nd.Decl;
 import meta.Meta;
 
 import java.util.ArrayList;
 
 public class CompUnit extends Node {
-    private final ArrayList<Node> dcel = new ArrayList<>();
-    private final ArrayList<Node> funcDef = new ArrayList<>();
+    private final ArrayList<Node> decl = new ArrayList<>();
     private Node mainFuncdef;
 
     public CompUnit() {
@@ -19,18 +18,16 @@ public class CompUnit extends Node {
     /* CompUnit → {Decl} {FuncDef} MainFuncDef */
     @Override
     public boolean forward() {
-        Node ch = New.typ(NTyp.Decl);
-        while (ch.fwd()) {
-            dcel.add(ch);
-            ch = New.typ(NTyp.Decl);
+        Node ch = new Decl();
+        while (ch.fwd() && ch.gettyp() != NTyp.MainFuncDef) {
+            decl.add(ch);
+            ch = new Decl();
         }
-        ch = New.typ(NTyp.FuncDef);
-        while(ch.fwd()) {
-            funcDef.add(ch);
-            ch = New.typ(NTyp.FuncDef);
+        mainFuncdef = ch;
+        while (mainFuncdef.gettyp() != NTyp.MainFuncDef) {
+            (mainFuncdef = new Decl()).fwd();
         }
-        mainFuncdef = New.typ(NTyp.MainFuncDef);
-        return mainFuncdef.fwd();
+        return true;
     }
 
     @Override

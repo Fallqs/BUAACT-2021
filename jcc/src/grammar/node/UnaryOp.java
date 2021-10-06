@@ -13,7 +13,9 @@ public class UnaryOp extends Node {
         typ = NTyp.UnaryOp;
     }
 
-    /* UnaryOp → '+' | '−' | '!' */
+    /**
+     * UnaryOp → [+-!]
+     */
     @Override
     public boolean forward() {
         if (cs.isTyp(Typ.PLUS) || cs.isTyp(Typ.MINU) || cs.isTyp(Typ.NOT)) {

@@ -1,10 +1,13 @@
 package grammar.node;
 
 import grammar.NTyp;
+import grammar.New;
 import grammar.Node;
 import meta.Meta;
 
 public class Exp extends Node {
+    private Node exp;
+
     public Exp() {
         typ = NTyp.Exp;
     }
@@ -12,8 +15,7 @@ public class Exp extends Node {
     /* Exp → AddExp → MulExp { ('+' | '−') MulExp } */
     @Override
     public boolean forward() {
-
-        return false;
+        return (exp = New.typ(NTyp.AddExp)).fwd();
     }
 
     @Override

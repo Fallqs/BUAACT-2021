@@ -8,17 +8,16 @@ import word.Typ;
 public class Break extends Node {
     public Break() {
         typ = NTyp.Break;
+        autoDisplay = false;
     }
 
     /* 'break' ';' */
     @Override
     public boolean forward() {
-        if (cs.isTyp(Typ.BREAKTK)) {
-            while(!cs.nex().isTyp(Typ.SEMICN));
-            return true;
-        }
+        if (!cs.isTyp(Typ.BREAKTK)) return false;
+        while (!cs.isTyp(Typ.SEMICN)) cs.nex();
         cs.nex();
-        return false;
+        return true;
     }
 
     @Override

@@ -7,6 +7,7 @@ import word.Typ;
 
 public class Getint extends Node {
     public Getint() {
+        autoDisplay = false;
     }
 
     /* 'getint' '(' ')' */

@@ -1,28 +1,30 @@
 package grammar;
 
+import grammar.nd.Decl;
+import grammar.nd.StmtLR;
 import grammar.node.*;
 
 public class New {
     public static Node typ(NTyp typ) {
         return switch (typ) {
             case CompUnit -> new CompUnit();
-            case Decl -> new Decl();
             case ConstDecl -> new ConstDecl();
-            case BType -> new BType();
             case ConstDef -> new ConstDef();
-            case ConstInitVal -> new ConstInitVal();
+//            case ConstInitVal -> new ConstInitVal();
+            case Decl -> new Decl();
             case VarDecl -> new VarDecl();
             case VarDef -> new VarDef();
             case InitVal -> new InitVal();
-            case FuncDef -> new FuncDef();
+//            case FuncDef -> new FuncDef();
             case MainFuncDef -> new MainFuncDef();
             case FuncType -> new FuncType();
             case FuncFParams -> new FuncFParams();
             case FuncFParam -> new FuncFParam();
             case FuncRParams -> new FuncRParams();
             case Block -> new Block();
-            case BlockItem -> new BlockItem();
+//            case BlockItem -> new BlockItem();
             case Stmt -> new Stmt();
+            case StmtLR -> new StmtLR();
             case If -> new If();
             case While -> new While();
             case Break -> new Break();

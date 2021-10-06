@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class Node {
     public static Cursor cs;
     public static List<Compo> output = new ArrayList<>();
-    public static boolean display = true;
+    public boolean autoDisplay = true;
     public Meta meta;
     protected NTyp typ;
 
@@ -18,12 +18,24 @@ public abstract class Node {
     public abstract Meta compile();
 
     public void dump(NTyp typ) {
-        output.add(new Compo(typ, cs.p));
+        output.add(new Compo(typ, cs.pos()));
+    }
+
+    public void dump(NTyp typ, int p) {
+        output.add(new Compo(typ, p));
+    }
+
+    public void dedump() {
+        if (output.size() != 0) output.remove(output.size() - 1);
+    }
+
+    public NTyp gettyp() {
+        return typ;
     }
 
     public boolean fwd() {
         boolean ret = forward();
-        if(display && ret && typ != null) dump(this.typ);
+        if (autoDisplay && ret && typ != null) dump(this.typ);
         return ret;
     }
 }

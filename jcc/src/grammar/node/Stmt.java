@@ -1,10 +1,14 @@
 package grammar.node;
 
 import grammar.NTyp;
+import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import word.Typ;
 
 public class Stmt extends Node {
+    private Node opr;
+
     public Stmt() {
         typ = NTyp.Stmt;
     }
@@ -23,8 +27,18 @@ public class Stmt extends Node {
      */
     @Override
     public boolean forward() {
-
-        return false;
+        if(cs.isTyp(Typ.SEMICN)) {
+            opr = null;
+            return true;
+        }
+        if((opr = New.typ(NTyp.If)).fwd()) return true;
+        if((opr = New.typ(NTyp.While)).fwd()) return true;
+        if((opr = New.typ(NTyp.Break)).fwd()) return true;
+        if((opr = New.typ(NTyp.Continue)).fwd()) return true;
+        if((opr = New.typ(NTyp.Return)).fwd()) return true;
+        if((opr = New.typ(NTyp.Printf)).fwd()) return true;
+        if((opr = New.typ(NTyp.Block)).fwd()) return true;
+        return (opr = New.typ(NTyp.StmtLR)).fwd();
     }
 
     @Override

@@ -6,19 +6,19 @@ import word.Typ;
 import java.util.List;
 
 public class Cursor {
-    public final Result[] token;
+    public final Result[] tokens;
     public int p = 0;
 
     public Cursor(List<Result> soup) {
-        token = soup.toArray(new Result[0]);
+        tokens = soup.toArray(new Result[0]);
     }
 
     public boolean isTyp(Typ t) {
-        return p >= token.length || token[p].isTyp(t);
+        return p >= tokens.length || tokens[p].isTyp(t);
     }
 
     public Cursor nex() {
-        p += (p < token.length) ? 1 : 0;
+        p += (p < tokens.length) ? 1 : 0;
         return this;
     }
 
@@ -28,6 +28,15 @@ public class Cursor {
     }
 
     public Result cont() {
-        return p < 0 || p >= token.length ? null : token[p];
+        return p < 0 || p >= tokens.length ? null : tokens[p];
+    }
+
+    public Typ typ() {
+        return p < 0 || p >= tokens.length ? Typ.END : tokens[p].typ;
+    }
+
+    public int pos() {
+        return p < 0 ? 0 : p >= tokens.length ?
+                tokens[tokens.length - 1].p + 1 : tokens[p].p;
     }
 }

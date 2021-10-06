@@ -4,5 +4,6 @@ CMakeLists.txt
 .idea/
 jcc/*
 !/jcc/src/
+jcc/src/test/
 *.zip
 /*.txt

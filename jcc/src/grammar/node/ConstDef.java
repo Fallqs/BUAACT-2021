@@ -7,21 +7,21 @@ import meta.Meta;
 import word.Typ;
 
 public class ConstDef extends Node {
-    private Node lval;
+    private LVal lval;
     private Node constinitval;
 
     public ConstDef() {
         typ = NTyp.ConstDef;
     }
 
-    /* ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal */
+    /** ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal
+     *  Ident: IDENTFR; '[': LBRACK; ']': RBRACK; '=': ASSIGN; */
     @Override
     public boolean forward() {
-        lval = New.typ(NTyp.LVal);
-        if (!lval.fwd()) return false;
+        if (!(lval = new LVal(true)).forward()) return false;
         if (cs.isTyp(Typ.ASSIGN)) cs.nex();
-
-        return false;
+        (constinitval = New.typ(NTyp.ConstInitVal)).fwd();
+        return true;
     }
 
     @Override

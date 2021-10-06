@@ -17,6 +17,7 @@ public class ConstDecl extends Node {
     }
 
     /* ConstDecl → 'const' BType ConstDef { ',' ConstDef } ';' */
+    /* 'const': CONSTTK; ',': COMMA; ';': SEMICN */
     @Override
     public boolean forward() {
         if(!cs.isTyp(Typ.CONSTTK)) return false;
