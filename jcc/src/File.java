@@ -21,15 +21,28 @@ public class File {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        init();
     }
 
     public ArrayList<Grid> read() {
         return input;
     }
 
+    public File copy() {
+        String str;
+        try {
+            while ((str = cin.readLine()) != null) {
+                cout.write(str);
+                cout.write('\n');
+            }
+            cout.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
     /* \ensures input == file + '\n' */
-    private void init() {
+    public File init() {
         ArrayList<Grid> v = new ArrayList<>();
         v.add(new Grid('\n'));
         try {
@@ -45,6 +58,7 @@ public class File {
             v.add(new Grid('\n'));
         }
         input = clean(v);
+        return this;
     }
 
     /* \ensures \result == filter(u[0:-1]) + '\n' */

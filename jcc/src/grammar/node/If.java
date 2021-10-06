@@ -11,6 +11,7 @@ public class If extends Node {
 
     public If() {
         typ = NTyp.If;
+        autoDisplay = false;
     }
 
     /* 'if' '(' Cond ')' Stmt [ 'else' Stmt ] */

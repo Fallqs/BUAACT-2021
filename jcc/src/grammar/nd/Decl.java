@@ -34,7 +34,7 @@ public class Decl extends Node {
         (ref = new Ref(false, true)).forward();
         if (ref.gettyp() == NTyp.FuncDef) {
             typ = NTyp.FuncDef;
-            dump(NTyp.FuncType, vtyp.p);
+            dump(NTyp.FuncType, vtyp.p + 1);
             return true;
         } else if (ref.gettyp() == NTyp.MainFuncDef) {
             typ = NTyp.MainFuncDef;
@@ -48,13 +48,13 @@ public class Decl extends Node {
         Node def = new Def(cnst, ref, init);
         def.fwd();
         defs.add(def);
-        while(cs.isTyp(Typ.COMMA)) {
+        while (cs.isTyp(Typ.COMMA)) {
             cs.nex();
-            if(!(def = new Def(cnst)).fwd()) break;
+            if (!(def = new Def(cnst)).fwd()) break;
             defs.add(def);
         }
-        while(!cs.isTyp(Typ.SEMICN))cs.nex();
-        while(cs.isTyp(Typ.SEMICN))cs.nex();
+        while (!cs.isTyp(Typ.SEMICN)) cs.nex();
+        cs.nex();
         return true;
     }
 

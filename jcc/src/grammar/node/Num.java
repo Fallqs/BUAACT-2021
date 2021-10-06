@@ -17,6 +17,7 @@ public class Num extends Node {
     public boolean forward() {
         if(!cs.isTyp(Typ.INTCON))return false;
         cont = cs.cont();
+        cs.nex();
         return true;
     }
 

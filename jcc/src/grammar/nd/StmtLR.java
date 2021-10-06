@@ -16,6 +16,7 @@ public class StmtLR extends Node {
     @Override
     public boolean forward() {
         int p = cs.p;
+        int siz = output.size();
         if ((ref = new Ref(false, false)).forward() && cs.isTyp(Typ.ASSIGN)) {
             dump(NTyp.LVal);
             cs.nex();
@@ -25,9 +26,10 @@ public class StmtLR extends Node {
             return true;
         }
         cs.p = p;
+        while (output.size() > siz) output.remove(output.size() - 1);
         ref = null;
         if ((calc = New.typ(NTyp.Exp)).fwd()) {
-            while(!cs.isTyp(Typ.SEMICN))cs.nex();
+            while (!cs.isTyp(Typ.SEMICN)) cs.nex();
             cs.nex();
             return true;
         }

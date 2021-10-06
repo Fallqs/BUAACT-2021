@@ -25,7 +25,7 @@ public class CompUnit extends Node {
         }
         mainFuncdef = ch;
         while (mainFuncdef.gettyp() != NTyp.MainFuncDef) {
-            (mainFuncdef = new Decl()).fwd();
+            if(!(mainFuncdef = new Decl()).fwd()) cs.nex();
         }
         return true;
     }

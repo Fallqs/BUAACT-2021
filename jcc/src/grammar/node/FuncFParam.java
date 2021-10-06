@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class FuncFParam extends Node {
     private Result name;
-    private ArrayList<Node> ind;
+    private ArrayList<Node> ind = new ArrayList<>();
 
     public FuncFParam() {
         typ = NTyp.FuncFParam;
@@ -29,6 +29,7 @@ public class FuncFParam extends Node {
             cs.nex();
             Node ch;
             while (cs.isTyp(Typ.LBRACK)) {
+                cs.nex();
                 if(!(ch = New.typ(NTyp.ConstExp)).fwd()) break;
                 ind.add(ch);
                 while(!cs.isTyp(Typ.RBRACK))cs.nex();

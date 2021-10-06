@@ -29,6 +29,7 @@ public class Stmt extends Node {
     public boolean forward() {
         if(cs.isTyp(Typ.SEMICN)) {
             opr = null;
+            cs.nex();
             return true;
         }
         if((opr = New.typ(NTyp.If)).fwd()) return true;

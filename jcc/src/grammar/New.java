@@ -13,7 +13,8 @@ public class New {
                 return new ConstDecl();
             case ConstDef:
                 return new ConstDef();
-//            case ConstInitVal : return new ConstInitVal();
+            case ConstInitVal:
+                return new InitVal(true);
             case Decl:
                 return new Decl();
             case VarDecl:
@@ -21,7 +22,7 @@ public class New {
             case VarDef:
                 return new VarDef();
             case InitVal:
-                return new InitVal();
+                return new InitVal(false);
 //            case FuncDef : return new FuncDef();
             case MainFuncDef:
                 return new MainFuncDef();
@@ -83,7 +84,7 @@ public class New {
             case Printf:
                 return new Printf();
             default:
-                return null;
+                return new NullNode();
         }
     }
 }

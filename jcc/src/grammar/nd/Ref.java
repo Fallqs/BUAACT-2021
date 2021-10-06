@@ -30,18 +30,19 @@ public class Ref extends Node {
         switch (cs.nex().typ()) {
             case LBRACK: {//[
                 this.typ = NTyp.LVal;
-                Node ch = New.typ(ind);
-                while (ch.fwd()) {
+                cs.nex();
+                Node ch;
+                while ((ch = New.typ(ind)).fwd()) {
                     params.add(ch);
                     if (!cs.isTyp(Typ.RBRACK)) break;
                     if (!cs.nex().isTyp(Typ.LBRACK)) break;
                     cs.nex();
-                    ch = New.typ(ind);
                 }
                 break;
             }
             case LPARENT : { //(
                 this.typ = name.typ == Typ.MAINTK ? NTyp.MainFuncDef : NTyp.FuncDef;
+                cs.nex();
                 Node ch = New.typ(para);
                 if (ch.fwd()) params.add(ch);
                 while (!cs.isTyp(Typ.RPARENT)) cs.nex();

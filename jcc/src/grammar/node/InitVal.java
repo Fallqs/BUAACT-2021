@@ -16,22 +16,26 @@ public class InitVal extends Node {
         typ = NTyp.InitVal;
     }
 
+    public InitVal(boolean cnst) {
+        this.typ = cnst ? NTyp.ConstInitVal : NTyp.InitVal;
+    }
+
     /**
      * InitVal → Exp | '{' [ InitVal { ',' InitVal } ] '}'
      */
     @Override
     public boolean forward() {
-        if ((exp = New.typ(NTyp.Exp)).fwd()) return true;
+        if ((exp = New.typ(typ == NTyp.InitVal ? NTyp.Exp : NTyp.ConstExp)).fwd()) return true;
         else if (cs.isTyp(Typ.LBRACE)) {
+            cs.nex();
             exp = null;
-            Node ch = New.typ(NTyp.InitVal);
-            while (ch.fwd()) {
+            Node ch;
+            while ((ch = New.typ(typ)).fwd()) {
                 init.add(ch);
                 if (!cs.isTyp(Typ.COMMA)) break;
                 cs.nex();
-                ch = New.typ(NTyp.InitVal);
             }
-            while(!cs.isTyp(Typ.RBRACE))cs.nex();
+            while (!cs.isTyp(Typ.RBRACE)) cs.nex();
             cs.nex();
             return true;
         }
