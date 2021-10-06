@@ -28,7 +28,7 @@ public class Ref extends Node {
         if (!cs.isTyp(Typ.IDENFR) && !cs.isTyp(Typ.MAINTK)) return false;
         name = cs.cont();
         switch (cs.nex().typ()) {
-            case LBRACK -> { //[
+            case LBRACK: {//[
                 this.typ = NTyp.LVal;
                 Node ch = New.typ(ind);
                 while (ch.fwd()) {
@@ -38,16 +38,18 @@ public class Ref extends Node {
                     cs.nex();
                     ch = New.typ(ind);
                 }
+                break;
             }
-            case LPARENT -> { //(
+            case LPARENT : { //(
                 this.typ = name.typ == Typ.MAINTK ? NTyp.MainFuncDef : NTyp.FuncDef;
                 Node ch = New.typ(para);
                 if (ch.fwd()) params.add(ch);
                 while (!cs.isTyp(Typ.RPARENT)) cs.nex();
                 cs.nex();
                 (body = New.typ(NTyp.Block)).fwd();
+                break;
             }
-            default -> this.typ = NTyp.LVal;
+            default : this.typ = NTyp.LVal;
         }
         return true;
     }
