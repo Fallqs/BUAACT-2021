@@ -1,6 +1,9 @@
 package word;
 
 public class Grid {
+    /**
+     * (x, y) == (line, column)
+     */
     public final int x, y;
     public char c;
     private static int line = 0, col = 1;

@@ -27,8 +27,7 @@ public class UnaryExp extends Node {
         if (cs.isTyp(Typ.LPARENT)) {
             cs.nex();
             (obj = New.typ(NTyp.Exp)).fwd();
-            while (!cs.isTyp(Typ.RPARENT)) cs.nex();
-            cs.nex();
+            cs.chkErr(Typ.RPARENT).nex();
             dump(NTyp.PrimaryExp);
         } else if ((obj = New.typ(NTyp.Number)).fwd()) {
             dump(NTyp.PrimaryExp);

@@ -31,8 +31,7 @@ public class ConstDecl extends Node {
             cs.nex();
             def = New.typ(NTyp.ConstDef);
         }
-        while(!cs.isTyp(Typ.SEMICN))cs.nex();
-        cs.nex();
+        cs.chkErr(Typ.SEMICN).nex();
         return true;
     }
 

@@ -8,20 +8,17 @@ import word.Result;
 import word.Typ;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LVal extends Node {
     Result ident;
     ArrayList<Node> index = new ArrayList<>();
-    private boolean cnst = false;
 
     public LVal() {
         typ = NTyp.LVal;
     }
 
-    public LVal(boolean cnst) {
-        typ = NTyp.NULL;
-        this.cnst = cnst;
+    public LVal(NTyp t) {
+        typ = t;
     }
 
     /**
@@ -38,8 +35,7 @@ public class LVal extends Node {
             Node ind = New.typ(NTyp.Exp);
             if (!ind.fwd()) break;
             index.add(ind);
-            if (!cs.isTyp(Typ.RBRACK)) break;
-            cs.nex();
+            cs.chkErr(Typ.RBRACK).nex();
         }
         return true;
     }

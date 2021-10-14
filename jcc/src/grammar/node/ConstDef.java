@@ -18,7 +18,7 @@ public class ConstDef extends Node {
      *  Ident: IDENTFR; '[': LBRACK; ']': RBRACK; '=': ASSIGN; */
     @Override
     public boolean forward() {
-        if (!(lval = new LVal(true)).forward()) return false;
+        if (!(lval = new LVal(NTyp.NULL)).forward()) return false;
         if (cs.isTyp(Typ.ASSIGN)) cs.nex();
         (constinitval = New.typ(NTyp.ConstInitVal)).fwd();
         return true;

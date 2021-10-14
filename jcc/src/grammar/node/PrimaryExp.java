@@ -22,8 +22,7 @@ public class PrimaryExp extends Node {
         } else if (cs.isTyp(Typ.LPARENT)) {
             cs.nex();
             (cont = New.typ(NTyp.Exp)).fwd();
-            while (!cs.isTyp(Typ.RPARENT)) cs.nex();
-            cs.nex();
+            cs.chkErr(Typ.RPARENT).nex();
         } else if ((cont = new Ref(false, false)).forward()) {
             (cont = new Ref(false, false)).forward();
             if (cont.gettyp() == NTyp.LVal) cont.dump(NTyp.LVal);

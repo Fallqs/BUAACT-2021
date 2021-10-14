@@ -31,9 +31,7 @@ public class Printf extends Node {
             if (!(ch = New.typ(NTyp.Exp)).fwd()) break;
             exp.add(ch);
         }
-        while(!cs.isTyp(Typ.RPARENT))cs.nex();
-        while(!cs.isTyp(Typ.SEMICN))cs.nex();
-        cs.nex();
+        cs.chkErr(Typ.RPARENT).nex().chkErr(Typ.SEMICN).nex();
         return true;
     }
 

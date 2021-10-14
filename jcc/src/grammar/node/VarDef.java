@@ -19,7 +19,7 @@ public class VarDef extends Node {
      */
     @Override
     public boolean forward() {
-        if (!(lval = new LVal(true)).forward()) return false;
+        if (!(lval = new LVal(NTyp.NULL)).forward()) return false;
         if (!cs.isTyp(Typ.ASSIGN)) return true;
         cs.nex();
         (initval = New.typ(NTyp.InitVal)).fwd();

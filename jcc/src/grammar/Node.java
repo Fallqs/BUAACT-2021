@@ -1,6 +1,7 @@
 package grammar;
 
 import meta.Cursor;
+import meta.Err;
 import meta.Meta;
 
 import java.util.ArrayList;

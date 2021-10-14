@@ -20,17 +20,16 @@ public class StmtLR extends Node {
         if ((ref = new Ref(false, false)).forward() && cs.isTyp(Typ.ASSIGN)) {
             dump(NTyp.LVal);
             cs.nex();
-            (calc = New.typ(NTyp.Exp)).fwd();
-            while (!cs.isTyp(Typ.SEMICN)) cs.nex();
-            cs.nex();
+            if (!(calc = New.typ(NTyp.Getint)).forward())
+                (calc = New.typ(NTyp.Exp)).fwd();
+            cs.chkErr(Typ.SEMICN).nex();
             return true;
         }
         cs.p = p;
         while (output.size() > siz) output.remove(output.size() - 1);
         ref = null;
         if ((calc = New.typ(NTyp.Exp)).fwd()) {
-            while (!cs.isTyp(Typ.SEMICN)) cs.nex();
-            cs.nex();
+            cs.chkErr(Typ.SEMICN).nex();
             return true;
         }
         return false;

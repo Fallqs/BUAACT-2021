@@ -15,8 +15,7 @@ public class Break extends Node {
     @Override
     public boolean forward() {
         if (!cs.isTyp(Typ.BREAKTK)) return false;
-        while (!cs.isTyp(Typ.SEMICN)) cs.nex();
-        cs.nex();
+        cs.nex().chkErr(Typ.SEMICN).nex();
         return true;
     }
 

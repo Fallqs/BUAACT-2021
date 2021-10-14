@@ -23,7 +23,6 @@ public class New {
                 return new VarDef();
             case InitVal:
                 return new InitVal(false);
-//            case FuncDef : return new FuncDef();
             case MainFuncDef:
                 return new MainFuncDef();
             case FuncType:
@@ -36,7 +35,6 @@ public class New {
                 return new FuncRParams();
             case Block:
                 return new Block();
-//            case BlockItem : return new BlockItem();
             case Stmt:
                 return new Stmt();
             case StmtLR:

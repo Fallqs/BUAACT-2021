@@ -15,8 +15,7 @@ public class Continue extends Node {
     @Override
     public boolean forward() {
         if (!cs.isTyp(Typ.CONTINUETK)) return false;
-        while (!cs.isTyp(Typ.SEMICN)) cs.nex();
-        cs.nex();
+        cs.nex().chkErr(Typ.SEMICN).nex();
         return true;
     }
 

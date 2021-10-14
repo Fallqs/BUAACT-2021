@@ -21,19 +21,17 @@ public class FuncFParam extends Node {
     @Override
     public boolean forward() {
         if (!cs.isTyp(Typ.INTTK)) return false;
-        while (!cs.isTyp(Typ.IDENFR)) cs.nex();
+        cs.chkTil(Typ.IDENFR);
         name = cs.cont();
         if (cs.nex().isTyp(Typ.LBRACK)) {
             ind.add(null);
-            while (!cs.isTyp(Typ.RBRACK)) cs.nex();
-            cs.nex();
+            cs.nex().chkErr(Typ.RBRACK).nex();
             Node ch;
             while (cs.isTyp(Typ.LBRACK)) {
                 cs.nex();
                 if(!(ch = New.typ(NTyp.ConstExp)).fwd()) break;
                 ind.add(ch);
-                while(!cs.isTyp(Typ.RBRACK))cs.nex();
-                cs.nex();
+                cs.chkErr(Typ.RBRACK).nex();
             }
         }
         return true;

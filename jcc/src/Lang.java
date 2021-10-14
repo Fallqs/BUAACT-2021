@@ -1,4 +1,5 @@
 import grammar.Compo;
+import meta.Err;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
@@ -12,8 +13,8 @@ public class Lang {
     private List<Compo> tokens = Node.output;
     private Node unit;
 
-    public Lang(Word wd) {
-        Node.cs = new Cursor(wd.tokens());
+    public Lang(Word wd, Err err) {
+        Node.cs = new Cursor(wd.tokens(), err);
         (unit = New.typ(NTyp.CompUnit)).fwd();
     }
 
@@ -28,6 +29,7 @@ public class Lang {
             else ret.append(rst[j++]).append('\n');
         }
         return ret.toString();
+//        return Node.cs.err.toString();
     }
 
 }

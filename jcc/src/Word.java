@@ -76,7 +76,6 @@ public class Word {
     }
 
     private final List<Result> tokens = new LinkedList<>();
-    private final ArrayList<Grid> grids;
     private final Nd root = new Nd('^', Typ.Error, null);
 
     private static final String[] signal0 = {
@@ -103,10 +102,8 @@ public class Word {
     public Word(ArrayList<Grid> s) {
         for (int i = 0; i < signal0.length; ++i)
             root.match(signal0[i].toCharArray(), 0, signal1[i]);
-        grids = s;
         char[] chars = new char[s.size()];
         for (int i = 0; i < chars.length; ++i) chars[i] = s.get(i).c;
-//        System.out.println(String.valueOf(chars));
         work(chars);
     }
 
@@ -128,7 +125,6 @@ public class Word {
                 if (r.typ == Typ.Error || q > r.p) {
                     String text = dump(s, p, q);
                     tokens.add(new Result(p == q ? Typ.Error : Typ.IDENFR, q, text));
-//                    root.match(text.toCharArray(), 0, word.Typ.IDENFR);
                     p = max(q, p + 1);
                 } else {
                     r.text = dump(s, p, r.p);

@@ -14,9 +14,7 @@ public class Getint extends Node {
     @Override
     public boolean forward() {
         if (!cs.isTyp(Typ.GETINTTK)) return false;
-        while (!cs.isTyp(Typ.LPARENT)) cs.nex();
-        while (!cs.isTyp(Typ.RPARENT)) cs.nex();
-        cs.nex();
+        cs.chkTil(Typ.LPARENT).nex().chkErr(Typ.RPARENT).nex();
         return true;
     }
 

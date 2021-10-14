@@ -35,8 +35,7 @@ public class InitVal extends Node {
                 if (!cs.isTyp(Typ.COMMA)) break;
                 cs.nex();
             }
-            while (!cs.isTyp(Typ.RBRACE)) cs.nex();
-            cs.nex();
+            cs.chkTil(Typ.RBRACE).nex();
             return true;
         }
         return false;

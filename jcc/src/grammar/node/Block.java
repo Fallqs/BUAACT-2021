@@ -22,8 +22,7 @@ public class Block extends Node {
         cs.nex();
         Node ch;
         while ((ch = New.typ(NTyp.Decl)).fwd() || (ch = New.typ(NTyp.Stmt)).fwd()) lines.add(ch);
-        while(!cs.isTyp(Typ.RBRACE))cs.nex();
-        cs.nex();
+        cs.chkTil(Typ.RBRACE).nex();
         return true;
     }
 

@@ -19,11 +19,8 @@ public class Return extends Node {
     public boolean forward() {
         if (!cs.isTyp(Typ.RETURNTK)) return false;
         cs.nex();
-        while (!cs.isTyp(Typ.SEMICN)) if (!(val = New.typ(NTyp.Exp)).fwd()) {
-            val = null;
-            cs.nex();
-        }
-        cs.nex();
+        if(!(val = New.typ(NTyp.Exp)).fwd()) val = null;
+        cs.chkErr(Typ.SEMICN).nex();
         return true;
     }
 

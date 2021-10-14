@@ -53,8 +53,7 @@ public class Decl extends Node {
             if (!(def = new Def(cnst)).fwd()) break;
             defs.add(def);
         }
-        while (!cs.isTyp(Typ.SEMICN)) cs.nex();
-        cs.nex();
+        cs.chkErr(Typ.SEMICN).nex();
         return true;
     }
 

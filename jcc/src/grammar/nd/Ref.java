@@ -34,8 +34,8 @@ public class Ref extends Node {
                 Node ch;
                 while ((ch = New.typ(ind)).fwd()) {
                     params.add(ch);
-                    if (!cs.isTyp(Typ.RBRACK)) break;
-                    if (!cs.nex().isTyp(Typ.LBRACK)) break;
+                    cs.chkErr(Typ.RBRACK).nex();
+                    if (!cs.isTyp(Typ.LBRACK)) break;
                     cs.nex();
                 }
                 break;
@@ -45,8 +45,7 @@ public class Ref extends Node {
                 cs.nex();
                 Node ch = New.typ(para);
                 if (ch.fwd()) params.add(ch);
-                while (!cs.isTyp(Typ.RPARENT)) cs.nex();
-                cs.nex();
+                cs.chkErr(Typ.RPARENT).nex();
                 (body = New.typ(NTyp.Block)).fwd();
                 break;
             }

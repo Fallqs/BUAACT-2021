@@ -29,8 +29,7 @@ public class VarDecl extends Node {
             cs.nex();
             def = New.typ(NTyp.VarDef);
         }
-        while (!cs.isTyp(Typ.SEMICN)) cs.nex();
-        cs.nex();
+        cs.chkErr(Typ.SEMICN).nex();
         return true;
     }
 

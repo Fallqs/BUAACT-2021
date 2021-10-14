@@ -18,11 +18,9 @@ public class If extends Node {
     @Override
     public boolean forward() {
         if (!cs.isTyp(Typ.IFTK)) return false;
-        while (!cs.isTyp(Typ.LPARENT)) cs.nex();
-        cs.nex();
+        cs.chkTil(Typ.LPARENT).nex();
         (cond = New.typ(NTyp.Cond)).fwd();
-        while (!cs.isTyp(Typ.RPARENT)) cs.nex();
-        cs.nex();
+        cs.chkErr(Typ.RPARENT).nex();
         (then = New.typ(NTyp.Stmt)).fwd();
         if (cs.isTyp(Typ.ELSETK)) {
             cs.nex();
