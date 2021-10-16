@@ -63,7 +63,6 @@ public class Ref extends Node {
             if (typ == NTyp.LVal) {
                 for (Node i : params) i.logIdt();
                 idt.cur.buf.dim = params.size();
-                if (idt.cur.query(name.text) != null) cs.chkErr(Typ.IDENFR, name);
             } else {
                 if (!idt.merge()) cs.chkErr(Typ.IDENFR, name);
                 if (!params.isEmpty()) params.get(0).logIdt();
@@ -95,7 +94,7 @@ public class Ref extends Node {
 
     @Override
     public Var rets() {
-        if (typ != NTyp.LVal) return new Var(0);
+        if (typ != NTyp.LVal) return (idt.qfun(name.text) == Typ.VOIDTK)? new Var(Typ.VOIDTK): new Var(0);
         return new Var(idt.query(name.text), params.size());
     }
 

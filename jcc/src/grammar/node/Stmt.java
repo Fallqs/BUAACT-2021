@@ -7,7 +7,7 @@ import meta.Meta;
 import word.Typ;
 
 public class Stmt extends Node {
-    private Node opr;
+    public Node opr;
 
     public Stmt() {
         typ = NTyp.Stmt;

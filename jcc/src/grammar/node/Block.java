@@ -4,6 +4,7 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.ident.Env;
 import word.Typ;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class Block extends Node {
     private final ArrayList<Node> lines = new ArrayList<>();
     public boolean func = false;
     private int endp;
+    private Env env;
 
     public Block() {
         typ = NTyp.Block;
@@ -32,8 +34,19 @@ public class Block extends Node {
 
     @Override
     public void logIdt() {
+        env = func ? idt.cur : idt.cur.chEnv();
         for (Node i : lines) i.logIdt();
-        if(func && idt.cur.retErr()) cs.chkErr(Typ.NULLRET, endp);
+        if (!func) idt.cur.faEnv();
+        if (func && idt.cur.retErr() && !ret()) cs.chkErr(Typ.NULLRET, endp);
+    }
+
+    private boolean ret() {
+        if (lines.isEmpty()) return false;
+        Node stmt = lines.get(lines.size() - 1);
+        if (!(stmt instanceof Stmt)) return false;
+        if (((Stmt) stmt).opr instanceof Return) return true;
+        // else if (((Stmt) stmt).opr instanceof Block) return ((Block) ((Stmt) stmt).opr).ret();
+        return false;
     }
 
     @Override

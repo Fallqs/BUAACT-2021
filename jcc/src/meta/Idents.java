@@ -2,6 +2,7 @@ package meta;
 
 import meta.ident.Env;
 import meta.ident.Var;
+import word.Typ;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,11 @@ public class Idents {
     public Env func(String name) {
         ofun = fun;
         return fun = env.get(name);
+    }
+
+    public Typ qfun(String name) {
+        Env f = env.get(name);
+        return f == null ? Typ.INTTK : f.ret;
     }
 
     public Env ofun() {

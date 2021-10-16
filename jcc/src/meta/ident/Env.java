@@ -15,6 +15,20 @@ public class Env {
     public final Buf buf = new Buf();
     private Var retV;
 
+    private Env cur = this, fa = this;
+    private final List<Env> ch = new ArrayList<>();
+
+    public Env chEnv() {
+        Env ch = new Env();
+        ch.fa = cur;
+        cur.ch.add(ch);
+        return cur = ch;
+    }
+
+    public void faEnv() {
+        cur = cur.fa;
+    }
+
     public Env() {
     }
 
@@ -47,7 +61,7 @@ public class Env {
 
     public boolean addVar(boolean isParam) {
         if (buf.name == null) return false;
-        return insert(buf.name, buildVar(), isParam);
+        return cur.insert(buf.name, buildVar(), isParam);
     }
 
     public int paramSiz() {
@@ -67,10 +81,17 @@ public class Env {
     }
 
     public boolean retErr() {
-        return ret == Typ.INTTK && retV == null;
+        return ret == Typ.INTTK;
     }
 
     public Var query(String name) {
+        Env env = cur;
+        Var ret = null;
+        while (env != this) {
+            ret = env.mp.get(name);
+            if (ret != null) return ret;
+            env = env.fa;
+        }
         return mp.get(name);
     }
 }

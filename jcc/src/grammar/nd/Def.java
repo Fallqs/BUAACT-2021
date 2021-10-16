@@ -7,7 +7,8 @@ import meta.Meta;
 import word.Typ;
 
 public class Def extends Node {
-    private Node ref, val;
+    private Ref ref;
+    private Node val;
     private final NTyp vtyp;
 
     public Def(boolean cnst) {
@@ -15,7 +16,7 @@ public class Def extends Node {
         vtyp = cnst ? NTyp.ConstInitVal : NTyp.InitVal;
     }
 
-    public Def(boolean cnst, Node ref, Node val) {
+    public Def(boolean cnst, Ref ref, Node val) {
         this(cnst);
         this.ref = ref;
         this.val = val;
@@ -36,7 +37,7 @@ public class Def extends Node {
         idt.cur.buf.onDecl = true;
         idt.cur.buf.cnst = (typ == NTyp.ConstDef);
         ref.logIdt();
-        idt.cur.addVar(false);
+        if (!idt.cur.addVar(false)) cs.chkErr(Typ.IDENFR, ref.name);
         idt.cur.buf.onDecl = false;
     }
 

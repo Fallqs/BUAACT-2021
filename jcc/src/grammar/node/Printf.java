@@ -22,7 +22,7 @@ public class Printf extends Node {
         int ans = 0;
         char[] ch = fmt.text.substring(1, fmt.text.length() - 1).toCharArray();
         for (char c : ch) if ((c < 40 || c > 126) && c != 32 && c != 33 && c != '%') return -1;
-        if (ch[ch.length - 1] == '\\' || ch[ch.length - 1] == '%') return -1;
+        if (ch.length > 0 && (ch[ch.length - 1] == '\\' || ch[ch.length - 1] == '%')) return -1;
         for (int i = 0; i < ch.length - 1; ++i) {
             if (ch[i] == '%') {
                 if (ch[i + 1] != 'd') return -1;

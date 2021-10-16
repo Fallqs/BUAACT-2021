@@ -1,9 +1,11 @@
 package meta.ident;
 
 
+import word.Typ;
+
 public class Var {
     public int[] siz, val;
-    public boolean cnst = false, zero = false, any = false;
+    public boolean cnst = false, zero = false, any = false, vod = false;
 
     public Var(int dim) {
         this.siz = new int[dim];
@@ -19,6 +21,11 @@ public class Var {
         this.siz = new int[v.siz.length - oft];
         this.cnst = v.cnst;
         this.zero = v.zero;
+    }
+
+    public Var(Typ t) {
+        this(0);
+        vod = (t == Typ.VOIDTK);
     }
 
     public Var set(int... args) {
@@ -73,6 +80,6 @@ public class Var {
     }
 
     public boolean chkParam(Var v) {
-        return v.any || v.siz.length == this.siz.length;
+        return v.any || v.siz.length == this.siz.length && !v.vod;
     }
 }
