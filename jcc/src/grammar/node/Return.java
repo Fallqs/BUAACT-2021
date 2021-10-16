@@ -30,6 +30,7 @@ public class Return extends Node {
     @Override
     public void logIdt() {
         if (idt.cur.ret == Typ.VOIDTK && val != null) cs.chkErr(Typ.RETURNTK, pos);
+        idt.cur.setRetV(new Var(0));
         if (val != null) val.logIdt();
     }
 

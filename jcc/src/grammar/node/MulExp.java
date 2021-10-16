@@ -39,9 +39,14 @@ public class MulExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        for (Node i : uny) i.logIdt();
+    }
+
+    @Override
     public Var rets() {
         if (uny.size() > 1) {
-            for(Node i: uny) if(!i.rets().cnst) return new Var(0);
+            for (Node i : uny) if (!i.rets().cnst) return new Var(0);
             return new Var(0).setCnst(true);
         }
         return uny.get(0).rets();

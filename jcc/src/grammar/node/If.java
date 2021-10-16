@@ -30,6 +30,13 @@ public class If extends Node {
     }
 
     @Override
+    public void logIdt() {
+        cond.logIdt();
+        then.logIdt();
+        if (els != null) els.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

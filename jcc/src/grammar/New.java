@@ -9,22 +9,12 @@ public class New {
         switch (typ) {
             case CompUnit:
                 return new CompUnit();
-            case ConstDecl:
-                return new ConstDecl();
-            case ConstDef:
-                return new ConstDef();
             case ConstInitVal:
                 return new InitVal(true);
             case Decl:
                 return new Decl();
-            case VarDecl:
-                return new VarDecl();
-            case VarDef:
-                return new VarDef();
             case InitVal:
                 return new InitVal(false);
-            case MainFuncDef:
-                return new MainFuncDef();
             case FuncType:
                 return new FuncType();
             case FuncFParams:
@@ -53,8 +43,6 @@ public class New {
                 return new Exp();
             case Cond:
                 return new Cond();
-            case LVal:
-                return new LVal();
             case PrimaryExp:
                 return new PrimaryExp();
             case Number:

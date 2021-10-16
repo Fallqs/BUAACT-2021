@@ -51,13 +51,13 @@ public class Cursor {
     public Cursor chkErr(Typ t) {
         switch (t) {
             case SEMICN:
-                if (!isTyp(Typ.SEMICN)) err.add(tokens[p - 1], 'i');
+                if (!isTyp(Typ.SEMICN)) err.add(tokens[--p], 'i');
                 break;
             case RPARENT:
-                if (!isTyp(Typ.RPARENT)) err.add(tokens[p - 1], 'j');
+                if (!isTyp(Typ.RPARENT)) err.add(tokens[--p], 'j');
                 break;
             case RBRACK:
-                if (!isTyp(Typ.RBRACK)) err.add(tokens[p - 1], 'k');
+                if (!isTyp(Typ.RBRACK)) err.add(tokens[--p], 'k');
                 break;
             case WHILETK:
                 if (whl == 0) err.add(tokens[p], 'm');

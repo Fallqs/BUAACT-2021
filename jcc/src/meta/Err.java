@@ -4,6 +4,7 @@ import word.Grid;
 import word.Result;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Collections.sort;
@@ -20,9 +21,13 @@ public class Err {
             this.c = c;
         }
 
+        public int getLine() {
+            return line;
+        }
+
         @Override
         public int compareTo(Nd o) {
-            return Integer.compare(c, o.c);
+            return Integer.compare(o.c, c);
         }
 
         public String toString() {
@@ -43,7 +48,7 @@ public class Err {
 
     @Override
     public String toString() {
-        sort(cont);
+        cont.sort(Comparator.comparing(Nd::getLine));
         StringBuilder ans = new StringBuilder();
         for (Nd n : cont) ans.append(n).append("\n");
         return ans.toString();

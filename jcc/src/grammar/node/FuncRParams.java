@@ -30,7 +30,9 @@ public class FuncRParams extends Node {
     }
 
     public void logIdt() {
-        idt.fun.buf.paramCnt = (params.size() == idt.fun.paramSiz());
+        for(Node i: params) i.logIdt();
+        if(idt.fun == null) return;
+        idt.fun.buf.paramCnt = (params.size() != idt.fun.paramSiz());
         if(idt.fun.buf.paramCnt) return;
         boolean err = false;
         for (int i = 0; i < params.size(); ++i) err |= !idt.fun.chkParam(i, params.get(i).rets());

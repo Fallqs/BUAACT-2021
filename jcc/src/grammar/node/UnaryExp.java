@@ -43,8 +43,13 @@ public class UnaryExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        obj.logIdt();
+    }
+
+    @Override
     public Var rets() {
-        if (ops.size() == 0) {
+        if (ops.size() != 0) {
             return obj.rets().cnst ? new Var(0).setCnst(true) : new Var(0);
         }
         return obj.rets();

@@ -20,15 +20,19 @@ public class Printf extends Node {
 
     private int cnt() {
         int ans = 0;
-        char[] ch = fmt.text.toCharArray();
-        for (char c : ch) if ((c < 40 || c > 126) && c != 32 && c != 33 && c != 25) return -1;
+        char[] ch = fmt.text.substring(1, fmt.text.length() - 1).toCharArray();
+        for (char c : ch) if ((c < 40 || c > 126) && c != 32 && c != 33 && c != '%') return -1;
         if (ch[ch.length - 1] == '\\' || ch[ch.length - 1] == '%') return -1;
-        for (int i = 0; i < ch.length - 1; ++i)
+        for (int i = 0; i < ch.length - 1; ++i) {
             if (ch[i] == '%') {
                 if (ch[i + 1] != 'd') return -1;
                 ++ans;
                 ++i;
+            } else if (ch[i] == '\\') {
+                if (ch[i + 1] != 'n') return -1;
+                ++i;
             }
+        }
         return ans;
     }
 
@@ -51,6 +55,11 @@ public class Printf extends Node {
         if (siz != -1 && siz != exp.size()) cs.chkErr(Typ.PRINTFTK, pos);
         cs.chkErr(Typ.RPARENT).nex().chkErr(Typ.SEMICN).nex();
         return true;
+    }
+
+    @Override
+    public void logIdt() {
+        for (Node i : exp) i.logIdt();
     }
 
     @Override

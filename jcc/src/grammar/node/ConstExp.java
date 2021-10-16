@@ -19,6 +19,11 @@ public class ConstExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        exp.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

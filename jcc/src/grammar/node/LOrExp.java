@@ -33,6 +33,11 @@ public class LOrExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        for (Node i : and) i.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

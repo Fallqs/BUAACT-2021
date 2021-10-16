@@ -31,6 +31,11 @@ public class PrimaryExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        cont.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

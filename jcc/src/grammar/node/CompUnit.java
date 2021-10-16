@@ -25,9 +25,15 @@ public class CompUnit extends Node {
         }
         mainFuncdef = ch;
         while (mainFuncdef.gettyp() != NTyp.MainFuncDef) {
-            if(!(mainFuncdef = new Decl()).fwd()) cs.nex();
+            if (!(mainFuncdef = new Decl()).fwd()) cs.nex();
         }
         return true;
+    }
+
+    @Override
+    public void logIdt() {
+        for (Node i : decl) i.logIdt();
+        mainFuncdef.logIdt();
     }
 
     @Override

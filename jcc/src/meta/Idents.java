@@ -1,6 +1,7 @@
 package meta;
 
 import meta.ident.Env;
+import meta.ident.Var;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +15,19 @@ public class Idents {
     public Idents() {
     }
 
+    public Var query(String name) {
+        Var v = cur.query(name);
+        return v == null ? sup.query(name) : v;
+    }
+
     public Env newEnv() {
         return cur = new Env();
     }
 
     public boolean merge() {
-        if (cur.buf.name == null || env.containsKey(cur.buf.name)) return false;
+        if (cur.buf.name == null || env.containsKey(cur.buf.name) || sup.query(cur.buf.name) != null) return false;
         env.put(cur.buf.name, cur);
+        sup.insert(cur.buf.name, new Var(0), false);
         return true;
     }
 

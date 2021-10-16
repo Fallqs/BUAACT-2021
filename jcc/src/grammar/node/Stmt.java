@@ -27,19 +27,24 @@ public class Stmt extends Node {
      */
     @Override
     public boolean forward() {
-        if(cs.isTyp(Typ.SEMICN)) {
+        if (cs.isTyp(Typ.SEMICN)) {
             opr = null;
             cs.nex();
             return true;
         }
-        if((opr = New.typ(NTyp.If)).fwd()) return true;
-        if((opr = New.typ(NTyp.While)).fwd()) return true;
-        if((opr = New.typ(NTyp.Break)).fwd()) return true;
-        if((opr = New.typ(NTyp.Continue)).fwd()) return true;
-        if((opr = New.typ(NTyp.Return)).fwd()) return true;
-        if((opr = New.typ(NTyp.Printf)).fwd()) return true;
-        if((opr = New.typ(NTyp.Block)).fwd()) return true;
+        if ((opr = New.typ(NTyp.If)).fwd()) return true;
+        if ((opr = New.typ(NTyp.While)).fwd()) return true;
+        if ((opr = New.typ(NTyp.Break)).fwd()) return true;
+        if ((opr = New.typ(NTyp.Continue)).fwd()) return true;
+        if ((opr = New.typ(NTyp.Return)).fwd()) return true;
+        if ((opr = New.typ(NTyp.Printf)).fwd()) return true;
+        if ((opr = New.typ(NTyp.Block)).fwd()) return true;
         return (opr = New.typ(NTyp.StmtLR)).fwd();
+    }
+
+    @Override
+    public void logIdt() {
+        if(opr != null)opr.logIdt();
     }
 
     @Override

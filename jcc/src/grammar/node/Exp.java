@@ -20,6 +20,7 @@ public class Exp extends Node {
         return (exp = New.typ(NTyp.AddExp)).fwd();
     }
 
+    @Override
     public void logIdt() {
         exp.logIdt();
     }

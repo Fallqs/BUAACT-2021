@@ -36,6 +36,11 @@ public class EqExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        for (Node i : rel) i.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

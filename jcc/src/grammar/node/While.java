@@ -28,6 +28,12 @@ public class While extends Node {
     }
 
     @Override
+    public void logIdt() {
+        cond.logIdt();
+        stmt.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

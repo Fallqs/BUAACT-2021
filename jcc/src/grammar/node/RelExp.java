@@ -36,6 +36,11 @@ public class RelExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        for (Node i : exp) i.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

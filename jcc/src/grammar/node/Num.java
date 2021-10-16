@@ -3,6 +3,7 @@ package grammar.node;
 import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
+import meta.ident.Var;
 import word.Result;
 import word.Typ;
 
@@ -19,6 +20,11 @@ public class Num extends Node {
         cont = cs.cont();
         cs.nex();
         return true;
+    }
+
+    @Override
+    public Var rets() {
+        return new Var(0).setCnst(true);
     }
 
     @Override

@@ -42,6 +42,12 @@ public class InitVal extends Node {
     }
 
     @Override
+    public void logIdt() {
+        if (exp != null) exp.logIdt();
+        for (Node i : init) i.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

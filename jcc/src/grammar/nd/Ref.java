@@ -61,26 +61,33 @@ public class Ref extends Node {
         if (idt.cur.buf.onDecl) {
             idt.cur.buf.name = name.text;
             if (typ == NTyp.LVal) {
+                for (Node i : params) i.logIdt();
                 idt.cur.buf.dim = params.size();
                 if (idt.cur.query(name.text) != null) cs.chkErr(Typ.IDENFR, name);
             } else {
-                if (idt.func(name.text) != null) cs.chkErr(Typ.IDENFR, name);
-                idt.merge();
-                params.get(0).logIdt();
+                if (!idt.merge()) cs.chkErr(Typ.IDENFR, name);
+                if (!params.isEmpty()) params.get(0).logIdt();
                 idt.cur.buf.onDecl = false;
                 body.func = true;
                 body.logIdt();
             }
         } else {
-            if(typ == NTyp.LVal) {
-                Var var = idt.cur.query(name.text);
-                if(var == null) cs.chkErr(Typ.NULL, name);
-                else if(idt.cur.buf.nonConst && !var.cnst) cs.chkErr(Typ.CONSTTK, name);
+            if (typ == NTyp.LVal) {
+                for (Node i : params) i.logIdt();
+                Var var = idt.query(name.text);
+                if (var == null) cs.chkErr(Typ.NULL, name);
+                else if (idt.cur.buf.nonConst && !var.cnst) cs.chkErr(Typ.CONSTTK, name);
             } else {
-                if(idt.func(name.text) == null) cs.chkErr(Typ.NULL, name);
-                else params.get(0).logIdt();
-                if(idt.fun.buf.paramCnt) cs.chkErr(Typ.PARAMCNT, name);
-                else if(idt.fun.buf.paramErr) cs.chkErr(Typ.PARAMTYP, name);
+                if (idt.func(name.text) == null) {
+                    cs.chkErr(Typ.NULL, name);
+                    if (!params.isEmpty()) params.get(0).logIdt();
+                } else {
+                    if (!params.isEmpty()) {
+                        params.get(0).logIdt();
+                        if (idt.fun.buf.paramCnt) cs.chkErr(Typ.PARAMCNT, name);
+                        else if (idt.fun.buf.paramErr) cs.chkErr(Typ.PARAMTYP, name);
+                    } else if (idt.fun.paramSiz() != 0) cs.chkErr(Typ.PARAMCNT, name);
+                }
                 idt.ofun();
             }
         }
@@ -88,8 +95,8 @@ public class Ref extends Node {
 
     @Override
     public Var rets() {
-        if(typ != NTyp.LVal) return new Var(0);
-        return new Var(idt.cur.query(name.text), params.size());
+        if (typ != NTyp.LVal) return new Var(0);
+        return new Var(idt.query(name.text), params.size());
     }
 
     @Override

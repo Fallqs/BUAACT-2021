@@ -33,6 +33,11 @@ public class LAndExp extends Node {
     }
 
     @Override
+    public void logIdt() {
+        for (Node i : bl) i.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

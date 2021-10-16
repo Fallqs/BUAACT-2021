@@ -38,9 +38,9 @@ public class StmtLR extends Node {
 
     @Override
     public void logIdt() {
-        ref.logIdt();
+        if(ref != null)ref.logIdt();
         calc.logIdt();
-        if(ref.rets().cnst) cs.chkErr(Typ.CONSTTK, ref.name);
+        if(ref != null && ref.rets().cnst) cs.chkErr(Typ.CONSTTK, ref.name);
     }
 
     @Override
