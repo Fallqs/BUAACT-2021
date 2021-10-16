@@ -12,18 +12,35 @@ import java.util.ArrayList;
 public class Printf extends Node {
     private Result fmt;
     private ArrayList<Node> exp = new ArrayList<>();
+    private int siz = 0;
 
     public Printf() {
         autoDisplay = false;
+    }
+
+    private int cnt() {
+        int ans = 0;
+        char[] ch = fmt.text.toCharArray();
+        for (char c : ch) if ((c < 40 || c > 126) && c != 32 && c != 33 && c != 25) return -1;
+        if (ch[ch.length - 1] == '\\' || ch[ch.length - 1] == '%') return -1;
+        for (int i = 0; i < ch.length - 1; ++i)
+            if (ch[i] == '%') {
+                if (ch[i + 1] != 'd') return -1;
+                ++ans;
+                ++i;
+            }
+        return ans;
     }
 
     /* 'printf' '(' FormatString { ',' Exp } ')' ';' */
     @Override
     public boolean forward() {
         if (!cs.isTyp(Typ.PRINTFTK)) return false;
-        if (!cs.nex().isTyp(Typ.LPARENT))return true;
+        int pos = cs.p;
+        if (!cs.nex().isTyp(Typ.LPARENT)) return true;
         if (!cs.nex().isTyp(Typ.STRCON)) return true;
         fmt = cs.cont();
+        if (-1 == (siz = cnt())) cs.chkErr(Typ.STRCON);
         cs.nex();
         Node ch;
         while (cs.isTyp(Typ.COMMA)) {
@@ -31,6 +48,7 @@ public class Printf extends Node {
             if (!(ch = New.typ(NTyp.Exp)).fwd()) break;
             exp.add(ch);
         }
+        if (siz != -1 && siz != exp.size()) cs.chkErr(Typ.PRINTFTK, pos);
         cs.chkErr(Typ.RPARENT).nex().chkErr(Typ.SEMICN).nex();
         return true;
     }

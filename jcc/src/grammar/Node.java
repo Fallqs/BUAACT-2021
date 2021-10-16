@@ -1,14 +1,17 @@
 package grammar;
 
 import meta.Cursor;
-import meta.Err;
+import meta.Idents;
 import meta.Meta;
+import meta.ident.Var;
+import word.Typ;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Node {
     public static Cursor cs;
+    public static Idents idt;
     public static List<Compo> output = new ArrayList<>();
     public boolean autoDisplay = true;
     public Meta meta;
@@ -17,6 +20,13 @@ public abstract class Node {
     public abstract boolean forward();
 
     public abstract Meta compile();
+
+    public void logIdt() {
+    }
+
+    public Var rets() {
+        return new Var(0);
+    }
 
     public void dump(NTyp typ) {
         output.add(new Compo(typ, cs.pos()));

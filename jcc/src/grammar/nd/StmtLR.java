@@ -7,7 +7,8 @@ import meta.Meta;
 import word.Typ;
 
 public class StmtLR extends Node {
-    private Node ref, calc;
+    private Node calc;
+    private Ref ref;
 
     public StmtLR() {
         autoDisplay = false;
@@ -33,6 +34,13 @@ public class StmtLR extends Node {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void logIdt() {
+        ref.logIdt();
+        calc.logIdt();
+        if(ref.rets().cnst) cs.chkErr(Typ.CONSTTK, ref.name);
     }
 
     @Override

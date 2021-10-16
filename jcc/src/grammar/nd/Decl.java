@@ -3,7 +3,6 @@ package grammar.nd;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
-import grammar.node.ConstDecl;
 import meta.Meta;
 import word.Result;
 import word.Typ;
@@ -15,7 +14,7 @@ public class Decl extends Node {
     private boolean cnst;
     private Ref ref;
     private Node init;
-    private ArrayList<Node> defs = new ArrayList<>();
+    private final ArrayList<Node> defs = new ArrayList<>();
 
     public Decl() {
         typ = NTyp.VarDecl;
@@ -55,6 +54,20 @@ public class Decl extends Node {
         }
         cs.chkErr(Typ.SEMICN).nex();
         return true;
+    }
+
+    @Override
+    public void logIdt() {
+        if (typ == NTyp.ConstDecl || typ == NTyp.VarDecl) {
+            idt.cur.buf.zero = (idt.cur == idt.sup);
+            for (Node def : defs) def.logIdt();
+        } else {
+            idt.newEnv().buf.onDecl = true;
+            idt.cur.setRet(vtyp.typ);
+            ref.logIdt();
+            idt.cur.buf.onDecl = false;
+            idt.cur = idt.sup;
+        }
     }
 
     @Override

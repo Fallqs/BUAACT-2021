@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class FuncFParam extends Node {
     private Result name;
-    private ArrayList<Node> ind = new ArrayList<>();
+    private final ArrayList<Node> ind = new ArrayList<>();
 
     public FuncFParam() {
         typ = NTyp.FuncFParam;
@@ -29,12 +29,19 @@ public class FuncFParam extends Node {
             Node ch;
             while (cs.isTyp(Typ.LBRACK)) {
                 cs.nex();
-                if(!(ch = New.typ(NTyp.ConstExp)).fwd()) break;
+                if (!(ch = New.typ(NTyp.ConstExp)).fwd()) break;
                 ind.add(ch);
                 cs.chkErr(Typ.RBRACK).nex();
             }
         }
         return true;
+    }
+
+    public void logIdt() {
+        idt.cur.buf.name = name.text;
+        idt.cur.buf.dim = ind.size();
+        idt.cur.buf.cnst = idt.cur.buf.zero = false;
+        if (!idt.cur.addVar(true)) cs.chkErr(Typ.IDENFR, name);
     }
 
     @Override

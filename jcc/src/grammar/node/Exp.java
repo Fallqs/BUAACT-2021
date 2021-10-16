@@ -4,6 +4,8 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.ident.Var;
+import word.Typ;
 
 public class Exp extends Node {
     private Node exp;
@@ -16,6 +18,15 @@ public class Exp extends Node {
     @Override
     public boolean forward() {
         return (exp = New.typ(NTyp.AddExp)).fwd();
+    }
+
+    public void logIdt() {
+        exp.logIdt();
+    }
+
+    @Override
+    public Var rets() {
+        return exp.rets();
     }
 
     @Override

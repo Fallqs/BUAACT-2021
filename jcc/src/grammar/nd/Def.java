@@ -8,7 +8,7 @@ import word.Typ;
 
 public class Def extends Node {
     private Node ref, val;
-    private NTyp vtyp;
+    private final NTyp vtyp;
 
     public Def(boolean cnst) {
         this.typ = cnst ? NTyp.ConstDef : NTyp.VarDef;
@@ -30,6 +30,14 @@ public class Def extends Node {
             (val = New.typ(vtyp)).fwd();
         }
         return true;
+    }
+
+    public void logIdt() {
+        idt.cur.buf.onDecl = true;
+        idt.cur.buf.cnst = (typ == NTyp.ConstDef);
+        ref.logIdt();
+        idt.cur.addVar(false);
+        idt.cur.buf.onDecl = false;
     }
 
     @Override

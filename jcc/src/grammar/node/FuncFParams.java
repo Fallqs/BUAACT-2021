@@ -9,7 +9,7 @@ import word.Typ;
 import java.util.ArrayList;
 
 public class FuncFParams extends Node {
-    private ArrayList<Node> params = new ArrayList<>();
+    private final ArrayList<Node> params = new ArrayList<>();
 
     public FuncFParams() {
         typ = NTyp.FuncFParams;
@@ -21,12 +21,16 @@ public class FuncFParams extends Node {
         Node ch = New.typ(NTyp.FuncFParam);
         if (!ch.fwd()) return false;
         params.add(ch);
-        while(cs.isTyp(Typ.COMMA)) {
+        while (cs.isTyp(Typ.COMMA)) {
             cs.nex();
-            if(!(ch = New.typ(NTyp.FuncFParam)).fwd()) break;
+            if (!(ch = New.typ(NTyp.FuncFParam)).fwd()) break;
             params.add(ch);
         }
         return true;
+    }
+
+    public void logIdt() {
+        for (Node i : params) i.logIdt();
     }
 
     @Override

@@ -21,7 +21,9 @@ public class While extends Node {
         cs.chkTil(Typ.LPARENT).nex();
         (cond = New.typ(NTyp.Cond)).fwd();
         cs.chkErr(Typ.RPARENT).nex();
+        ++cs.whl;
         (stmt = New.typ(NTyp.Stmt)).fwd();
+        --cs.whl;
         return true;
     }
 

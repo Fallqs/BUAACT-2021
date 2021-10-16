@@ -19,6 +19,11 @@ public class Cond extends Node {
     }
 
     @Override
+    public void logIdt() {
+        logi.logIdt();
+    }
+
+    @Override
     public Meta compile() {
         return null;
     }

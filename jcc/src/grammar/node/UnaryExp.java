@@ -5,12 +5,13 @@ import grammar.New;
 import grammar.Node;
 import grammar.nd.Ref;
 import meta.Meta;
+import meta.ident.Var;
 import word.Typ;
 
 import java.util.ArrayList;
 
 public class UnaryExp extends Node {
-    private ArrayList<Node> ops = new ArrayList<>();
+    private final ArrayList<Node> ops = new ArrayList<>();
     private Node obj;
 
     public UnaryExp() {
@@ -37,8 +38,16 @@ public class UnaryExp extends Node {
                 dump(NTyp.PrimaryExp);
             }
         } else return false;
-        for(Node i: ops) dump(typ);
+        for (Node i : ops) dump(typ);
         return true;
+    }
+
+    @Override
+    public Var rets() {
+        if (ops.size() == 0) {
+            return obj.rets().cnst ? new Var(0).setCnst(true) : new Var(0);
+        }
+        return obj.rets();
     }
 
     @Override

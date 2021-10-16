@@ -4,18 +4,21 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Cursor;
+import meta.Idents;
 import word.Result;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class Lang {
-    private List<Compo> tokens = Node.output;
-    private Node unit;
+    private final List<Compo> tokens = Node.output;
+    private final Node unit;
 
     public Lang(Word wd, Err err) {
         Node.cs = new Cursor(wd.tokens(), err);
+        Node.idt = new Idents();
         (unit = New.typ(NTyp.CompUnit)).fwd();
+        unit.compile();
     }
 
     public String toString() {

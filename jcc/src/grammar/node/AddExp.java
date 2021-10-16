@@ -4,14 +4,15 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.ident.Var;
 import word.Result;
 import word.Typ;
 
 import java.util.ArrayList;
 
 public class AddExp extends Node {
-    private ArrayList<Node> mult = new ArrayList<>();
-    private ArrayList<Result> opr = new ArrayList<>();
+    private final ArrayList<Node> mult = new ArrayList<>();
+    private final ArrayList<Result> opr = new ArrayList<>();
 
     public AddExp() {
         typ = NTyp.AddExp;
@@ -33,6 +34,19 @@ public class AddExp extends Node {
             dump(typ);
         }
         return true;
+    }
+
+    public void logIdt() {
+        for (Node i : mult) i.logIdt();
+    }
+
+    @Override
+    public Var rets() {
+        if (mult.size() > 1) {
+            for (Node i : mult) if (!i.rets().cnst) return new Var(0);
+            return new Var(0).setCnst(true);
+        }
+        return mult.get(0).rets();
     }
 
     @Override
