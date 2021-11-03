@@ -4,6 +4,7 @@ import meta.Cursor;
 import meta.Idents;
 import meta.Meta;
 import meta.ident.Var;
+import word.Result;
 import word.Typ;
 
 import java.util.ArrayList;
@@ -16,12 +17,18 @@ public abstract class Node {
     public boolean autoDisplay = true;
     public Meta meta;
     protected NTyp typ;
+    protected Result key;
+    private Node fa;
 
     public abstract boolean forward();
 
     public abstract Meta compile();
 
     public void logIdt() {
+    }
+
+    public void reward(Result k) {
+        this.key = k;
     }
 
     public Var rets() {

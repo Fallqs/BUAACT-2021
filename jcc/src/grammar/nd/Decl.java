@@ -3,6 +3,7 @@ package grammar.nd;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
+import grammar.node.BType;
 import meta.Meta;
 import word.Result;
 import word.Typ;
@@ -10,7 +11,6 @@ import word.Typ;
 import java.util.ArrayList;
 
 public class Decl extends Node {
-    private Result vtyp;
     private boolean cnst;
     private Ref ref;
     private Node init;
@@ -27,13 +27,12 @@ public class Decl extends Node {
             cs.nex();
             this.typ = NTyp.ConstDecl;
         }
-        if (!cs.isTyp(Typ.INTTK) && !cs.isTyp(Typ.VOIDTK)) return false;
-        vtyp = cs.cont();
+        if (!(new BType(this).fwd())) return false;  // value type stored in (Result)this.key
         cs.nex();
         (ref = new Ref(false, true)).forward();
         if (ref.gettyp() == NTyp.FuncDef) {
             typ = NTyp.FuncDef;
-            dump(NTyp.FuncType, vtyp.p + 1);
+            dump(NTyp.FuncType, key.p + 1);
             return true;
         } else if (ref.gettyp() == NTyp.MainFuncDef) {
             typ = NTyp.MainFuncDef;
@@ -63,7 +62,7 @@ public class Decl extends Node {
             for (Node def : defs) def.logIdt();
         } else {
             idt.newEnv().buf.onDecl = true;
-            idt.cur.setRet(vtyp.typ);
+            idt.cur.setRet(key.typ);
             ref.logIdt();
             idt.cur.buf.onDecl = false;
             idt.cur = idt.sup;

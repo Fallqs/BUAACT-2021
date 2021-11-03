@@ -1,20 +1,19 @@
 package meta;
 
-import grammar.NTyp;
-
 public class Meta {
-    public final NTyp opr;
-    public final int lval, rval;
+    public final Opr opr;
+    public final Meta ma, mb;
     public final int tar;
+    private static int cnt = 0;
 
-    public Meta(NTyp opr, int lval, int rval, int tar) {
+    public Meta(Opr opr, Meta ma, Meta mb) {
         this.opr = opr;
-        this.lval = lval;
-        this.rval = rval;
-        this.tar = tar;
+        this.ma = ma;
+        this.mb = mb;
+        this.tar = ++cnt;
     }
 
     public String toString() {
-        return "(" + opr + ", " + lval + ", " + rval + ", " + tar + ")";
+        return "(" + opr + ", " + ma.tar + ", " + mb.tar + " => " + tar + ")";
     }
 }

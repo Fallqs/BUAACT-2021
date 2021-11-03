@@ -20,7 +20,7 @@ public class FuncFParam extends Node {
     /* FuncFParam → BType Ident ['[' ']' { '[' ConstExp ']' }] */
     @Override
     public boolean forward() {
-        if (!cs.isTyp(Typ.INTTK)) return false;
+        if (!(new BType(this).fwd())) return false;  // type stored in (Result)this.key
         cs.chkTil(Typ.IDENFR);
         name = cs.cont();
         if (cs.nex().isTyp(Typ.LBRACK)) {
