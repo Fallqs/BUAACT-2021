@@ -1,5 +1,7 @@
 package grammar;
 
+import engine.SyncO;
+import engine.SyncR;
 import meta.Cursor;
 import meta.Idents;
 import meta.Meta;
@@ -18,11 +20,15 @@ public abstract class Node {
     public Meta meta;
     protected NTyp typ;
     protected Result key;
-    private Node fa;
+    public Node fa;
+    protected SyncR syncR;
+    public SyncO syncO;
 
     public abstract boolean forward();
 
-    public abstract Meta translate();
+    public Meta translate() {
+        return null;
+    }
 
     public void logIdt() {
     }

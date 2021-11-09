@@ -33,4 +33,10 @@ public class Put extends Meta {
     public String toString() {
         return "(" + fr.id + " -> " + var.name + ")";
     }
+
+    @Override
+    public void collect() {
+        if(ref == 0) fr.collect();
+        super.collect();
+    }
 }

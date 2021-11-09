@@ -17,20 +17,29 @@ public class SyncO implements Index {
     private final Set<MVar> reqs = new HashSet<>();
     private boolean valid = false;
     private final SyncO fa;
+    private final SyncR rq;
     private int cnt = 0;
 
     public SyncO() {
-        fa = this;
+        rq = Dojo.curReq;
+        Dojo.add(fa = this);
     }
 
     public SyncO(SyncO fa) {
+        rq = Dojo.curReq;
         this.fa = fa;
+        Dojo.add(this);
     }
 
-    public Put upd(MVar v, Meta m) {
-        if(!mp.containsKey(v))mp.put(v, new Put(v, m));
+    public void upd(MVar v, Meta m) {
+        if (!mp.containsKey(v)) mp.put(v, new Put(v, m));
         else mp.get(v).upd(m);
-        return mp.get(v);
+        // mp.get(v);
+    }
+
+    public Meta qry(MVar v) {
+        if(!mp.containsKey(v)) return rq.qry(v);
+        return mp.get(v).fr;
     }
 
     @Override

@@ -12,28 +12,26 @@ public class MTable {
     public static final List<MIdt> temp = new ArrayList<>();
     public static final List<MFunc> func = new ArrayList<>();
     private static final Stack<String> log = new Stack<>();
-    private static final Stack<Integer> nw = new Stack<>();
-    private static int cnt = -1;
+    private static int nw = -1;
 
     private static class Stk {
         private static final Stack<MIdt> idt = new Stack<>();
         private static final Stack<Integer> tag = new Stack<>();
 
         public Stk() {
-
         }
 
         public boolean push(MIdt x) {
-            if (!tag.empty() && tag.peek().equals(nw.peek())) return false;
+            if (!tag.empty() && tag.peek().equals(nw)) return false;
             idt.push(x);
-            tag.push(nw.peek());
+            tag.push(nw);
             return true;
         }
 
-        public MIdt pop() {
-            if (tag.empty()) return null;
+        public void pop() {
+            if (tag.empty()) return;
             tag.pop();
-            return idt.pop();
+            idt.pop();
         }
 
         public MIdt peek() {
@@ -43,19 +41,22 @@ public class MTable {
 
     public static void newBlock() {
         log.push("$");
-        nw.push(++cnt);
+        ++nw;
     }
 
     public static void popBlock() {
-        while (!log.empty()) if ("$".equals(log.pop())) break;
-        nw.pop();
+        while (!log.empty()) {
+            if ("$".equals(log.peek())) break;
+            cur.get(log.pop()).pop();
+        }
+        --nw;
     }
 
     public static boolean newIdt(MIdt x) {
         if (!cur.containsKey(x.name())) cur.put(x.name(), new Stk());
         if (!cur.get(x.name()).push(x)) return false;
-        if (x.typ() == MVTyp.Func) func.add((MFunc) x);
-        else if (0 == nw.peek()) global.add(x);
+        if (x.typ() == MTyp.Func) func.add((MFunc) x);
+        else if (0 == nw) global.add(x);
         else temp.add(x);
         return true;
     }

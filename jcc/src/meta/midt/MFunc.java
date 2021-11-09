@@ -5,18 +5,18 @@ import engine.SyncR;
 public class MFunc implements MIdt {
     public String name;
     public MVar[] params;
-    public MVTyp ret;
+    public MTyp ret;
     public SyncR req;
 
-    public MFunc(String name, MVTyp ret, MVar... params) {
+    public MFunc(String name, MTyp ret, MVar... params) {
         this.name = name;
         this.ret = ret;
         this.params = params;
     }
 
     @Override
-    public MVTyp typ() {
-        return MVTyp.Func;
+    public MTyp typ() {
+        return MTyp.Func;
     }
 
     @Override

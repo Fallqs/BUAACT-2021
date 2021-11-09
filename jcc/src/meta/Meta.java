@@ -1,6 +1,6 @@
 package meta;
 
-import meta.mcode.LgK;
+import engine.LgK;
 
 public class Meta {
     public final int id;
@@ -24,12 +24,6 @@ public class Meta {
         return new LgK(Opr.lw, id, id);
     }
 
-    public static int log2(int x) {
-        int i = 0;
-        for (int t = 1; t < x; t <<= 1) ++i;
-        return i;
-    }
-
     public int calc() {
         return 0;
     }
@@ -39,5 +33,10 @@ public class Meta {
     }
 
     public void shrink() {
+    }
+
+    public int ref = 0;
+    public void collect() {
+        ++ref;
     }
 }

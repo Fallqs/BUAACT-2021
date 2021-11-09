@@ -1,36 +1,40 @@
 package meta.midt;
 
+import meta.Meta;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MVar implements MIdt {
-    public MVTyp typ;
+    public MTyp typ;
     public String name;
     public int base = 0, size = 1, lgt = 0, dim = 1;
-    public boolean cnst, init = false, sp = false;
-    public int[] val;
+    public boolean cnst = false, init = false, sp = false;
+    public int[] putc;
+    public List<Meta> putv = new ArrayList<>();
 
-    public MVar(boolean cnst, int... dims) {
-        this.cnst = cnst;
+    public MVar(int... dims) {
         if (dims.length == 0) {
-            typ = MVTyp.Int;
+            typ = MTyp.Int;
         } else if (dims.length == 1) {
-            typ = MVTyp.Arr;
+            typ = MTyp.Arr;
             size = dims[0];
         } else {
-            typ = MVTyp.Mat;
+            typ = MTyp.Mat;
             lgt = MVar.log2(dim = dims[1]);
             size = dims[0] * (1 << lgt);
         }
-        val = new int[]{0};
+        putc = new int[]{0};
     }
 
-    public MVar(String name, boolean cnst, int... dims) {
-        this(cnst, dims);
+    public MVar(String name, int... dims) {
+        this(dims);
         this.name = name;
     }
 
     @Override
-    public MVTyp typ() {
+    public MTyp typ() {
         return typ;
     }
 
@@ -55,8 +59,8 @@ public class MVar implements MIdt {
 
     public int ix(int... i) {
         int ix = 0;
-        if (typ == MVTyp.Int && i.length > 0) ix = i[0];
-        else if (typ == MVTyp.Mat) {
+        if (typ == MTyp.Int && i.length > 0) ix = i[0];
+        else if (typ == MTyp.Mat) {
             if (i.length > 0) ix = (i[0] << lgt);
             if (i.length > 1) ix += i[1];
         }
@@ -64,13 +68,13 @@ public class MVar implements MIdt {
     }
 
     public int gval(int... i) {
-        return init ? val[ix(i)] : 0;
+        return init ? putc[ix(i) % putc.length] : 0;
     }
 
-    public void initv(int... vals) {
+    public void initc(int... vals) {
         init = true;
-        val = new int[size];
-        Arrays.fill(val, 0);
-        for (int i = 0; i < vals.length; ++i) val[ix(i / dim, i % dim)] = vals[i];
+        putc = new int[size];
+        Arrays.fill(putc, 0);
+        for (int i = 0; i < vals.length; ++i) putc[ix(i / dim, i % dim)] = vals[i];
     }
 }

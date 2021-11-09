@@ -1,18 +1,30 @@
 package engine;
 
+import meta.Meta;
+import meta.midt.MVar;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class Dojo {
     private static final ArrayList<SyncR> reqs = new ArrayList<>();
     private static final ArrayList<SyncO> oprs = new ArrayList<>();
+    public static SyncR curReq;
+    public static SyncO curOpr;
 
     public static void add(Index ix) {
         if (ix instanceof SyncR) {
-            reqs.add((SyncR) ix);
+            reqs.add(curReq = (SyncR) ix);
         } else {
-            oprs.add((SyncO) ix);
+            oprs.add(curOpr = (SyncO) ix);
         }
+    }
+
+    public static Meta qry(MVar v) {
+        return curOpr.qry(v);
+    }
+
+    public static void upd(MVar v, Meta m) {
+        curOpr.upd(v, m);
     }
 
     public static void index() {

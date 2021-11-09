@@ -3,7 +3,11 @@ package grammar.nd;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
+import grammar.node.InitVal;
 import meta.Meta;
+import meta.mcode.Get;
+import meta.midt.MTable;
+import meta.midt.MVar;
 import word.Typ;
 
 public class Def extends Node {
@@ -43,6 +47,10 @@ public class Def extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        MVar var = ((Get) ref.translate()).var;
+        var.cnst = typ == NTyp.ConstDef;
+        MTable.newIdt(var);
+        if(!(val instanceof InitVal)) return null;
+        return ((InitVal) val).translate(var);
     }
 }

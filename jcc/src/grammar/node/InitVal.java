@@ -1,16 +1,21 @@
 package grammar.node;
 
+import engine.Dojo;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.mcode.PArr;
+import meta.mcode.Put;
+import meta.midt.MVar;
 import word.Typ;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InitVal extends Node {
     private Node exp;
-    private ArrayList<Node> init = new ArrayList<>();
+    private final ArrayList<InitVal> init = new ArrayList<>();
 
     public InitVal() {
         typ = NTyp.InitVal;
@@ -31,7 +36,7 @@ public class InitVal extends Node {
             exp = null;
             Node ch;
             while ((ch = New.typ(typ)).fwd()) {
-                init.add(ch);
+                init.add((InitVal) ch);
                 if (!cs.isTyp(Typ.COMMA)) break;
                 cs.nex();
             }
@@ -47,8 +52,24 @@ public class InitVal extends Node {
         for (Node i : init) i.logIdt();
     }
 
-    @Override
-    public Meta translate() {
-        return null;
+    public Meta translate(MVar var) {
+        if (exp != null) {
+            Dojo.upd(var, exp.translate());
+            return Meta.Nop;
+        } else if (typ == NTyp.InitVal)
+            return new PArr(var, values(new ArrayList<>()).toArray(new Meta[0]));
+        else {
+            List<Meta> ms = values(new ArrayList<>());
+            int[] v = new int[ms.size()];
+            for (int i = 0; i < ms.size(); ++i) v[i] = ms.get(i).calc();
+            var.initc(v);
+            return Meta.Nop;
+        }
+    }
+
+    private List<Meta> values(List<Meta> v) {
+        if (exp != null) v.add(exp.translate());
+        else for (InitVal i : init) i.values(v);
+        return v;
     }
 }

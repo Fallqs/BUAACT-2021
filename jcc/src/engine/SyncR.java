@@ -17,13 +17,14 @@ public class SyncR implements Index {
     private final Set<SyncO> oprs = new HashSet<>();
 
     public SyncR() {
+        Dojo.add(this);
     }
 
     public void add(SyncO opr) {
         oprs.add(opr);
     }
 
-    public Get req(MVar v) {
+    public Get qry(MVar v) {
         if (!mp.containsKey(v)) mp.put(v, new Get(v));
         return mp.get(v);
     }

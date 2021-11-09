@@ -38,4 +38,10 @@ public class PVal extends Meta {
         ans.append(", shift=").append(lgd).append(")");
         return ans.toString();
     }
+
+    @Override
+    public void collect() {
+        if (ref == 0) fr.collect();
+        super.collect();
+    }
 }

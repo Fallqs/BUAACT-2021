@@ -1,9 +1,11 @@
 package grammar.node;
 
+import engine.SyncR;
 import grammar.NTyp;
 import grammar.Node;
 import grammar.nd.Decl;
 import meta.Meta;
+import meta.midt.MTable;
 
 import java.util.ArrayList;
 
@@ -38,6 +40,11 @@ public class CompUnit extends Node {
 
     @Override
     public Meta translate() {
+        MTable.newBlock();
+        syncR = new SyncR();
+        for(Node o: decl) o.translate();
+        mainFuncdef.translate();
+        MTable.popBlock();
         return null;
     }
 }

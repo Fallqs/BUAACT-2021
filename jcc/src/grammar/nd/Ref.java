@@ -6,6 +6,8 @@ import grammar.Node;
 import grammar.node.Block;
 import meta.Meta;
 import meta.ident.Var;
+import meta.mcode.Get;
+import meta.midt.MVar;
 import word.Result;
 import word.Typ;
 
@@ -94,12 +96,19 @@ public class Ref extends Node {
 
     @Override
     public Var rets() {
-        if (typ != NTyp.LVal) return (idt.qfun(name.text) == Typ.VOIDTK)? new Var(Typ.VOIDTK): new Var(0);
+        if (typ != NTyp.LVal) return (idt.qfun(name.text) == Typ.VOIDTK) ? new Var(Typ.VOIDTK) : new Var(0);
         return new Var(idt.query(name.text), params.size());
     }
 
     @Override
     public Meta translate() {
+        if (typ == NTyp.LVal) {
+            if (ind == NTyp.ConstExp) {
+                int[] dim = new int[params.size()];
+                for (int i = 0; i < params.size(); ++i) dim[i] = params.get(i).translate().calc();
+                return new Get(new MVar(name.text, dim));
+            }
+        }
         return null;
     }
 }

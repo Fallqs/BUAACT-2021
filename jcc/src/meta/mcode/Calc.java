@@ -1,5 +1,6 @@
 package meta.mcode;
 
+import engine.LgK;
 import meta.Meta;
 import meta.Opr;
 
@@ -79,5 +80,14 @@ public class Calc extends Meta {
     @Override
     public String toString() {
         return "(" + ma.id + " " + opr + " " + mb.id + " -> " + id + ")";
+    }
+
+    @Override
+    public void collect() {
+        if (ref == 0) {
+            ma.collect();
+            mb.collect();
+        }
+        super.collect();
     }
 }

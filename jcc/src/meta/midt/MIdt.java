@@ -1,6 +1,6 @@
 package meta.midt;
 
 public interface MIdt {
-    MVTyp typ();
+    MTyp typ();
     String name();
 }
