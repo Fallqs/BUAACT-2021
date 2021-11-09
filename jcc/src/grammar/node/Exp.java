@@ -31,7 +31,7 @@ public class Exp extends Node {
     }
 
     @Override
-    public Meta compile() {
+    public Meta translate() {
         return null;
     }
 }

@@ -46,6 +46,10 @@ public class Err {
         cont.add(new Nd(grids.get(r.p).x, c));
     }
 
+    public boolean empty() {
+        return cont.isEmpty();
+    }
+
     @Override
     public String toString() {
         cont.sort(Comparator.comparing(Nd::getLine));

@@ -5,9 +5,7 @@ import grammar.New;
 import grammar.Node;
 import meta.Cursor;
 import meta.Idents;
-import word.Result;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Lang {
@@ -19,10 +17,10 @@ public class Lang {
         Node.idt = new Idents();
         (unit = New.typ(NTyp.CompUnit)).fwd();
         unit.logIdt();
-        unit.compile();
+        if (Node.cs.err.empty()) unit.translate();
     }
 
-    public String toString() {
+//    public String toString() {
 //        Compo[] cpo = tokens.toArray(new Compo[0]);
 //        Arrays.sort(cpo);
 //        Result[] rst = Node.cs.tokens;
@@ -33,7 +31,9 @@ public class Lang {
 //            else ret.append(rst[j++]).append('\n');
 //        }
 //        return ret.toString();
+//    }
+
+    public String toString() {
         return Node.cs.err.toString();
     }
-
 }

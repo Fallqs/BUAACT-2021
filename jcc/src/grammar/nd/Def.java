@@ -42,7 +42,7 @@ public class Def extends Node {
     }
 
     @Override
-    public Meta compile() {
+    public Meta translate() {
         return null;
     }
 }

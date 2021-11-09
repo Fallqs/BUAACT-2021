@@ -70,7 +70,7 @@ public class Decl extends Node {
     }
 
     @Override
-    public Meta compile() {
+    public Meta translate() {
         return null;
     }
 }

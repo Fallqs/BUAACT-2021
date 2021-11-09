@@ -22,7 +22,7 @@ public abstract class Node {
 
     public abstract boolean forward();
 
-    public abstract Meta compile();
+    public abstract Meta translate();
 
     public void logIdt() {
     }

@@ -50,7 +50,7 @@ public class AddExp extends Node {
     }
 
     @Override
-    public Meta compile() {
+    public Meta translate() {
         return null;
     }
 }

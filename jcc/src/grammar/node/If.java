@@ -37,7 +37,7 @@ public class If extends Node {
     }
 
     @Override
-    public Meta compile() {
+    public Meta translate() {
         return null;
     }
 }

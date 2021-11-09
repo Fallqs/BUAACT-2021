@@ -19,7 +19,7 @@ public class Getint extends Node {
     }
 
     @Override
-    public Meta compile() {
+    public Meta translate() {
         return null;
     }
 }

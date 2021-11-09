@@ -6,6 +6,7 @@ import word.Typ;
 public class Var {
     public int[] siz, val;
     public boolean cnst = false, zero = false, any = false, vod = false;
+    public String name;
 
     public Var(int dim) {
         this.siz = new int[dim];
