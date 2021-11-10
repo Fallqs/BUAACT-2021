@@ -5,6 +5,8 @@ import meta.midt.MVar;
 
 /**
  * put value to RAM / Global $, component of SyncO
+ * Beware that FR maybe "function Call" or "Get operation",
+ * for which this should do nothing.
  */
 public class Put extends Meta {
     public Meta fr;

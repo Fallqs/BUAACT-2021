@@ -9,4 +9,5 @@ public interface Index {
     void index();
     void collect();
     boolean isValid();
+    void add(Index x);
 }

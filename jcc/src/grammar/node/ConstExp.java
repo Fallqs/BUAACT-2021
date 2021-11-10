@@ -25,6 +25,6 @@ public class ConstExp extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        return exp.translate();
     }
 }

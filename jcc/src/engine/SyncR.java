@@ -14,13 +14,15 @@ import java.util.Set;
  */
 public class SyncR implements Index {
     private final Map<MVar, Get> mp = new HashMap<>();
-    private final Set<SyncO> oprs = new HashSet<>();
+    private final Set<Index> oprs = new HashSet<>();
+    public final SyncR fa;
 
     public SyncR() {
+        fa = Dojo.curReq;
         Dojo.add(this);
     }
 
-    public void add(SyncO opr) {
+    public void add(Index opr) {
         oprs.add(opr);
     }
 
@@ -36,12 +38,12 @@ public class SyncR implements Index {
 
     @Override
     public void index() {
-        for (SyncO o : oprs) o.index(mp.keySet());
+        for (Index o : oprs) o.index(mp.keySet());
     }
 
     @Override
     public void collect() {
-        for (SyncO o : oprs) o.collect();
+        for (Index o : oprs) o.collect();
     }
 
     @Override

@@ -10,7 +10,7 @@ public class MVar implements MIdt {
     public MTyp typ;
     public String name;
     public int base = 0, size = 1, lgt = 0, dim = 1;
-    public boolean cnst = false, init = false, sp = false;
+    public boolean cnst = false, init = false, sp = false, param = false;
     public int[] putc;
     public List<Meta> putv = new ArrayList<>();
 

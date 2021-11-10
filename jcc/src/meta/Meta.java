@@ -1,10 +1,11 @@
 package meta;
 
+import engine.Dojo;
 import engine.LgK;
 
 public class Meta {
     public final int id;
-    public boolean cnst = false;
+    public boolean cnst = false, valid = false;
     public Meta eqls;
     protected static int cnt = 0;
     public int val = 0;
@@ -12,6 +13,7 @@ public class Meta {
     public Meta() {
         id = ++cnt;
         eqls = this;
+        Dojo.code.add(this);
     }
 
     public static final Meta Nop = new Meta();

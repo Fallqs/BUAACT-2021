@@ -1,17 +1,26 @@
 package meta.midt;
 
+import engine.Dojo;
+import engine.SyncO;
 import engine.SyncR;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MFunc implements MIdt {
     public String name;
-    public MVar[] params;
     public MTyp ret;
     public SyncR req;
+    public int index = 0;
+    public final List<MVar> params = new ArrayList<>();
+    public final List<MVar> writes = new ArrayList<>();
 
-    public MFunc(String name, MTyp ret, MVar... params) {
+    public MFunc(String name, MTyp ret, SyncR req) {
         this.name = name;
         this.ret = ret;
-        this.params = params;
+        this.req = req;
+        this.index = Dojo.code.size();
+        Dojo.curFunc = this;
     }
 
     @Override

@@ -4,6 +4,8 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.midt.MTable;
+import meta.midt.MVar;
 import word.Result;
 import word.Typ;
 
@@ -44,8 +46,14 @@ public class FuncFParam extends Node {
         if (!idt.cur.addVar(true)) cs.chkErr(Typ.IDENFR, name);
     }
 
-    @Override
-    public Meta translate() {
-        return null;
+    public MVar parse() {
+        int[] dim = new int[ind.size()];
+        for (int i = 0; i < dim.length; ++i) dim[i] = ind.get(i).translate().calc();
+        MVar ret = new MVar(name.text, dim);
+        if (!MTable.newIdt(ret)) {
+            // cs.chkErr(Typ.IDENFR, name);
+            return ret;
+        }
+        return ret;
     }
 }

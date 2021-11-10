@@ -58,6 +58,7 @@ public class MTable {
         if (x.typ() == MTyp.Func) func.add((MFunc) x);
         else if (0 == nw) global.add(x);
         else temp.add(x);
+        log.add(x.name());
         return true;
     }
 

@@ -5,7 +5,7 @@ import grammar.New;
 import grammar.Node;
 import grammar.node.BType;
 import meta.Meta;
-import word.Result;
+import meta.midt.MTyp;
 import word.Typ;
 
 import java.util.ArrayList;
@@ -71,6 +71,12 @@ public class Decl extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        if (typ == NTyp.VarDecl || typ == NTyp.ConstDecl) {
+            for (Node o : defs) o.translate();
+            return null;
+        } else {
+            ref.rettyp = key.typ == Typ.INTTK ? MTyp.Int : MTyp.Void;
+            return ref.translate();
+        }
     }
 }

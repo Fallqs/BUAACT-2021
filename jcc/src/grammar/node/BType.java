@@ -7,7 +7,7 @@ import word.Result;
 import word.Typ;
 
 public class BType extends Node {
-    private final Node fa;
+//    private final Node fa;
 
     public BType(Node fa) {
         this.typ = NTyp.BType;

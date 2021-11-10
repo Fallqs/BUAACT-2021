@@ -4,7 +4,9 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.Opr;
 import meta.ident.Var;
+import meta.mcode.Calc;
 import word.Result;
 import word.Typ;
 
@@ -24,6 +26,7 @@ public class AddExp extends Node {
     public boolean forward() {
         Node ch = New.typ(NTyp.MulExp);
         if (!ch.fwd()) return false;
+        opr.add(new Result(Typ.PLUS, 0));
         mult.add(ch);
         dump(typ);
         while (cs.isTyp(Typ.PLUS) || cs.isTyp(Typ.MINU)) {
@@ -51,6 +54,14 @@ public class AddExp extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        if (mult.isEmpty()) return Meta.Nop;
+        Meta ret = mult.get(0).translate();
+        for (int i = 1; i < mult.size(); ++i) {
+            ret = new Calc(
+                    opr.get(i).typ == Typ.PLUS ? Opr.add : Opr.sub,
+                    ret, mult.get(i).translate()
+            );
+        }
+        return ret;
     }
 }

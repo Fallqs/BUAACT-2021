@@ -1,11 +1,15 @@
 package engine;
 
 import meta.Meta;
+import meta.mcode.Call;
+import meta.mcode.Get;
 import meta.mcode.Put;
 import meta.midt.MVar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,13 +20,15 @@ public class SyncO implements Index {
     private final Map<MVar, Put> mp = new HashMap<>();
     private final Set<MVar> reqs = new HashSet<>();
     private boolean valid = false;
-    private final SyncO fa;
-    private final SyncR rq;
+    private final List<Index> pre = new ArrayList<>();
+    public final SyncO fa;
+    public final SyncR rq;
     private int cnt = 0;
 
     public SyncO() {
         rq = Dojo.curReq;
-        Dojo.add(fa = this);
+        fa = Dojo.curOpr;
+        Dojo.add(this);
     }
 
     public SyncO(SyncO fa) {
@@ -32,14 +38,20 @@ public class SyncO implements Index {
     }
 
     public void upd(MVar v, Meta m) {
+        if(m instanceof Call) m = new Get(v);
         if (!mp.containsKey(v)) mp.put(v, new Put(v, m));
         else mp.get(v).upd(m);
         // mp.get(v);
     }
 
     public Meta qry(MVar v) {
-        if(!mp.containsKey(v)) return rq.qry(v);
+        if (!mp.containsKey(v)) return rq.qry(v);
         return mp.get(v).fr;
+    }
+
+    @Override
+    public void add(Index x) {
+        pre.add(x);
     }
 
     @Override
@@ -50,7 +62,7 @@ public class SyncO implements Index {
             mp.entrySet().removeIf(e -> !reqs.contains(e.getKey()));
             reqs.removeIf(e -> !mp.containsKey(e));
             valid = !mp.isEmpty();
-            fa.index(reqs);
+            for (Index o : pre) o.index(reqs);
         }
     }
 
