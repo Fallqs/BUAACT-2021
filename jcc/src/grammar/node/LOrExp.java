@@ -43,7 +43,7 @@ public class LOrExp extends Node {
     @Override
     public Meta translate() {
         Meta ret = new Calc(Opr.not, bl0.translate());
-        for (Node o : and) ret = new Calc(Opr.and, new Calc(Opr.not, o.translate()));
+        for (Node o : and) ret = new Calc(Opr.and, ret, new Calc(Opr.not, o.translate()));
         return new Calc(Opr.not, ret, Meta.Nop);
     }
 }

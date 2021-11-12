@@ -48,7 +48,7 @@ public class FuncFParam extends Node {
 
     public MVar parse() {
         int[] dim = new int[ind.size()];
-        for (int i = 0; i < dim.length; ++i) dim[i] = ind.get(i).translate().calc();
+        for (int i = 1; i < dim.length; ++i) dim[i] = ind.get(i).translate().calc();
         MVar ret = new MVar(name.text, dim);
         if (!MTable.newIdt(ret)) {
             // cs.chkErr(Typ.IDENFR, name);

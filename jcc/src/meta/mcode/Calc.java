@@ -86,7 +86,9 @@ public class Calc extends Meta {
 
     @Override
     public String toString() {
-        return "(" + ma.id + " " + opr + " " + mb.id + " -> " + id + ")";
+        if (opr == Opr.cnst) return "(" + val + " -> T" + id + ")";
+        else if (opr == Opr.not) return "(" + opr + " T" + ma.id + " -> T" + id + ")";
+        return "(T" + ma.id + " " + opr + " T" + mb.id + " -> T" + id + ")";
     }
 
     @Override

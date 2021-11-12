@@ -5,9 +5,10 @@ import meta.midt.MFunc;
 import meta.midt.MVar;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Dojo {
-//    private static final ArrayList<SyncR> reqs = new ArrayList<>();
+    //    private static final ArrayList<SyncR> reqs = new ArrayList<>();
 //    private static final ArrayList<SyncO> oprs = new ArrayList<>();
     private static final ArrayList<SyncB> blks = new ArrayList<>();
     public static SyncR globalReq = new SyncR();
@@ -56,7 +57,7 @@ public class Dojo {
     }
 
     public static void upd(MVar v, Meta m) {
-        curOpr.upd(v, m);
+        if (curOpr != null) curOpr.upd(v, m);
     }
 
     public static void index() {
@@ -67,9 +68,13 @@ public class Dojo {
         for (SyncB b : blks) b.opr.handle().forEach(Interpreter::handle);
     }
 
+    public static void sort() {
+        for (SyncB blk : blks) blk.ms.sort(Comparator.naturalOrder());;
+    }
+
     public static String toStr() {
         StringBuilder ret = new StringBuilder();
-        for(SyncB blk : blks) ret.append(blk);
+        for (SyncB blk : blks) ret.append(blk);
         return ret.toString();
     }
 }

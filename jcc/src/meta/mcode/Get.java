@@ -30,7 +30,7 @@ public class Get extends Meta {
 
     @Override
     public String toString() {
-        return "(" + var.name + " -> " + this.id + ")";
+        return "(" + var.name + " -> T" + this.id + ")";
     }
 
     @Override

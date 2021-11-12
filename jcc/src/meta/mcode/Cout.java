@@ -31,6 +31,6 @@ public class Cout extends Meta {
 
     @Override
     public String toString() {
-        return "Cout << " + (isStr ? s.toString() : m.id);
+        return " cout << " + (isStr ? s.toString() : "T" + m.id);
     }
 }

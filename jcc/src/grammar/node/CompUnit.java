@@ -41,7 +41,6 @@ public class CompUnit extends Node {
     @Override
     public Meta translate() {
         MTable.newBlock();
-        syncR = new SyncR();
         for(Node o: decl) o.translate();
         mainFuncdef.translate();
         MTable.popBlock();

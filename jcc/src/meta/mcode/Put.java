@@ -33,7 +33,7 @@ public class Put extends Meta {
 
     @Override
     public String toString() {
-        return "(" + fr.id + " -> " + var.name + ")";
+        return "(T" + fr.id + " -> " + var.name + ")";
     }
 
     @Override

@@ -43,7 +43,7 @@ public class LAndExp extends Node {
     @Override
     public Meta translate() {
         Meta ret = new Calc(Opr.not, bl0.translate());
-        for (Node o : bl) ret = new Calc(Opr.or, new Calc(Opr.not, o.translate()));
+        for (Node o : bl) ret = new Calc(Opr.or, ret, new Calc(Opr.not, o.translate()));
         return new Calc(Opr.not, ret, Meta.Nop);
     }
 }

@@ -21,8 +21,6 @@ public abstract class Node {
     protected NTyp typ;
     protected Result key;
     public Node fa;
-    protected SyncR syncR;
-    public SyncO syncO;
 
     public abstract boolean forward();
 

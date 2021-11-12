@@ -25,7 +25,7 @@ public class SyncB {
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
-        ret.append(req).append('\n');
+        ret.append('\n').append(req).append(":\n");
         for (Meta m : ms) ret.append(m).append('\n');
         return ret.toString();
     }

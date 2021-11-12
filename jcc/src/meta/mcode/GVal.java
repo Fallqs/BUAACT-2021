@@ -37,7 +37,7 @@ public class GVal extends Meta {
         StringBuilder ans = new StringBuilder();
         ans.append("(").append(var.name);
         for (Meta mi : ms) {
-            ans.append("[").append(mi).append("]");
+            ans.append("[T").append(mi.id).append("]");
         }
         ans.append("@shift=").append(lgd).append(" -> ").append(this.id).append(")");
         return ans.toString();

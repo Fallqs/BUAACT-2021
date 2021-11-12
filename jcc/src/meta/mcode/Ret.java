@@ -11,12 +11,12 @@ public class Ret extends Meta {
 
     public Ret(Meta v) {
         asLegend(vl = v);
-        isVoid = true;
+        isVoid = false;
         (func = Dojo.curFunc).write(Dojo.curOpr);
     }
 
     public Ret() {
-        isVoid = false;
+        isVoid = true;
         func = Dojo.curFunc;
     }
 
@@ -27,6 +27,6 @@ public class Ret extends Meta {
 
     @Override
     public String toString() {
-        return "Ret " + (isVoid ? "void" : vl.id);
+        return " Ret " + (isVoid ? "void" : "T" + vl.id);
     }
 }

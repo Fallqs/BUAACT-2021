@@ -49,6 +49,6 @@ public class Stmt extends Node {
 
     @Override
     public Meta translate() {
-        return opr.translate();
+        return opr == null ? null : opr.translate();
     }
 }

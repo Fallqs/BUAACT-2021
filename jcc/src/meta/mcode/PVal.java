@@ -36,7 +36,7 @@ public class PVal extends Meta {
         StringBuilder ans = new StringBuilder();
         ans.append("(").append(fr.id).append("->").append(var.name);
         for (Meta mi : ms) {
-            ans.append("[").append(mi).append("]");
+            ans.append("[T").append(mi.id).append("]");
         }
         ans.append(", shift=").append(lgd).append(")");
         return ans.toString();

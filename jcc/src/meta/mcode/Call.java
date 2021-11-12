@@ -38,7 +38,7 @@ public class Call extends Meta {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder().append('(');
-        for(Meta m : params)str.append("push ").append(m.id).append('\n');
-        return str.append("Call ").append(func.name).append(')').toString();
+        for(Meta m : params)str.append(" push T").append(m.id).append('\n');
+        return str.append(" Call ").append(func.name).append(')').toString();
     }
 }

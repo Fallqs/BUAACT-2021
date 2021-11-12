@@ -79,4 +79,12 @@ public class MVar implements MIdt {
         Arrays.fill(putc, 0);
         for (int i = 0; i < vals.length; ++i) putc[ix(i / dim, i % dim)] = vals[i];
     }
+
+    @Override
+    public String toString() {
+        return "MVar{" +
+                "name=" + name + ", " +
+                "typ=" + typ +
+                '}';
+    }
 }

@@ -44,4 +44,12 @@ public class MFunc implements MIdt {
     public String name() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "MFunc{" +
+                "name='" + name + '\'' +
+                ", ret=" + ret +
+                '}';
+    }
 }

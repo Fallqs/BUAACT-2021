@@ -14,6 +14,6 @@ public class Cin extends Meta {
 
     @Override
     public String toString() {
-        return "cin >> " + this.id;
+        return " cin >> T" + this.id;
     }
 }

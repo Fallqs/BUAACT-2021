@@ -79,6 +79,7 @@ public class Ref extends Node {
             idt.cur.buf.name = name.text;
             if (typ == NTyp.LVal) {
                 for (Node i : params) i.logIdt();
+                idt.cur.buf.name = name.text;
                 idt.cur.buf.dim = params.size();
             } else {
                 if (!idt.merge()) cs.chkErr(Typ.IDENFR, name);

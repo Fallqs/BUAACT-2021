@@ -30,6 +30,6 @@ public class Num extends Node {
 
     @Override
     public Meta translate() {
-        return new Calc(Integer.getInteger(cont.text));
+        return new Calc(Integer.parseInt(cont.text));
     }
 }

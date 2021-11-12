@@ -15,8 +15,8 @@ public class MTable {
     private static int nw = -1;
 
     private static class Stk {
-        private static final Stack<MIdt> idt = new Stack<>();
-        private static final Stack<Integer> tag = new Stack<>();
+        private final Stack<MIdt> idt = new Stack<>();
+        private final Stack<Integer> tag = new Stack<>();
 
         public Stk() {
         }

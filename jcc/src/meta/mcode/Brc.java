@@ -26,8 +26,8 @@ public class Brc extends Meta {
 
     @Override
     public String toString() {
-        String ret = "Jmp " + then;
-        if (cond != null) ret = "Branch " + els + "\n" + ret;
+        String ret = " Jmp " + then;
+        if (cond != null) ret = " Branch " + els + "\n" + ret;
         return ret;
     }
 }
