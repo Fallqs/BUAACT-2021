@@ -25,6 +25,6 @@ public class Cond extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        return logi.translate();
     }
 }

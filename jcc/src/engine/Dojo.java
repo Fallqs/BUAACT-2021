@@ -7,35 +7,48 @@ import meta.midt.MVar;
 import java.util.ArrayList;
 
 public class Dojo {
-    private static final ArrayList<SyncR> reqs = new ArrayList<>();
-    private static final ArrayList<SyncO> oprs = new ArrayList<>();
-    public static final ArrayList<Meta> code = new ArrayList<>();
+//    private static final ArrayList<SyncR> reqs = new ArrayList<>();
+//    private static final ArrayList<SyncO> oprs = new ArrayList<>();
+    private static final ArrayList<SyncB> blks = new ArrayList<>();
+    public static SyncR globalReq = new SyncR();
     public static SyncR curReq;
     public static SyncO curOpr;
+    public static SyncB curB;
     public static MFunc curFunc;
 
     public static void add(Index ix) {
         if (ix instanceof SyncR) {
-            reqs.add(curReq = (SyncR) ix);
+//            if (curReq != ix) reqs.add(curReq = (SyncR) ix);
+            curReq = (SyncR) ix;
         } else {
-            oprs.add(curOpr = (SyncO) ix);
+//            if (curOpr != ix) oprs.add(curOpr = (SyncO) ix);
+            curOpr = (SyncO) ix;
         }
     }
 
     public static void popReq() {
-        curReq = curReq.fa;
+        curReq = null;
     }
 
     public static void popOpr() {
-        curOpr = curOpr.fa;
+        curOpr = null;
     }
 
-    public static void cleanReq() {
-        while (curReq != null && curReq.fa != null) popReq();
+    public static void add(SyncB blk) {
+        blks.add(curB = blk);
     }
 
-    public static void cleanOpr() {
-        while (curOpr != null) popOpr();
+    public static void embed(Meta m) {
+        if (curB != null) curB.embed(m);
+    }
+
+    public static void clean() {
+        globalReq.add(curOpr);
+        curOpr.setEnd();
+        curFunc = null;
+        curReq = null;
+        curOpr = null;
+        curB = null;
     }
 
     public static Meta qry(MVar v) {
@@ -47,13 +60,16 @@ public class Dojo {
     }
 
     public static void index() {
-        reqs.removeIf(e -> !e.isValid());
-        for (SyncR r : reqs) r.collect();
-        for (SyncR r : reqs) r.index();
-        oprs.removeIf(e -> !e.isValid());
+        globalReq.index();
     }
 
     public static void translate() {
-        for (SyncO o : oprs) o.handle().forEach(Interpreter::handle);
+        for (SyncB b : blks) b.opr.handle().forEach(Interpreter::handle);
+    }
+
+    public static String toStr() {
+        StringBuilder ret = new StringBuilder();
+        for(SyncB blk : blks) ret.append(blk);
+        return ret.toString();
     }
 }

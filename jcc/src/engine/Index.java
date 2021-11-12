@@ -6,8 +6,5 @@ import java.util.Set;
 
 public interface Index {
     void index(Set<MVar> s);
-    void index();
     void collect();
-    boolean isValid();
-    void add(Index x);
 }

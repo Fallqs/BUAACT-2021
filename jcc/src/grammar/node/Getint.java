@@ -3,6 +3,7 @@ package grammar.node;
 import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
+import meta.mcode.Cin;
 import word.Typ;
 
 public class Getint extends Node {
@@ -20,6 +21,6 @@ public class Getint extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        return new Cin();
     }
 }

@@ -1,10 +1,12 @@
 package grammar.node;
 
+import engine.Dojo;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
 import meta.ident.Var;
+import meta.mcode.Ret;
 import word.Typ;
 
 public class Return extends Node {
@@ -41,6 +43,9 @@ public class Return extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        Ret ret = val == null ? new Ret() : new Ret(val.translate());
+        Dojo.curOpr.setEnd(ret);
+        if (!"main".equals(Dojo.curFunc.name)) Dojo.globalReq.add(Dojo.curOpr);
+        return ret;
     }
 }

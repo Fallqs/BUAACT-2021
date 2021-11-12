@@ -4,6 +4,7 @@ import grammar.NTyp;
 import grammar.Node;
 import meta.Meta;
 import meta.ident.Var;
+import meta.mcode.Calc;
 import word.Result;
 import word.Typ;
 
@@ -29,6 +30,6 @@ public class Num extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        return new Calc(Integer.getInteger(cont.text));
     }
 }

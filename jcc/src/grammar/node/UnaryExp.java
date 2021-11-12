@@ -5,13 +5,15 @@ import grammar.New;
 import grammar.Node;
 import grammar.nd.Ref;
 import meta.Meta;
+import meta.Opr;
 import meta.ident.Var;
+import meta.mcode.Calc;
 import word.Typ;
 
 import java.util.ArrayList;
 
 public class UnaryExp extends Node {
-    private final ArrayList<Node> ops = new ArrayList<>();
+    private final ArrayList<UnaryOp> ops = new ArrayList<>();
     private Node obj;
 
     public UnaryExp() {
@@ -23,7 +25,7 @@ public class UnaryExp extends Node {
     public boolean forward() {
         Node op;
         while ((op = New.typ(NTyp.UnaryOp)).fwd()) {
-            ops.add(op);
+            ops.add((UnaryOp) op);
         }
         if (cs.isTyp(Typ.LPARENT)) {
             cs.nex();
@@ -57,6 +59,17 @@ public class UnaryExp extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        int pre = 0;
+        for (UnaryOp u: ops) pre = pre ^ u.val();
+        if(pre == 0) return obj.translate();
+        else if(pre == 1) {
+            Meta ret = obj.translate();
+            return ret.isCnst() ? new Calc(-ret.calc()) :
+                    new Calc(Opr.sub, Meta.Nop, ret);
+        } else {
+            Meta ret = obj.translate();
+            return ret.isCnst()? new Calc(ret.calc() == 0 ? 1 : 0) :
+                    new Calc(Opr.not, ret);
+        }
     }
 }

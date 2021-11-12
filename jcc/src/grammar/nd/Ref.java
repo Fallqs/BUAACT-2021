@@ -1,6 +1,7 @@
 package grammar.nd;
 
 import engine.Dojo;
+import engine.SyncB;
 import engine.SyncO;
 import engine.SyncR;
 import grammar.NTyp;
@@ -14,6 +15,7 @@ import meta.ident.Var;
 import meta.mcode.Call;
 import meta.mcode.GVal;
 import meta.mcode.Get;
+import meta.mcode.PVal;
 import meta.midt.MFunc;
 import meta.midt.MIdt;
 import meta.midt.MTable;
@@ -113,6 +115,23 @@ public class Ref extends Node {
         return new Var(idt.query(name.text), params.size());
     }
 
+    private Meta[] ix() {
+        List<Meta> ix = new ArrayList<>();
+        for (Node o : params) ix.add(o.translate());
+        return ix.toArray(new Meta[0]);
+    }
+
+    public void translate(Meta fr) {
+        if (typ != NTyp.LVal) return;
+        MIdt var = MTable.qryIdt(name.text);
+        if (!(var instanceof MVar)) {
+            // cs.chkErr(Typ.NULL, name);
+            return;
+        }
+        if (params.isEmpty()) Dojo.upd((MVar) var, fr);
+        else new PVal(fr, (MVar) var, ix());
+    }
+
     @Override
     public Meta translate() {
         if (typ == NTyp.LVal) {
@@ -127,25 +146,22 @@ public class Ref extends Node {
                     return null;
                 }
                 if (params.isEmpty()) return Dojo.qry((MVar) var);
-
-                List<Meta> ix = new ArrayList<>();
-                for (Node o : params) ix.add(o.translate());
-                return new GVal((MVar) var, ix.toArray(new Meta[0]));
+                return new GVal((MVar) var, ix());
             }
         } else {
             if (para == NTyp.FuncFParams) {
-                MFunc func = new MFunc(name.text, rettyp, new SyncR());
+                new SyncB();
+                MFunc func = new MFunc(name.text, rettyp, Dojo.curReq);
                 if (!MTable.newIdt(func)) {
                     // cs.chkErr(Typ.NULL, name);
                     return null;
                 }
-                Dojo.curReq.fa.add(new SyncO());
                 MTable.newBlock();
                 if (!params.isEmpty()) ((FuncFParams) params.get(0)).translate(func);
+                body.fa = this;
                 body.translate();
                 MTable.popBlock();
-                Dojo.cleanReq();
-                Dojo.cleanOpr();
+                Dojo.clean();
             } else {
                 MIdt func = MTable.qryIdt(name.text);
                 if (!(func instanceof MFunc)) {
@@ -153,7 +169,7 @@ public class Ref extends Node {
                     return null;
                 }
                 Call ret;
-                if(!params.isEmpty()) {
+                if (!params.isEmpty()) {
                     params.get(0).fa = this;
                     ret = ((FuncRParams) params.get(0)).translate((MFunc) func);
                 } else {

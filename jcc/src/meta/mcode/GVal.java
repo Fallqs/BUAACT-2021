@@ -15,6 +15,7 @@ public class GVal extends Meta {
         this.var = var;
         this.lgd = var.lgt;
         this.ms = ms;
+        for (Meta m : ms) m.addLegend(this);
     }
 
     @Override

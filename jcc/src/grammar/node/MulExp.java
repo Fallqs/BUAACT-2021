@@ -4,7 +4,9 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.Opr;
 import meta.ident.Var;
+import meta.mcode.Calc;
 import word.Result;
 import word.Typ;
 
@@ -27,6 +29,7 @@ public class MulExp extends Node {
         Node ch = New.typ(NTyp.UnaryExp);
         if (!ch.fwd()) return false;
         uny.add(ch);
+        opr.add(null);
         dump(typ);
         while (cs.isTyp(Typ.MULT) || cs.isTyp(Typ.DIV) || cs.isTyp(Typ.MOD)) {
             opr.add(cs.cont());
@@ -54,6 +57,10 @@ public class MulExp extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        Meta ret = uny.get(0).translate();
+        for (int i = 1; i < uny.size(); ++i) {
+            ret = new Calc(Opr.mult, ret, uny.get(i).translate());
+        }
+        return ret;
     }
 }

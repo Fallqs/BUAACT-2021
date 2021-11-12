@@ -4,6 +4,8 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.Opr;
+import meta.mcode.Calc;
 import word.Result;
 import word.Typ;
 
@@ -23,6 +25,7 @@ public class RelExp extends Node {
     public boolean forward() {
         Node ch = New.typ(NTyp.AddExp);
         if (!ch.fwd()) return false;
+        opr.add(null);
         exp.add(ch);
         dump(typ);
         while (cs.isTyp(Typ.LSS) || cs.isTyp(Typ.LEQ) || cs.isTyp(Typ.GRE) || cs.isTyp(Typ.GEQ)) {
@@ -42,6 +45,14 @@ public class RelExp extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        Meta ret = exp.get(0).translate();
+        for (int i = 1; i < exp.size(); ++i) {
+            Typ t = opr.get(i).typ;
+            if (t == Typ.LSS) ret = new Calc(Opr.lt, ret, exp.get(i).translate());
+            else if (t == Typ.LEQ) ret = new Calc(Opr.not, new Calc(Opr.gt, ret, exp.get(i).translate()));
+            else if (t == Typ.GEQ) ret = new Calc(Opr.not, new Calc(Opr.lt, ret, exp.get(i).translate()));
+            else ret = new Calc(Opr.gt, ret, exp.get(i).translate());
+        }
+        return ret;
     }
 }

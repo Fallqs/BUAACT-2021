@@ -3,8 +3,10 @@ package grammar.node;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
+import grammar.nd.Ref;
 import meta.Meta;
 import meta.ident.Env;
+import meta.midt.MTable;
 import word.Typ;
 
 import java.util.ArrayList;
@@ -51,6 +53,9 @@ public class Block extends Node {
 
     @Override
     public Meta translate() {
+        if (!(fa instanceof Ref)) MTable.newBlock();
+        for (Node o : lines) o.translate();
+        if (!(fa instanceof Ref)) MTable.popBlock();
         return null;
     }
 }

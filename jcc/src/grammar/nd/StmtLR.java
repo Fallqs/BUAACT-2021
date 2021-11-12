@@ -45,6 +45,8 @@ public class StmtLR extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        Meta fr = calc.translate();
+        if (ref != null) ref.translate(fr);
+        return fr;
     }
 }

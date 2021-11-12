@@ -4,12 +4,15 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.Opr;
+import meta.mcode.Calc;
 import word.Typ;
 
 import java.util.ArrayList;
 
 public class LOrExp extends Node {
     private ArrayList<Node> and = new ArrayList<>();
+    private Node bl0;
 
     public LOrExp() {
         typ = NTyp.LOrExp;
@@ -21,7 +24,7 @@ public class LOrExp extends Node {
     public boolean forward() {
         Node ch = New.typ(NTyp.LAndExp);
         if (!ch.fwd()) return false;
-        and.add(ch);
+        bl0 = ch;
         dump(typ);
         while (cs.isTyp(Typ.OR)) {
             cs.nex();
@@ -39,6 +42,8 @@ public class LOrExp extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        Meta ret = new Calc(Opr.not, bl0.translate());
+        for (Node o : and) ret = new Calc(Opr.and, new Calc(Opr.not, o.translate()));
+        return new Calc(Opr.not, ret, Meta.Nop);
     }
 }

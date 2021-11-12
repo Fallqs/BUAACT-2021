@@ -26,6 +26,17 @@ public class UnaryOp extends Node {
         return false;
     }
 
+    public int val() {
+        switch (opr.typ) {
+            case MINU:
+                return 1;
+            case NOT:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
     @Override
     public Meta translate() {
         return null;

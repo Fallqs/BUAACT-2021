@@ -4,14 +4,16 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.Opr;
+import meta.mcode.Calc;
 import word.Result;
 import word.Typ;
 
 import java.util.ArrayList;
 
 public class EqExp extends Node {
-    private ArrayList<Node> rel = new ArrayList<>();
-    private ArrayList<Result> opr = new ArrayList<>();
+    private final ArrayList<Node> rel = new ArrayList<>();
+    private final ArrayList<Result> opr = new ArrayList<>();
 
     public EqExp() {
         typ = NTyp.EqExp;
@@ -23,6 +25,7 @@ public class EqExp extends Node {
     public boolean forward() {
         Node ch = New.typ(NTyp.RelExp);
         if (!ch.fwd()) return false;
+        opr.add(null);
         rel.add(ch);
         dump(typ);
         while (cs.isTyp(Typ.EQL) || cs.isTyp(Typ.NEQ)) {
@@ -42,6 +45,9 @@ public class EqExp extends Node {
 
     @Override
     public Meta translate() {
-        return null;
+        Meta ret = rel.get(0).translate();
+        for (int i = 1; i < rel.size(); ++i)
+            ret = new Calc(opr.get(i).typ == Typ.EQL ? Opr.eql : Opr.neq, ret, rel.get(i).translate());
+        return ret;
     }
 }

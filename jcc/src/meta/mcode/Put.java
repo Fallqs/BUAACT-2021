@@ -14,7 +14,7 @@ public class Put extends Meta {
 
     public Put(MVar var, Meta fr) {
         this.var = var;
-        this.fr = fr;
+        asLegend(this.fr = fr);
     }
 
     public void upd(Meta m) {
@@ -40,5 +40,10 @@ public class Put extends Meta {
     public void collect() {
         if(ref == 0) fr.collect();
         super.collect();
+    }
+
+    @Override
+    public void shrink() {
+        fr = fr.eqls;
     }
 }

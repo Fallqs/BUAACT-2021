@@ -16,6 +16,7 @@ public class PArr extends Meta {
         cnst = false;
         var.putv.add(this);
         Dojo.upd(var, this);
+        for(Meta m : fr) m.addLegend(this);
     }
 
     @Override

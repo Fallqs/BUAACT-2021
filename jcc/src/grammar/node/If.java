@@ -1,9 +1,15 @@
 package grammar.node;
 
+import engine.Dojo;
+import engine.SyncB;
+import engine.SyncO;
+import engine.SyncR;
 import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.mcode.Brc;
+import meta.midt.MTable;
 import word.Typ;
 
 public class If extends Node {
@@ -38,6 +44,37 @@ public class If extends Node {
 
     @Override
     public Meta translate() {
+        Brc branch = new Brc();
+        Dojo.curOpr.setEnd(branch);
+        (branch.cond = cond.translate()).addLegend(branch);
+        SyncO begin = Dojo.curOpr;
+
+        branch.then = new SyncB().req;
+        then.translate();
+        SyncO opr = Dojo.curOpr;
+
+        if (els == null) {
+            Brc b1 = new Brc();
+            opr.setEnd(b1);
+            b1.then = branch.els = new SyncB().req;
+            branch.els.add(opr);
+        } else {
+            Brc b1 = new Brc();
+            opr.setEnd(b1);
+            branch.els = new SyncB().req;
+
+            els.translate();
+            SyncO opr2 = Dojo.curOpr;
+            Brc b2 = new Brc();
+
+            SyncR end = new SyncB().req;
+            opr2.setEnd(b2);
+            b1.then = b2.then = end;
+            end.add(opr);
+            end.add(opr2);
+        }
+        branch.then.add(begin);
+        branch.els.add(begin);
         return null;
     }
 }

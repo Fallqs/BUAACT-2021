@@ -1,5 +1,6 @@
 package meta.mcode;
 
+import engine.Dojo;
 import meta.Meta;
 import meta.midt.MVar;
 
@@ -12,10 +13,12 @@ public class PVal extends Meta {
     protected Meta[] ms;
 
     public PVal(Meta fr, MVar var, Meta... ms) {
-        this.fr = fr;
+        asLegend(this.fr = fr);
+        for (Meta m : ms) m.addLegend(this);
         this.var = var;
         this.ms = ms;
         lgd = var.lgt;
+        Dojo.curFunc.write(Dojo.curOpr);
     }
 
     @Override

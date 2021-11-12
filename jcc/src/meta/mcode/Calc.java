@@ -10,8 +10,14 @@ public class Calc extends Meta {
 
     public Calc(Opr opr, Meta ma, Meta mb) {
         this.opr = opr;
-        this.ma = ma;
-        this.mb = mb;
+        asLegend(this.ma = ma);
+        asLegend(this.mb = mb);
+    }
+
+    public Calc(Opr opr, Meta ma) {
+        this.opr = opr;
+        asLegend(this.ma = ma);
+        this.mb = null;
     }
 
     public Calc(int v) {
@@ -32,6 +38,7 @@ public class Calc extends Meta {
     }
 
     public int calc() {
+        if (opr == Opr.cnst) return val;
         if (ma != null) ma.calc();
         else opr = Opr.lw;
         if (mb != null) mb.calc();
@@ -74,7 +81,7 @@ public class Calc extends Meta {
             return;
         }
         ma = ma.eqls;
-        mb = mb.eqls;
+        if (mb != null) mb = mb.eqls;
     }
 
     @Override
@@ -85,8 +92,8 @@ public class Calc extends Meta {
     @Override
     public void collect() {
         if (ref == 0) {
-            ma.collect();
-            mb.collect();
+            if (ma != null) ma.collect();
+            if (mb != null) mb.collect();
         }
         super.collect();
     }

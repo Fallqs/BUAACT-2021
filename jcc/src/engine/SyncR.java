@@ -14,29 +14,40 @@ import java.util.Set;
  */
 public class SyncR implements Index {
     private final Map<MVar, Get> mp = new HashMap<>();
+    private final Set<MVar> reqs = new HashSet<>();
     private final Set<Index> oprs = new HashSet<>();
-    public final SyncR fa;
+    public final SyncB blk;
 
     public SyncR() {
-        fa = Dojo.curReq;
+        blk = null;
         Dojo.add(this);
     }
 
-    public void add(Index opr) {
+    public SyncR(SyncB blk) {
+        this.blk = blk;
+        Dojo.add(this);
+    }
+
+    public void add(SyncO opr) {
         oprs.add(opr);
+        opr.addLegend(this);
     }
 
     public Get qry(MVar v) {
-        if (!mp.containsKey(v)) mp.put(v, new Get(v));
+        if (!reqs.contains(v)) {
+            mp.put(v, new Get(v));
+            reqs.add(v);
+        }
         return mp.get(v);
     }
 
     @Override
     public void index(Set<MVar> s) {
-        index();
+        int sz = reqs.size();
+        reqs.addAll(s);
+        if (sz != reqs.size()) for (Index o : oprs) o.index(reqs);
     }
 
-    @Override
     public void index() {
         for (Index o : oprs) o.index(mp.keySet());
     }
@@ -47,7 +58,7 @@ public class SyncR implements Index {
     }
 
     @Override
-    public boolean isValid() {
-        return !mp.isEmpty();
+    public String toString() {
+        return "entry" + blk.id;
     }
 }

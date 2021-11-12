@@ -1,5 +1,6 @@
 package meta.midt;
 
+import engine.Dojo;
 import meta.Meta;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public class MVar implements MIdt {
     public MTyp typ;
     public String name;
     public int base = 0, size = 1, lgt = 0, dim = 1;
-    public boolean cnst = false, init = false, sp = false, param = false;
+    public boolean cnst = false, init = false, sp = false, param = false, global = false;
     public int[] putc;
     public List<Meta> putv = new ArrayList<>();
 
@@ -26,6 +27,7 @@ public class MVar implements MIdt {
             size = dims[0] * (1 << lgt);
         }
         putc = new int[]{0};
+        global = Dojo.curFunc == null || "main".equals(Dojo.curFunc.name);
     }
 
     public MVar(String name, int... dims) {

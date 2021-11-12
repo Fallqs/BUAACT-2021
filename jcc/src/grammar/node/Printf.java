@@ -4,6 +4,8 @@ import grammar.NTyp;
 import grammar.New;
 import grammar.Node;
 import meta.Meta;
+import meta.mcode.Cout;
+import meta.midt.MStr;
 import word.Result;
 import word.Typ;
 
@@ -64,6 +66,17 @@ public class Printf extends Node {
 
     @Override
     public Meta translate() {
+        char[] ch = fmt.text.toCharArray();
+        for (int l = 1, r = 0, k = 0; r < ch.length - 1; ++r) {
+            if (ch[r + 1] == '%' || r == ch.length - 2) {
+                if (r >= l) new Cout(new MStr(fmt.text.substring(l, r+1)));
+                if (ch[r + 1] == '%') {
+                    new Cout(exp.get(k++).translate());
+                    ++r;
+                }
+                l = r + 2;
+            }
+        }
         return null;
     }
 }

@@ -7,6 +7,9 @@ import grammar.nd.Ref;
 import meta.Meta;
 import word.Typ;
 
+/**
+ * Wasted Class
+ */
 public class PrimaryExp extends Node {
     private Node cont;
 

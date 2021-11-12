@@ -1,18 +1,28 @@
 package meta.mcode;
 
 import engine.Dojo;
+import engine.SyncO;
+import engine.SyncR;
 import meta.Meta;
 import meta.midt.MFunc;
 import meta.midt.MVar;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Call extends Meta {
     public final MFunc func;
     public Meta[] params;
+    public final List<Put> save = new LinkedList<>();
 
     public Call(MFunc f, Meta... params) {
         func = f;
         this.params = params;
-        for (MVar v : f.writes) Dojo.curOpr.upd(v, this);
+        save.addAll(Dojo.curOpr.save());
+        for (Put p : save) p.addLegend(this);
+        Dojo.curOpr.flush(this);
+        for (MVar v : f.writes.keySet()) Dojo.curOpr.upd(v, this);
+        valid = true;
     }
 
     @Override
@@ -27,6 +37,8 @@ public class Call extends Meta {
 
     @Override
     public String toString() {
-        return "Call " + func.name;
+        StringBuilder str = new StringBuilder().append('(');
+        for(Meta m : params)str.append("push ").append(m.id).append('\n');
+        return str.append("Call ").append(func.name).append(')').toString();
     }
 }
