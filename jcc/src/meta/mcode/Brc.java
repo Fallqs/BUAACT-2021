@@ -1,6 +1,6 @@
 package meta.mcode;
 
-import engine.SyncR;
+import engine.sync.SyncR;
 import meta.Meta;
 
 /**

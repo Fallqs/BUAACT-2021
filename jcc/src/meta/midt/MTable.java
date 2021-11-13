@@ -8,7 +8,8 @@ import java.util.Stack;
 
 public class MTable {
     public static final Map<String, Stk> cur = new HashMap<>();
-    public static final List<MIdt> global = new ArrayList<>();
+    public static final List<MVar> global = new ArrayList<>();
+    public static final List<MStr> strcon = new ArrayList<>();
     public static final List<MIdt> temp = new ArrayList<>();
     public static final List<MFunc> func = new ArrayList<>();
     private static final Stack<String> log = new Stack<>();
@@ -54,9 +55,13 @@ public class MTable {
 
     public static boolean newIdt(MIdt x) {
         if (!cur.containsKey(x.name())) cur.put(x.name(), new Stk());
+        if (x.typ() == MTyp.String) {
+            strcon.add((MStr) x);
+            return true;
+        }
         if (!cur.get(x.name()).push(x)) return false;
         if (x.typ() == MTyp.Func) func.add((MFunc) x);
-        else if (0 == nw) global.add(x);
+        else if (0 == nw || ((MVar) x).global || ((MVar) x).cnst) global.add((MVar) x);
         else temp.add(x);
         log.add(x.name());
         return true;

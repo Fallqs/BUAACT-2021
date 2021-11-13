@@ -1,7 +1,7 @@
 package meta;
 
 import engine.Dojo;
-import engine.Instr;
+import engine.instr.Instr;
 import engine.LgK;
 import engine.instr.Nop;
 

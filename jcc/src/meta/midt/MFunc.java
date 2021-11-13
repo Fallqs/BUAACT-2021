@@ -1,9 +1,8 @@
 package meta.midt;
 
 import engine.Dojo;
-import engine.SyncO;
-import engine.SyncR;
-import meta.Meta;
+import engine.sync.SyncO;
+import engine.sync.SyncR;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ public class MFunc implements MIdt {
     public final List<MVar> params = new ArrayList<>();
     public final Map<MVar, SyncO> writes = new HashMap<>();
     public final Set<SyncO> oprs = new HashSet<>();
+    public int siz = 1;
 
     public MFunc(String name, MTyp ret, SyncR req) {
         this.name = name;

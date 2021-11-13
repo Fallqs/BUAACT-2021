@@ -8,12 +8,13 @@ public class MStr implements MIdt {
     public int base = 0;
     public final int size;
     private final int id;
-    private final String cont;
+    public final String cont;
 
     public MStr(String s) {
         id = ++cnt;
         cont = s;
         size = s.length() + 1;
+        MTable.newIdt(this);
     }
 
 
@@ -24,7 +25,7 @@ public class MStr implements MIdt {
 
     @Override
     public String name() {
-        return "#str" + id;
+        return "str_" + id;
     }
 
     @Override

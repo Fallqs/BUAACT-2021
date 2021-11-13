@@ -1,8 +1,6 @@
 package meta.mcode;
 
 import engine.Dojo;
-import engine.SyncO;
-import engine.SyncR;
 import meta.Meta;
 import meta.midt.MFunc;
 import meta.midt.MVar;

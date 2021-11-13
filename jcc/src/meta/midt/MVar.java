@@ -11,11 +11,15 @@ public class MVar implements MIdt {
     public MTyp typ;
     public String name;
     public int base = 0, size = 1, lgt = 0, dim = 1;
-    public boolean cnst = false, init = false, sp = false, param = false, global = false;
+    public boolean cnst = false, init = false, param = false, global;
     public int[] putc;
     public List<Meta> putv = new ArrayList<>();
 
+    private static int cnt = 0;
+    private final int id;
+
     public MVar(int... dims) {
+        id = ++cnt;
         if (dims.length == 0) {
             typ = MTyp.Int;
         } else if (dims.length == 1) {
@@ -43,14 +47,6 @@ public class MVar implements MIdt {
     @Override
     public String name() {
         return name;
-    }
-
-    public void setSp() {
-        sp = true;
-    }
-
-    public boolean onSp() {
-        return sp && !cnst;
     }
 
     public static int log2(int x) {
@@ -86,5 +82,9 @@ public class MVar implements MIdt {
                 "name=" + name + ", " +
                 "typ=" + typ +
                 '}';
+    }
+
+    public String tag() {
+        return "var" + id;
     }
 }

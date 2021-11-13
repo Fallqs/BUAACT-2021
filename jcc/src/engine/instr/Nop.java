@@ -1,13 +1,27 @@
 package engine.instr;
 
-import engine.Instr;
+public class Nop extends Instr {
+    private static int cnt = 0;
+    private final int id;
+    public String name;
+    private boolean pure = false;
 
-public class Nop implements Instr {
     public Nop() {
+        id = ++cnt;
+    }
+
+    public Nop(String name) {
+        id = ++cnt;
+        this.name = name;
+    }
+
+    public Nop(String name, boolean pure) {
+        this(name);
+        this.pure = pure;
     }
 
     @Override
     public String toString() {
-        return "nop";
+        return name == null ? "nop" + id + ":" : pure ? name : name + ":";
     }
 }

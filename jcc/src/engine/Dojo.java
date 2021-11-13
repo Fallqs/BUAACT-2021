@@ -1,5 +1,8 @@
 package engine;
 
+import engine.sync.SyncB;
+import engine.sync.SyncO;
+import engine.sync.SyncR;
 import meta.Meta;
 import meta.midt.MFunc;
 import meta.midt.MVar;
@@ -25,14 +28,6 @@ public class Dojo {
 //            if (curOpr != ix) oprs.add(curOpr = (SyncO) ix);
             curOpr = (SyncO) ix;
         }
-    }
-
-    public static void popReq() {
-        curReq = null;
-    }
-
-    public static void popOpr() {
-        curOpr = null;
     }
 
     public static void add(SyncB blk) {
