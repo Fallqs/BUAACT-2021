@@ -1,6 +1,5 @@
 package meta.mcode;
 
-import com.sun.tools.javac.util.ArrayUtils;
 import engine.Dojo;
 import meta.Meta;
 import meta.midt.MVar;

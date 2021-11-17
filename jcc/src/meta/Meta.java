@@ -4,8 +4,6 @@ import engine.Dojo;
 import engine.instr.Instr;
 import engine.LgK;
 import engine.instr.Nop;
-import meta.mcode.Phi;
-import meta.mcode.Psi;
 
 public class Meta implements Comparable<Meta> {
     public final int id;
@@ -13,7 +11,12 @@ public class Meta implements Comparable<Meta> {
     public boolean cnst = false, valid = false;
     public Meta eqls;
     public static int cnt = 0;
-    public int val = 0;
+    /**
+     * val : deduced Value
+     * reg : Register ID, -1 for No Register
+     * spx : Index of Position on Stack
+     */
+    public int val = 0, reg = -1, spx = -1;
 
     public Meta() {
         legend = (id = ++cnt) << 1;

@@ -4,11 +4,12 @@ import meta.Meta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MemAlloc {
+public class MetaAlloc {
     public static final String[] regs = {
             "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
             "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "fp"
@@ -16,10 +17,9 @@ public class MemAlloc {
     public final List<List<Integer>> G = new ArrayList<>();
     public final Map<Meta, Integer> mp = new HashMap<>();
     private int cnt = 0;
-    public int[] regAlloc, stackAlloc;
+    public int[] regAlloc, stackAlloc, regUse;
 
-    public MemAlloc() {
-        for (int i = 0; i <= Meta.cnt; ++i) G.add(new ArrayList<>());
+    public MetaAlloc() {
     }
 
     public void add(Meta u, Meta v) {
@@ -37,22 +37,22 @@ public class MemAlloc {
     }
 
     private int[] deduce() {
-        int[] p = new int[Meta.cnt + 1], h = new int[Meta.cnt + 1];
-        int[] nxt = new int[Meta.cnt + 1], lst = new int[Meta.cnt + 1];
-        int[] deg = new int[Meta.cnt + 1];
-        boolean[] tf = new boolean[Meta.cnt + 1];
+        int[] p = new int[cnt + 1], h = new int[cnt + 1];
+        int[] nxt = new int[cnt + 1], lst = new int[cnt + 1];
+        int[] deg = new int[cnt + 1];
+        boolean[] tf = new boolean[cnt + 1];
 
         Arrays.fill(tf, false);
         Arrays.fill(deg, 0);
         Arrays.fill(h, 0);
         h[0] = 1;
-        for (int i = 0; i <= Meta.cnt; ++i) {
+        for (int i = 0; i <= cnt; ++i) {
             nxt[i] = i + 1;
             lst[i] = i - 1;
         }
-        nxt[Meta.cnt] = 0;
+        nxt[cnt] = 0;
 
-        int cur = Meta.cnt, nww = 0;
+        int cur = cnt, nww = 0;
         while (cur != 0) {
             p[cur] = h[nww];
             h[nww] = nxt[h[nww]];
@@ -97,7 +97,7 @@ public class MemAlloc {
         return clr;
     }
 
-    public Integer[] alloc() {
+    private void alloc() {
         int[] colors = color(deduce());
         int[] colorSum = new int[colors[0] + 1];
         for (int c : colors) ++colorSum[c];
@@ -111,6 +111,19 @@ public class MemAlloc {
             if (regAlloc[i] >= regs.length) regAlloc[i] = -1;
             stackAlloc[i] = colors[i] << 2;
         }
-        return order.toArray(new Integer[0]);
+        order.clear();  // Random Shuffle
+        for (int i = 0; i < regs.length; ++i) order.add(i);
+        Collections.shuffle(order);
+        regUse = new int[Math.min(regs.length, colors.length)];
+        for (int i = 0; i < regUse.length; ++i) regUse[i] = order.get(i);
+    }
+
+    public void distribute() {
+        alloc();
+        for (Map.Entry<Meta, Integer> e : mp.entrySet()) {
+            e.getKey().reg = regAlloc[e.getValue()];
+            e.getKey().spx = stackAlloc[e.getValue()];
+        }
+        for (Meta m : mp.keySet()) if (m.reg != -1) m.reg = regUse[m.reg];
     }
 }

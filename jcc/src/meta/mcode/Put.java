@@ -15,6 +15,7 @@ public class Put extends Meta {
     public Put(MVar var, Meta fr) {
         this.var = var;
         asLegend(this.fr = fr);
+        valid = true;
     }
 
     public void upd(Meta m) {

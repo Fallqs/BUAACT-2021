@@ -1,5 +1,6 @@
 package engine;
 
+import engine.sync.GlobalR;
 import engine.sync.SyncB;
 import engine.sync.SyncO;
 import engine.sync.SyncR;
@@ -11,12 +12,13 @@ import meta.midt.MVar;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Dojo {
     //    private static final ArrayList<SyncR> reqs = new ArrayList<>();
 //    private static final ArrayList<SyncO> oprs = new ArrayList<>();
     private static final ArrayList<SyncB> blks = new ArrayList<>();
-    public static SyncR globalReq = new SyncR();
+    public static SyncR globalReq = new GlobalR();
     public static SyncR curReq;
     public static SyncO curOpr;
     public static SyncB curB;
@@ -58,6 +60,8 @@ public class Dojo {
     }
 
     public static void index() {
+        for (MVar v : MTable.global) globalReq.qry(v);
+        for (Meta m : globalReq.mp.values()) m.valid = true;
         for (MFunc f : MTable.func) {
             f.req.setFunc(f);
             f.req.indexOpr(new HashMap<>());
@@ -67,6 +71,7 @@ public class Dojo {
             f.req.indexPhi();
             f.req.flushCnt();
         }
+        globalReq.indexMeta(new HashSet<>());
     }
 
     public static void translate() {

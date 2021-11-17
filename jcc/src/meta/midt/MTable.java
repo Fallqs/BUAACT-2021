@@ -1,5 +1,7 @@
 package meta.midt;
 
+import engine.Dojo;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +62,10 @@ public class MTable {
             return true;
         }
         if (!cur.get(x.name()).push(x)) return false;
-        if (x.typ() == MTyp.Func) func.add((MFunc) x);
+        if (x.typ() == MTyp.Func) {
+            func.add((MFunc) x);
+            if ("main".equals(((MFunc) x).name)) Dojo.globalReq.func = (MFunc) x;
+        }
         else if (0 == nw || ((MVar) x).global || ((MVar) x).cnst) global.add((MVar) x);
         else temp.add(x);
         log.add(x.name());

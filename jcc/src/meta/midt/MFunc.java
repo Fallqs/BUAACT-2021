@@ -1,7 +1,7 @@
 package meta.midt;
 
 import engine.Dojo;
-import engine.MemAlloc;
+import engine.MetaAlloc;
 import engine.sync.SyncO;
 import engine.sync.SyncR;
 
@@ -16,7 +16,7 @@ public class MFunc implements MIdt {
     public String name;
     public MTyp ret;
     public SyncR req;
-    public MemAlloc malloc;
+    public MetaAlloc malloc;
     public final List<MVar> params = new ArrayList<>();
     public final Map<MVar, SyncO> writes = new HashMap<>();
     public final Set<SyncO> oprs = new HashSet<>();
@@ -27,7 +27,7 @@ public class MFunc implements MIdt {
         this.ret = ret;
         this.req = req;
         Dojo.curFunc = this;
-        malloc = new MemAlloc();
+        malloc = new MetaAlloc();
     }
 
     public void write(SyncO o, MVar v) {

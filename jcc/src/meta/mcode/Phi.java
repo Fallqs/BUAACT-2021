@@ -4,7 +4,9 @@ import meta.Meta;
 import meta.midt.MVar;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Phi extends Meta {
     public MVar var;
@@ -50,6 +52,8 @@ public class Phi extends Meta {
 
     @Override
     public Meta[] prevs() {
-        return fr.toArray(new Meta[0]);
+        Set<Meta> ret = new HashSet<>();
+        for (Meta m : fr) ret.add(m.eqls);
+        return ret.toArray(new Meta[0]);
     }
 }

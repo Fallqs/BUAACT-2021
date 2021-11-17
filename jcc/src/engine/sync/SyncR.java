@@ -96,7 +96,14 @@ public class SyncR implements Index {
 
     @Override
     public void indexMeta(Set<Meta> s) {
-
+        if (indexCnt < 0) return;
+        indexCnt = -1;
+        for (Meta p : mp.values()) {
+            if (!s.contains(p)) continue;
+            s.remove(p);
+            p.valid = true;
+        }
+        for (Index i : oprH) i.indexMeta(new HashSet<>(s));
     }
 
     @Override

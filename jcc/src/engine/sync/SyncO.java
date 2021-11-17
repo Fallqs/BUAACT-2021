@@ -49,24 +49,6 @@ public class SyncO implements Index {
         Dojo.add(this);
     }
 
-    private static class Item {
-        public Meta fr;
-        public final MVar v;
-
-        public Item(MVar v, Meta m) {
-            this.v = v;
-            this.fr = m;
-        }
-
-        public void upd(Meta m) {
-            this.fr = m;
-        }
-
-        public Put translate() {
-            return new Put(v, fr);
-        }
-    }
-
     public void addLegend(SyncR req) {
         legendH.add(req);
     }
@@ -132,6 +114,26 @@ public class SyncO implements Index {
         for (Index i : legendH) i.indexPhi();
     }
 
+    private void phi(Set<MVar> vars, List<SyncR> lgd) {  // deduce (psi) nodes for every branch
+        for (SyncR req : lgd) {
+            psi.put(req, new ArrayList<>());
+            for (Map.Entry<MVar, Meta> e : req.mp.entrySet()) {
+                if (!(e.getValue() instanceof Phi) || !e.getValue().valid) continue;
+                if (mp.containsKey(e.getKey())) {
+                    vars.add(e.getKey());
+                    psi.get(req).add(new Psi(mp.get(e.getKey()), e.getValue()));
+                }
+            }
+        }
+    }
+
+    private void call(Call m) {
+
+        m.save.removeIf(e -> {
+            return !e.var.global && !alive.contains(e.fr);
+        });
+    }
+
     @Override
     public void indexMeta(Set<Meta> s) {
         alive.addAll(s);
@@ -139,23 +141,21 @@ public class SyncO implements Index {
         if (++indexCnt >= legendH.size()) {
             indexCnt = -1;
             Set<MVar> vars = new HashSet<>();
-            for (SyncR req : legendL) {
-                psi.put(req, new ArrayList<>());
-                for (Map.Entry<MVar, Meta> e : req.mp.entrySet()) {
-                    if (!(e.getValue() instanceof Phi)) continue;
-                    if (mp.containsKey(e.getKey())) {
-                        vars.add(e.getKey());
-                        psi.get(req).add(new Psi(mp.get(e.getKey()), e.getValue()));
-                    }
-                }
-            }
+            phi(vars, legendH);
+            phi(vars, legendL);
             for (Map.Entry<MVar, Meta> e : mp.entrySet()) if (vars.contains(e.getKey())) e.getValue().valid = true;
             List<Meta> soup = blk.ms;
             for (int i = soup.size() - 1; i > -1; --i) {
                 Meta m = soup.get(i);
-                if (!alive.contains(m) && !m.valid) continue;
+                if (m instanceof Call) call((Call) m);
+                if (!alive.contains(m) && !m.valid && !(m instanceof Call)) continue;
                 alive.remove(m);
-
+                m.valid = true;
+                for (Meta p : m.prevs())
+                    if (!alive.contains(p)) {
+                        for (Meta q : alive) func.malloc.add(p, q);
+                        alive.add(p.eqls);
+                    }
             }
             blk.req.indexMeta(alive);
         }
