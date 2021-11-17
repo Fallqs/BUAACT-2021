@@ -29,4 +29,9 @@ public class Ret extends Meta {
     public String toString() {
         return " Ret " + (isVoid ? "void" : "T" + vl.id);
     }
+
+    @Override
+    public Meta[] prevs() {
+        return isVoid ? new Meta[0] : new Meta[]{vl};
+    }
 }

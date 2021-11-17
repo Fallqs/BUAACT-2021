@@ -54,7 +54,10 @@ public class Block extends Node {
     @Override
     public Meta translate() {
         if (!(fa instanceof Ref)) MTable.newBlock();
-        for (Node o : lines) o.translate();
+        for (Node o : lines) {
+            o.translate();
+            if (o instanceof Return) break;
+        }
         if (!(fa instanceof Ref)) MTable.popBlock();
         return null;
     }

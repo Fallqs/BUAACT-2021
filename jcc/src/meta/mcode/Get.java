@@ -38,4 +38,9 @@ public class Get extends Meta {
         if (ref == 0) for (Meta m : putv) m.collect();
         super.collect();
     }
+
+    @Override
+    public Meta[] prevs() {
+        return putv.toArray(new Meta[0]);
+    }
 }

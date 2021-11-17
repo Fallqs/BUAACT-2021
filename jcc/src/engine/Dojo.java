@@ -5,10 +5,12 @@ import engine.sync.SyncO;
 import engine.sync.SyncR;
 import meta.Meta;
 import meta.midt.MFunc;
+import meta.midt.MTable;
 import meta.midt.MVar;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class Dojo {
     //    private static final ArrayList<SyncR> reqs = new ArrayList<>();
@@ -56,7 +58,15 @@ public class Dojo {
     }
 
     public static void index() {
-        globalReq.index();
+        for (MFunc f : MTable.func) {
+            f.req.setFunc(f);
+            f.req.indexOpr(new HashMap<>());
+            f.req.flushCnt();
+            f.req.indexPhi();
+            f.req.flushCnt();
+            f.req.indexPhi();
+            f.req.flushCnt();
+        }
     }
 
     public static void translate() {
@@ -64,7 +74,8 @@ public class Dojo {
     }
 
     public static void sort() {
-        for (SyncB blk : blks) blk.ms.sort(Comparator.naturalOrder());;
+        for (SyncB blk : blks) blk.ms.sort(Comparator.naturalOrder());
+        ;
     }
 
     public static String toStr() {

@@ -9,6 +9,7 @@ import lex.New;
 import lex.Node;
 import meta.Meta;
 import meta.mcode.Brc;
+import meta.mcode.Ret;
 import word.Typ;
 
 public class If extends Node {
@@ -43,37 +44,35 @@ public class If extends Node {
 
     @Override
     public Meta translate() {
-        Brc branch = new Brc();
-        Dojo.curOpr.setEnd(branch);
-        (branch.cond = cond.translate()).addLegend(branch);
-        SyncO begin = Dojo.curOpr;
+        Brc c1 = new Brc(cond.translate(), null, null);
+        Dojo.curOpr.setEnd(c1);
+        SyncO o1 = Dojo.curOpr;
 
-        branch.then = new SyncB().req;
+        c1.then = new SyncB().req;
         then.translate();
-        SyncO opr = Dojo.curOpr;
+        SyncO o2 = Dojo.curOpr;
 
         if (els == null) {
-            Brc b1 = new Brc();
-            opr.setEnd(b1);
-            b1.then = branch.els = new SyncB().req;
-            branch.els.add(opr);
+            Brc c2 = new Brc();
+            o2.setEnd(c2);
+            c2.then = c1.els = new SyncB().req;
+            if(!(o2.end instanceof Ret)) c1.els.add(o2);
         } else {
-            Brc b1 = new Brc();
-            opr.setEnd(b1);
-            branch.els = new SyncB().req;
-
+            Brc c2 = new Brc();
+            o2.setEnd(c2);
+            c1.els = new SyncB().req;
             els.translate();
-            SyncO opr2 = Dojo.curOpr;
-            Brc b2 = new Brc();
+            SyncO o3 = Dojo.curOpr;
+            Brc c3 = new Brc();
 
-            SyncR end = new SyncB().req;
-            opr2.setEnd(b2);
-            b1.then = b2.then = end;
-            end.add(opr);
-            end.add(opr2);
+            SyncR r4 = new SyncB().req;
+            o3.setEnd(c3);
+            c2.then = c3.then = r4;
+            r4.add(o2);
+            r4.add(o3);
         }
-        branch.then.add(begin);
-        branch.els.add(begin);
+        c1.then.add(o1);
+        c1.els.add(o1);
         return null;
     }
 }

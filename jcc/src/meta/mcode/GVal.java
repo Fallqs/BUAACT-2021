@@ -42,4 +42,9 @@ public class GVal extends Meta {
         ans.append("@shift=").append(lgd).append(" -> ").append(this.id).append(")");
         return ans.toString();
     }
+
+    @Override
+    public Meta[] prevs() {
+        return ms;
+    }
 }

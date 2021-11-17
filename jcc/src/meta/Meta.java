@@ -4,19 +4,26 @@ import engine.Dojo;
 import engine.instr.Instr;
 import engine.LgK;
 import engine.instr.Nop;
+import meta.mcode.Phi;
+import meta.mcode.Psi;
 
 public class Meta implements Comparable<Meta> {
     public final int id;
     private int legend;
     public boolean cnst = false, valid = false;
     public Meta eqls;
-    protected static int cnt = 0;
+    public static int cnt = 0;
     public int val = 0;
 
     public Meta() {
         legend = (id = ++cnt) << 1;
         eqls = this;
         Dojo.embed(this);
+    }
+
+    public Meta (boolean embed) {
+        legend = (id = ++cnt) << 1;
+        eqls = this;
     }
 
     public static final Meta Nop = new Meta();
@@ -64,5 +71,9 @@ public class Meta implements Comparable<Meta> {
 
     public Instr translate() {
         return new Nop();
+    }
+
+    public Meta[] prevs() {
+        return new Meta[0];
     }
 }

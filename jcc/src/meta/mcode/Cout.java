@@ -33,4 +33,9 @@ public class Cout extends Meta {
     public String toString() {
         return " cout << " + (isStr ? s.toString() : "T" + m.id);
     }
+
+    @Override
+    public Meta[] prevs() {
+        return isStr ? new Meta[0] : new Meta[]{m};
+    }
 }

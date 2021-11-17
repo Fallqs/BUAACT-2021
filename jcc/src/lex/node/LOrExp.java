@@ -40,6 +40,10 @@ public class LOrExp extends Node {
         for (Node i : and) i.logIdt();
     }
 
+    /**
+     * Short-cut Deducing Unimplemented
+     * @return new Calc
+     */
     @Override
     public Meta translate() {
         Meta ret = new Calc(Opr.not, bl0.translate());

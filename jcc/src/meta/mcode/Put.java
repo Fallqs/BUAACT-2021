@@ -46,4 +46,9 @@ public class Put extends Meta {
     public void shrink() {
         fr = fr.eqls;
     }
+
+    @Override
+    public Meta[] prevs() {
+        return new Meta[]{fr};
+    }
 }

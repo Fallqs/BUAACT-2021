@@ -3,11 +3,13 @@ package lex.node;
 import engine.Dojo;
 import engine.sync.SyncB;
 import engine.sync.SyncO;
+import engine.sync.SyncR;
 import lex.NTyp;
 import lex.New;
 import lex.Node;
 import meta.Meta;
 import meta.mcode.Brc;
+import meta.mcode.Ret;
 import word.Typ;
 
 public class While extends Node {
@@ -39,19 +41,24 @@ public class While extends Node {
 
     @Override
     public Meta translate() {
-        SyncO begin = Dojo.curOpr;
-        Brc b0 = new Brc();
-        begin.setEnd(b0);
-        b0.then = new SyncB().req;
-
-        Brc b1 = new Brc(cond.translate(), null, null);
-        Dojo.curOpr.setEnd(b1);
-        b1.then = new SyncB().req;
-
+        SyncO o1 = Dojo.curOpr;
+        Brc c1 = new Brc(cond.translate(), null, null);
+        o1.setEnd(c1);
+        new SyncB();
+        SyncR r2 = Dojo.curReq;
+        c1.then = r2;
+        r2.add(o1);
         stmt.translate();
-        Brc b2 = new Brc();
-        Dojo.curOpr.setEnd(b2);
-        b1.els = b2.then = new SyncB().req;
+        Brc c2 = new Brc(cond.translate(), null, null);
+        c2.then = r2;
+        SyncO o2 = Dojo.curOpr;
+        o2.setEnd(c2);
+        if (!(o2.end instanceof Ret)) r2.addL(o2);
+        new SyncB();
+        SyncR r3 = Dojo.curReq;
+        c1.els = c2.els = r3;
+        r3.add(o1);
+        r3.add(o2);
         return null;
     }
 }

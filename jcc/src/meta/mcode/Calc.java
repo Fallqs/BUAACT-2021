@@ -99,4 +99,9 @@ public class Calc extends Meta {
         }
         super.collect();
     }
+
+    @Override
+    public Meta[] prevs() {
+        return mb == null ? new Meta[]{ma} : new Meta[]{ma, mb};
+    }
 }

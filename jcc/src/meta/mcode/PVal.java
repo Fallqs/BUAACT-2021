@@ -1,10 +1,13 @@
 package meta.mcode;
 
+import com.sun.tools.javac.util.ArrayUtils;
 import engine.Dojo;
 import meta.Meta;
 import meta.midt.MVar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class PVal extends Meta {
     public int lgd = 0;
@@ -46,5 +49,12 @@ public class PVal extends Meta {
     public void collect() {
         if (ref == 0) fr.collect();
         super.collect();
+    }
+
+    @Override
+    public Meta[] prevs() {
+        Meta[] ret = Arrays.copyOf(ms, ms.length + 1);
+        ret[ret.length - 1] = fr;
+        return ret;
     }
 }

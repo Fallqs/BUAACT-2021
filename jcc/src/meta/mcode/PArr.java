@@ -4,6 +4,9 @@ import engine.Dojo;
 import meta.Meta;
 import meta.midt.MVar;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class PArr extends Meta {
     public Meta[] fr;
     public boolean[] ban;
@@ -16,7 +19,7 @@ public class PArr extends Meta {
         cnst = false;
         var.putv.add(this);
         Dojo.upd(var, this);
-        for(Meta m : fr) m.addLegend(this);
+        for (Meta m : fr) m.addLegend(this);
     }
 
     @Override
@@ -44,5 +47,12 @@ public class PArr extends Meta {
             for (int i = 0; i < fr.length; ++i) if (!ban[i]) fr[i].collect();
         }
         super.collect();
+    }
+
+    @Override
+    public Meta[] prevs() {
+        List<Meta> ret = new LinkedList<>();
+        for (int i = 0; i < fr.length; ++i) if (!ban[i]) ret.add(fr[i]);
+        return ret.toArray(new Meta[0]);
     }
 }

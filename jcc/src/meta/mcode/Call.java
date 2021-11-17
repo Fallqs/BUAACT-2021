@@ -39,4 +39,9 @@ public class Call extends Meta {
         for(Meta m : params)str.append(" push T").append(m.id).append('\n');
         return str.append(" Call ").append(func.name).append(')').toString();
     }
+
+    @Override
+    public Meta[] prevs() {
+        return params;
+    }
 }
