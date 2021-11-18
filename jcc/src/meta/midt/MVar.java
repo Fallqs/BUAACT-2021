@@ -11,7 +11,7 @@ public class MVar implements MIdt {
     public MTyp typ;
     public String name;
     public int base = 0, size = 1, lgt = 0, dim = 1;
-    public int reg = 0;
+    public int reg = -1;
     public boolean cnst = false, init = false, param = false, global;
     public int[] putc;
     public List<Meta> putv = new ArrayList<>();

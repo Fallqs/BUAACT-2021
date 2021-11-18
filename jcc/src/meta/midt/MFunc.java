@@ -18,9 +18,10 @@ public class MFunc implements MIdt {
     public SyncR req;
     public MetaAlloc malloc;
     public final List<MVar> params = new ArrayList<>();
-    public final Map<MVar, SyncO> writes = new HashMap<>();
+    public final Set<MVar> writes = new HashSet<>();
+    public final List<MVar> defs = new ArrayList<>();
     public final Set<SyncO> oprs = new HashSet<>();
-    public int siz = 1;
+    public int stackSiz = 0;
 
     public MFunc(String name, MTyp ret, SyncR req) {
         this.name = name;
@@ -30,8 +31,8 @@ public class MFunc implements MIdt {
         malloc = new MetaAlloc();
     }
 
-    public void write(SyncO o, MVar v) {
-        writes.put(v, o);
+    public void write(MVar v) {
+        if (v.global) writes.add(v);
     }
 
     public void write(SyncO o) {
@@ -54,5 +55,20 @@ public class MFunc implements MIdt {
                 "name='" + name + '\'' +
                 ", ret=" + ret +
                 '}';
+    }
+
+    public void memAlloc() {
+        malloc.distribute();
+        stackSiz = malloc.stackSiz;
+        for (MVar m : defs) {
+            m.base = stackSiz;
+            stackSiz += m.size << 2;
+        }
+        for (MVar p : params) {
+            p.param = true;
+            p.base = stackSiz;
+            stackSiz += 4;
+        }
+        stackSiz += 4;
     }
 }

@@ -1,5 +1,11 @@
 package meta.mcode;
 
+import engine.instr.Instr;
+import engine.instr.InstrI;
+import engine.instr.InstrLS;
+import engine.instr.InstrR;
+import engine.instr.Nop;
+import engine.instr.Op;
 import meta.Meta;
 
 public class Cin extends Meta {
@@ -15,5 +21,15 @@ public class Cin extends Meta {
     @Override
     public String toString() {
         return " cin >> T" + this.id;
+    }
+
+    @Override
+    public Instr translate() {
+        new InstrI(Op.ori, Instr.V0, Instr.ZERO, 5);
+        new Nop("syscall", true);
+        Instr ret;
+        if (reg >= 0) ret = new InstrR(Op.or, reg, Instr.V0, Instr.ZERO);
+        else ret = new InstrLS(Op.lw, Instr.V0, spx, Instr.SP);
+        return ret;
     }
 }

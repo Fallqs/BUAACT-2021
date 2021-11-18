@@ -3,7 +3,9 @@ package meta;
 import engine.Dojo;
 import engine.instr.Instr;
 import engine.LgK;
+import engine.instr.InstrLS;
 import engine.instr.Nop;
+import engine.instr.Op;
 
 public class Meta implements Comparable<Meta> {
     public final int id;
@@ -78,5 +80,15 @@ public class Meta implements Comparable<Meta> {
 
     public Meta[] prevs() {
         return new Meta[0];
+    }
+
+    public int get(int tmp) {
+        if (reg >= 0) return reg;
+        new InstrLS(Op.lw, tmp, spx, Instr.SP);
+        return tmp;
+    }
+
+    public int gtag(int tmp) {
+        return reg >= 0 ? reg : tmp;
     }
 }

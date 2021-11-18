@@ -2,8 +2,8 @@ package meta;
 
 /**
  * not: sltiu $result, $operand, 1
- * eql: xor $at, $operand1, $operand2
- * ~~~~ sltiu $result, $at, 1
+ * eql: xor $result, $operand1, $operand2
+ * ~~~~ sltiu $result, $result, 1
  * JUMP: bne $cond, $0, target
  */
 public enum Opr {

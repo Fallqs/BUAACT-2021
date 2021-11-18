@@ -12,8 +12,8 @@ public class MTable {
     public static final Map<String, Stk> cur = new HashMap<>();
     public static final List<MVar> global = new ArrayList<>();
     public static final List<MStr> strcon = new ArrayList<>();
-    public static final List<MIdt> temp = new ArrayList<>();
     public static final List<MFunc> func = new ArrayList<>();
+
     private static final Stack<String> log = new Stack<>();
     private static int nw = -1;
 
@@ -63,11 +63,13 @@ public class MTable {
         }
         if (!cur.get(x.name()).push(x)) return false;
         if (x.typ() == MTyp.Func) {
-            func.add((MFunc) x);
-            if ("main".equals(((MFunc) x).name)) Dojo.globalReq.func = (MFunc) x;
+            if ("main".equals(((MFunc) x).name)) {
+                Dojo.globalReq.func = (MFunc) x;
+                func.add(0, (MFunc) x);
+            } else func.add((MFunc) x);
         }
         else if (0 == nw || ((MVar) x).global || ((MVar) x).cnst) global.add((MVar) x);
-        else temp.add(x);
+        else Dojo.curFunc.defs.add((MVar) x);
         log.add(x.name());
         return true;
     }

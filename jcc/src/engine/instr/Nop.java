@@ -8,16 +8,19 @@ public class Nop extends Instr {
 
     public Nop() {
         id = ++cnt;
+        op = Op.nop;
     }
 
     public Nop(String name) {
         id = ++cnt;
         this.name = name;
+        op = Op.nop;
     }
 
     public Nop(String name, boolean pure) {
         this(name);
         this.pure = pure;
+        op = Op.nop;
     }
 
     @Override

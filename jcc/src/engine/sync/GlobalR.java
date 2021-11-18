@@ -23,4 +23,13 @@ public class GlobalR extends SyncR {
     @Override
     public void indexPhi() {
     }
+
+    @Override
+    public String toString() {
+        return "Global_Seg";
+    }
+
+    @Override
+    public void translate() {
+    }
 }

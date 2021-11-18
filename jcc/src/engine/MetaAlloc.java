@@ -12,12 +12,13 @@ import java.util.Map;
 public class MetaAlloc {
     public static final String[] regs = {
             "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
-            "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "fp"
+            "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "fp", "v1"
     };
     public final List<List<Integer>> G = new ArrayList<>();
     public final Map<Meta, Integer> mp = new HashMap<>();
     private int cnt = 0;
     public int[] regAlloc, stackAlloc, regUse;
+    public int stackSiz = 0;
 
     public MetaAlloc() {
     }
@@ -100,6 +101,8 @@ public class MetaAlloc {
     private void alloc() {
         int[] colors = color(deduce());
         int[] colorSum = new int[colors[0] + 1];
+        stackSiz = colorSum.length << 2;
+
         for (int c : colors) ++colorSum[c];
         List<Integer> order = new ArrayList<>();
         for (int i = 1; i < colorSum.length; ++i) order.add(i);

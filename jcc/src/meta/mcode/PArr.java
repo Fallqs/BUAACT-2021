@@ -1,6 +1,10 @@
 package meta.mcode;
 
 import engine.Dojo;
+import engine.instr.Instr;
+import engine.instr.InstrLS;
+import engine.instr.InstrSI;
+import engine.instr.Op;
 import meta.Meta;
 import meta.midt.MVar;
 
@@ -54,5 +58,18 @@ public class PArr extends Meta {
         List<Meta> ret = new LinkedList<>();
         for (int i = 0; i < fr.length; ++i) if (!ban[i]) ret.add(fr[i]);
         return ret.toArray(new Meta[0]);
+    }
+
+    @Override
+    public Instr translate() {
+        for (int i = 0; i < fr.length; ++i) {
+            if (fr[i].isCnst()) {
+                new InstrSI(Op.li, Instr.V0, fr[i].calc());
+                new InstrLS(Op.sw, Instr.V0, var.base + (i << 2), Instr.bsR(var));
+            } else {
+                new InstrLS(Op.sw, fr[i].get(Instr.V0), var.base + (i << 2), Instr.bsR(var));
+            }
+        }
+        return null;
     }
 }

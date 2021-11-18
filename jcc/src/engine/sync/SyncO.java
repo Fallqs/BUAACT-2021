@@ -4,7 +4,7 @@ import engine.Dojo;
 import engine.Index;
 import meta.Meta;
 import meta.mcode.Call;
-import meta.mcode.Get;
+import meta.mcode.Flight;
 import meta.mcode.Phi;
 import meta.mcode.Psi;
 import meta.mcode.Put;
@@ -25,14 +25,12 @@ import java.util.Set;
  */
 public class SyncO implements Index {
     private final Map<MVar, Meta> mp = new HashMap<>();
-    private final Set<MVar> reqs = new HashSet<>(), spreads = new HashSet<>();
     public final ArrayList<SyncR> legendH = new ArrayList<>();
     public final ArrayList<SyncR> legendL = new ArrayList<>();
     public final Set<Meta> alive = new HashSet<>();
-    public final Map<SyncR, ArrayList<Meta>> psi = new HashMap<>();
+    public final Map<SyncR, ArrayList<Psi>> psi = new HashMap<>();
     public final SyncB blk;
     public final SyncR rq;
-    private int cnt = 0;
     public Meta end;
 
     public MFunc func;
@@ -59,9 +57,8 @@ public class SyncO implements Index {
 
     public void upd(MVar v, Meta m) {
         if (end != null) return;
-        if (m instanceof Call) m = new Get(v).asLegend(m);
         mp.put(v, m);
-        if (Dojo.curFunc != null) Dojo.curFunc.write(this, v);
+        if (Dojo.curFunc != null) Dojo.curFunc.write(v);
     }
 
     public Meta qry(MVar v) {
@@ -69,14 +66,8 @@ public class SyncO implements Index {
         return mp.get(v);
     }
 
-    public Collection<Put> save() {
-        List<Put> ret = new ArrayList<>();
-        if (end == null) for (Map.Entry<MVar, Meta> e : mp.entrySet()) ret.add(new Put(e.getKey(), e.getValue()));
-        return ret;
-    }
-
-    public void flush(Meta m) {
-        if (end == null) mp.entrySet().forEach(e -> e.setValue(new Get(e.getKey()).asLegend(m)));
+    public Map<MVar, Meta> save() {
+        return new HashMap<>(mp);
     }
 
     private int indexCnt = 0;
@@ -100,7 +91,7 @@ public class SyncO implements Index {
 
     @Override
     public void indexOpr(Map<MVar, Meta> mp) {
-        if (indexCnt == -1) return;
+        if (indexCnt < 0) return;
         indexCnt = -1;
         for (Map.Entry<MVar, Meta> e : mp.entrySet())
             if (!this.mp.containsKey(e.getKey())) this.mp.put(e.getKey(), e.getValue());
@@ -109,9 +100,10 @@ public class SyncO implements Index {
 
     @Override
     public void indexPhi() {
-        if (indexCnt == -1) return;
+        if (indexCnt < 0) return;
         indexCnt = -1;
         for (Index i : legendH) i.indexPhi();
+        ((Flight) end).addPsi(psi);
     }
 
     private void phi(Set<MVar> vars, List<SyncR> lgd) {  // deduce (psi) nodes for every branch
@@ -127,11 +119,15 @@ public class SyncO implements Index {
         }
     }
 
-    private void call(Call m) {
-
-        m.save.removeIf(e -> {
-            return !e.var.global && !alive.contains(e.fr);
-        });
+    private void call(Call c) {
+        for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
+            if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue());
+        }
+        c.sync.entrySet().removeIf(e -> !e.getKey().global);
+        for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
+            if (alive.contains(e.getValue())) c.retrieve.put(e.getKey(), e.getValue());
+        }
+        for (Meta m : alive) if (!c.retrieve.containsValue(m)) c.preserve.add(m);
     }
 
     @Override
@@ -162,27 +158,12 @@ public class SyncO implements Index {
     }
 
     @Override
-    public void index(Set<MVar> s) {
-        int sz = reqs.size();
-        reqs.addAll(s);
-        spreads.addAll(s);
-        spreads.removeAll(mp.keySet());
-        if (sz != reqs.size()) rq.index(spreads);
-    }
-
-    public void slim() {
-        mp.entrySet().removeIf(e -> !reqs.contains(e.getKey()));
-        reqs.removeIf(e -> !mp.containsKey(e));
-    }
-
-    @Override
-    public void collect() {
-        if (cnt == 0) blk.req.collect();
-        ++cnt;
-    }
-
-    public Collection<Put> handle() {
-        return save();
+    public void translate() {
+        if (indexCnt < 0) return;
+        indexCnt = -1;
+        for (Meta m : blk.ms) m.translate();
+        end.translate();
+        for (SyncR l : legendH) l.translate();
     }
 
     public void setEnd(Meta m) {

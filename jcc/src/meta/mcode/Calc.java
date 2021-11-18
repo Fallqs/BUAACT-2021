@@ -1,6 +1,13 @@
 package meta.mcode;
 
 import engine.LgK;
+import engine.instr.Instr;
+import engine.instr.InstrI;
+import engine.instr.InstrLS;
+import engine.instr.InstrDual;
+import engine.instr.InstrR;
+import engine.instr.InstrS;
+import engine.instr.Op;
 import meta.Meta;
 import meta.Opr;
 
@@ -103,5 +110,29 @@ public class Calc extends Meta {
     @Override
     public Meta[] prevs() {
         return mb == null ? new Meta[]{ma} : new Meta[]{ma, mb};
+    }
+
+    @Override
+    public Instr translate() {
+        int tar = reg >= 0 ? reg : Instr.V0;
+        Instr ret = null;
+        if (opr == Opr.add) ret = new InstrR(Op.add, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        else if (opr == Opr.sub) ret = new InstrR(Op.sub, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        else if (opr == Opr.not) ret = new InstrI(Op.sltiu, tar, ma.get(Instr.V0), 1);
+        else if (opr == Opr.eql) {
+            new InstrR(Op.xor, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+            ret = new InstrI(Op.sltiu, tar, tar, 1);
+        } else if (opr == Opr.mult) {
+            new InstrDual(Op.mult, ma.get(Instr.V0), mb.get(Instr.A0));
+            ret = new InstrS(Op.mflo, tar);
+        } else if (opr == Opr.div) {
+            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
+            ret = new InstrS(Op.mflo, tar);
+        } else if (opr == Opr.mod) {
+            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
+            ret = new InstrS(Op.mfhi, tar);
+        }
+        if (tar == Instr.V0) new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
+        return ret;
     }
 }

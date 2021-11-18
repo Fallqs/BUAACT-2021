@@ -1,5 +1,9 @@
 package meta.mcode;
 
+import engine.instr.Instr;
+import engine.instr.InstrDual;
+import engine.instr.InstrLS;
+import engine.instr.Op;
 import meta.Meta;
 
 public class Psi extends Meta {
@@ -30,5 +34,13 @@ public class Psi extends Meta {
     @Override
     public Meta[] prevs() {
         return new Meta[]{fr};
+    }
+
+    @Override
+    public Instr translate() {
+        if (to.reg >= 0 && fr.reg >= 0) return new InstrDual(Op.mov, to.reg, fr.reg);
+        if (to.reg >= 0) return new InstrLS(Op.lw, to.reg, fr.spx, Instr.SP);
+        new InstrLS(Op.lw, Instr.V0, fr.spx, Instr.SP);
+        return new InstrLS(Op.sw, Instr.V0, to.spx, Instr.SP);
     }
 }

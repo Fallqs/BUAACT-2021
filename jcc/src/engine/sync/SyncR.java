@@ -2,6 +2,10 @@ package engine.sync;
 
 import engine.Dojo;
 import engine.Index;
+import engine.instr.Instr;
+import engine.instr.InstrLS;
+import engine.instr.Nop;
+import engine.instr.Op;
 import meta.Meta;
 import meta.mcode.Phi;
 import meta.midt.MFunc;
@@ -17,9 +21,8 @@ import java.util.Set;
  */
 public class SyncR implements Index {
     public final Map<MVar, Meta> mp = new HashMap<>();
-    private final Set<MVar> reqs = new HashSet<>();
     private final Set<Index> oprH = new HashSet<>();
-    private final Set<Index> oprL = new HashSet<>();
+//    private final Set<Index> oprL = new HashSet<>();
     public final SyncB blk;
 
     public MFunc func;
@@ -40,14 +43,13 @@ public class SyncR implements Index {
     }
 
     public void addL(SyncO opr) {
-        oprL.add(opr);
+//        oprL.add(opr);
         opr.addLegendL(this);
     }
 
     public Meta qry(MVar v) {
         if (!mp.containsKey(v)) {
             mp.put(v, new Phi(v));
-            reqs.add(v);
         }
         return mp.get(v);
     }
@@ -89,6 +91,7 @@ public class SyncR implements Index {
     public void indexPhi() {
         if (indexCnt < 0) return;
         if (++indexCnt >= oprH.size()) {
+            indexCnt = -1;
             for (Meta p : mp.values()) p.shrink();
             blk.opr.indexPhi();
         }
@@ -107,25 +110,17 @@ public class SyncR implements Index {
     }
 
     @Override
-    public void index(Set<MVar> s) {
-        if (++indexCnt < oprH.size()) return;
-        indexCnt = 0;
-        int sz = reqs.size();
-        reqs.addAll(s);
-        if (sz != reqs.size()) for (Index o : oprH) o.index(reqs);
-    }
-
-    public void index() {
-        for (Index o : oprH) o.index(mp.keySet());
-    }
-
-    @Override
-    public void collect() {
-        for (Index o : oprH) o.collect();
-    }
-
-    @Override
     public String toString() {
         return "entry" + blk.id;
+    }
+
+    @Override
+    public void translate() {
+        if (indexCnt < 0) return;
+        if (++indexCnt < oprH.size()) return;
+        indexCnt = -1;
+        new Nop(toString());
+        if (func.req == this) new InstrLS(Op.sw, Instr.RA, func.stackSiz - 4, Instr.SP);
+        blk.opr.translate();
     }
 }

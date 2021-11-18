@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Dojo {
-    //    private static final ArrayList<SyncR> reqs = new ArrayList<>();
-//    private static final ArrayList<SyncO> oprs = new ArrayList<>();
     private static final ArrayList<SyncB> blks = new ArrayList<>();
     public static SyncR globalReq = new GlobalR();
     public static SyncR curReq;
@@ -24,12 +22,14 @@ public class Dojo {
     public static SyncB curB;
     public static MFunc curFunc;
 
+    /**
+     * Sync : add(), clean()
+     * Meta : embed(), qry(), upd()
+     */
     public static void add(Index ix) {
         if (ix instanceof SyncR) {
-//            if (curReq != ix) reqs.add(curReq = (SyncR) ix);
             curReq = (SyncR) ix;
         } else {
-//            if (curOpr != ix) oprs.add(curOpr = (SyncO) ix);
             curOpr = (SyncO) ix;
         }
     }
@@ -59,6 +59,9 @@ public class Dojo {
         if (curOpr != null) curOpr.upd(v, m);
     }
 
+    /**
+     * Translating : sort(), index(), translate()
+     */
     public static void index() {
         for (MVar v : MTable.global) globalReq.qry(v);
         for (Meta m : globalReq.mp.values()) m.valid = true;
@@ -72,15 +75,16 @@ public class Dojo {
             f.req.flushCnt();
         }
         globalReq.indexMeta(new HashSet<>());
+        for (MFunc f : MTable.func) f.memAlloc();
     }
 
     public static void translate() {
-        for (SyncB b : blks) b.opr.handle().forEach(Interpreter::handle);
+        sort();
+        index();
     }
 
     public static void sort() {
         for (SyncB blk : blks) blk.ms.sort(Comparator.naturalOrder());
-        ;
     }
 
     public static String toStr() {
