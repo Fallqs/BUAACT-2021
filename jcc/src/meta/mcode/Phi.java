@@ -63,11 +63,19 @@ public class Phi extends Meta {
     @Override
     public Instr translate() {
         Instr ret;
-        if (reg >= 0) ret = new InstrLS(Op.lw, reg, var.base, Instr.bsR(var));
-        else {
+        if (reg >= 0) {
+            ret = new InstrLS(Op.lw, reg, var.base, Instr.bsR(var));
+            setSave(reg);
+        } else {
             new InstrLS(Op.lw, Instr.V0, var.base, Instr.bsR(var));
+            setSave(Instr.V0);
             ret = new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
         }
         return ret;
+    }
+
+    public void save() {
+        if (reg >= 0) setSave(reg);
+        else setSave(Instr.V0);
     }
 }

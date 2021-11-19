@@ -42,6 +42,11 @@ public class If extends Node {
         if (els != null) els.logIdt();
     }
 
+    private static SyncB nxtB(SyncR req) {
+        if (Dojo.curB.ms.isEmpty() && Dojo.curB.req != req) return Dojo.curB;
+        return new SyncB();
+    }
+
     @Override
     public Meta translate() {
         Brc c1 = new Brc(cond.translate(), null, null);
@@ -52,27 +57,29 @@ public class If extends Node {
         then.translate();
         SyncO o2 = Dojo.curOpr;
 
+        Brc c2 = new Brc();
         if (els == null) {
-            Brc c2 = new Brc();
-            o2.setEnd(c2);
             c2.then = c1.els = new SyncB().req;
-            if(!(o2.end instanceof Ret)) c1.els.add(o2);
+            o2.setEnd(c2);
+            if (!(o2.end instanceof Ret)) c1.els.add(o2);
+
         } else {
-            Brc c2 = new Brc();
             o2.setEnd(c2);
             c1.els = new SyncB().req;
             els.translate();
             SyncO o3 = Dojo.curOpr;
             Brc c3 = new Brc();
 
-            SyncR r4 = new SyncB().req;
-            o3.setEnd(c3);
+            SyncR r4 = nxtB(c1.els).req;
             c2.then = c3.then = r4;
+            if (r4 != o3.rq) {
+                o3.setEnd(c3);
+                r4.add(o3);
+            }
             r4.add(o2);
-            r4.add(o3);
         }
         c1.then.add(o1);
         c1.els.add(o1);
-        return null;
+        return Meta.Nop;
     }
 }

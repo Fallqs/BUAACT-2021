@@ -67,16 +67,8 @@ public class Meta implements Comparable<Meta> {
         legend = Integer.min(legend, m.id * 2 - 1);
     }
 
-    public Meta asLegend(Meta m) {
+    public void asLegend(Meta m) {
         m.addLegend(this);
-        return this;
-    }
-
-    public int ref = 0;
-
-    public void collect() {
-        ++ref;
-        valid = true;
     }
 
     @Override

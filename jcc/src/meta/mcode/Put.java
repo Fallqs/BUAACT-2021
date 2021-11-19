@@ -1,5 +1,8 @@
 package meta.mcode;
 
+import engine.instr.Instr;
+import engine.instr.InstrLS;
+import engine.instr.Op;
 import meta.Meta;
 import meta.midt.MVar;
 
@@ -9,47 +12,41 @@ import meta.midt.MVar;
  * for which this should do nothing.
  */
 public class Put extends Meta {
-    public Meta fr;
     public final MVar var;
 
-    public Put(MVar var, Meta fr) {
+    public Put(MVar var) {
+        super(false);
         this.var = var;
-        asLegend(this.fr = fr);
         valid = true;
-    }
-
-    public void upd(Meta m) {
-        fr = m;
     }
 
     @Override
     public boolean isCnst() {
-        return cnst = fr.cnst;
+        return cnst = var.cnst;
     }
 
     @Override
     public int calc() {
-        return val = fr.calc();
+        return val = var.gval();
     }
 
     @Override
     public String toString() {
-        return "(T" + fr.id + " -> " + var.name + ")";
-    }
-
-    @Override
-    public void collect() {
-        if(ref == 0) fr.collect();
-        super.collect();
+        return "(Global: " + var.name + ")";
     }
 
     @Override
     public void shrink() {
-        fr = fr.eqls;
+    }
+
+    @Override
+    public int get(int tmp) {
+        new InstrLS(Op.lw, tmp, var.base, Instr.bsR(var));
+        return tmp;
     }
 
     @Override
     public Meta[] prevs() {
-        return new Meta[]{fr};
+        return new Meta[0];
     }
 }

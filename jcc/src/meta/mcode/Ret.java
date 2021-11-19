@@ -74,7 +74,7 @@ public class Ret extends Meta implements Flight {
         if (psi != null && psi.containsKey(Dojo.globalReq)) {
             List<Psi> list = psi.get(Dojo.globalReq);
             for (Psi p : list)
-                if (p.to instanceof Phi) p.fr.save = ((Phi) p.to).var;
+                if (p.to instanceof Phi) func.writes.add(p.fr.save = ((Phi) p.to).var);
         }
     }
 }

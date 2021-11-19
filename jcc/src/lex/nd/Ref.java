@@ -142,7 +142,7 @@ public class Ref extends Node {
                 MIdt var = MTable.qryIdt(name.text);
                 if (!(var instanceof MVar)) {
                     // cs.chkErr(Typ.NULL, name);
-                    return null;
+                    return Meta.Nop;
                 }
                 if (params.isEmpty()) return Dojo.qry((MVar) var);
                 return new GVal((MVar) var, ix());
@@ -153,7 +153,7 @@ public class Ref extends Node {
                 MFunc func = new MFunc(name.text, rettyp, Dojo.curReq);
                 if (!MTable.newIdt(func)) {
                     // cs.chkErr(Typ.NULL, name);
-                    return null;
+                    return Meta.Nop;
                 }
                 MTable.newBlock();
                 if (!params.isEmpty()) ((FuncFParams) params.get(0)).translate(func);
@@ -165,7 +165,7 @@ public class Ref extends Node {
                 MIdt func = MTable.qryIdt(name.text);
                 if (!(func instanceof MFunc)) {
                     // cs.chkErr(Typ.NULL, name);
-                    return null;
+                    return Meta.Nop;
                 }
                 Call ret;
                 if (!params.isEmpty()) {
@@ -177,6 +177,6 @@ public class Ref extends Node {
                 return ret;
             }
         }
-        return null;
+        return Meta.Nop;
     }
 }

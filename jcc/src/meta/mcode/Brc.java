@@ -36,6 +36,7 @@ public class Brc extends Meta implements Flight {
     }
 
     public Brc() {
+        super(false);
     }
 
     @Override

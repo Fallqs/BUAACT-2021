@@ -26,8 +26,9 @@ public class SyncB {
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
+        if (req.func != null && req.func.req == req) ret.append('\n').append(req.func);
         ret.append('\n').append(req).append(":\n");
-        for (Meta m : req.mp.values()) ret.append(m).append('\n');
+        for (Meta m : req.mp.values()) if (m.valid) ret.append(m).append('\n');
         for (Meta m : ms) ret.append(m).append('\n');
         ret.append(opr.end).append('\n');
         return ret.toString();

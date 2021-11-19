@@ -46,14 +46,6 @@ public class PArr extends Meta {
     }
 
     @Override
-    public void collect() {
-        if (ref == 0) {
-            for (int i = 0; i < fr.length; ++i) if (!ban[i]) fr[i].collect();
-        }
-        super.collect();
-    }
-
-    @Override
     public Meta[] prevs() {
         List<Meta> ret = new LinkedList<>();
         for (int i = 0; i < fr.length; ++i) if (!ban[i]) ret.add(fr[i]);

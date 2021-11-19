@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PVal extends Meta {
-    //    public int lgd = 0;
     public Meta fr;
     public MVar var;
     protected Meta[] ms;
@@ -25,7 +24,6 @@ public class PVal extends Meta {
         for (Meta m : ms) m.addLegend(this);
         this.var = var;
         this.ms = ms;
-//        lgd = var.lgt;
         Dojo.curFunc.write(Dojo.curOpr);
     }
 
@@ -48,12 +46,6 @@ public class PVal extends Meta {
         }
         ans.append(", shift=").append(var.lgt).append(")");
         return ans.toString();
-    }
-
-    @Override
-    public void collect() {
-        if (ref == 0) fr.collect();
-        super.collect();
     }
 
     @Override

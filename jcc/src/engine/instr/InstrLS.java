@@ -1,7 +1,5 @@
 package engine.instr;
 
-import engine.MetaAlloc;
-
 public class InstrLS extends Instr {
     public int rt, ix, base;
 

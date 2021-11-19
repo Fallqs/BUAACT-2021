@@ -93,15 +93,6 @@ public class Calc extends Meta {
     }
 
     @Override
-    public void collect() {
-        if (ref == 0) {
-            if (ma != null) ma.collect();
-            if (mb != null) mb.collect();
-        }
-        super.collect();
-    }
-
-    @Override
     public Meta[] prevs() {
         return mb == Nop ? (ma == Nop ? new Meta[0] : new Meta[]{ma}) : (ma == Nop ? new Meta[]{mb} : new Meta[]{ma, mb});
     }

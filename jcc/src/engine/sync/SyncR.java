@@ -48,9 +48,7 @@ public class SyncR implements Index {
     }
 
     public Meta qry(MVar v) {
-        if (!mp.containsKey(v)) {
-            mp.put(v, new Phi(v));
-        }
+        mp.putIfAbsent(v, new Phi(v));
         return mp.get(v);
     }
 
@@ -111,7 +109,6 @@ public class SyncR implements Index {
             for (Meta q : p.prevs())
                 if (!s.contains(q)) {
                     for (Meta r : s) func.malloc.add(p.eqls, r.eqls);
-//                    s.add(q.eqls);
                 }
         }
         for (Index i : oprH) i.indexMeta(new HashSet<>(s));
@@ -129,7 +126,10 @@ public class SyncR implements Index {
         indexCnt = -1;
         new Nop(toString());
         if (func.req == this && !"main".equals(func.name)) new InstrLS(Op.sw, Instr.RA, func.stackSiz - 4, Instr.SP);
-        for (Meta p : mp.values()) if (p.valid && p.prevs().length == 0) p.translate();
+        if (func.req == this) {
+            for (Meta p : mp.values()) if (p.valid) p.translate();
+        } else for (Meta p : mp.values()) if (p.valid) ((Phi) p).save();
+
         blk.opr.translate();
     }
 }

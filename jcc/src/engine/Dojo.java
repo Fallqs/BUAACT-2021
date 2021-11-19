@@ -1,10 +1,8 @@
 package engine;
 
-import engine.sync.GlobalR;
-import engine.sync.SyncB;
-import engine.sync.SyncO;
-import engine.sync.SyncR;
+import engine.sync.*;
 import meta.Meta;
+import meta.mcode.Put;
 import meta.midt.MFunc;
 import meta.midt.MTable;
 import meta.midt.MVar;
@@ -17,6 +15,7 @@ import java.util.HashSet;
 public class Dojo {
     private static final ArrayList<SyncB> blks = new ArrayList<>();
     public static SyncR globalReq = new GlobalR();
+    public static SyncO globalOpr = new GlobalO();
     public static SyncR curReq;
     public static SyncO curOpr;
     public static SyncB curB;
@@ -64,21 +63,21 @@ public class Dojo {
      */
     public static void index() {
         for (MVar v : MTable.global) globalReq.qry(v);
-        for (Meta m : globalReq.mp.values()) m.valid = true;
+        for (MVar v : MTable.global) globalOpr.upd(v, new Put(v));
         for (MFunc f : MTable.func) {
+            globalOpr.addLegend(f.req);
             f.req.setFunc(f);
-            f.req.indexOpr(new HashMap<>());
-            f.req.flushCnt();
-            f.req.indexPhi();
-            f.req.flushCnt();
-            f.req.indexPhi();
-            f.req.flushCnt();
         }
+        globalOpr.flushCnt();
+        globalOpr.indexOpr(new HashMap<>());
+        globalOpr.flushCnt();
+        globalOpr.indexPhi();
+        globalOpr.flushCnt();
+        globalOpr.indexPhi();
+        globalOpr.flushCnt();
         globalReq.indexMeta(new HashSet<>());
-        for (MFunc f : MTable.func) {
-            f.memAlloc();
-            f.req.flushCnt();
-        }
+        globalOpr.flushCnt();
+        for (MFunc f : MTable.func) f.memAlloc();
     }
 
     public static void translate() {

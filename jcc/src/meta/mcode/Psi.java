@@ -36,10 +36,18 @@ public class Psi extends Meta {
         return new Meta[]{fr};
     }
 
+    private Instr loadVar(Meta tar, Put p) {
+        int reg = tar.gtag(Instr.V0);
+        Instr ret = new InstrLS(Op.lw, reg, p.var.base, Instr.bsR(p.var));
+        if (reg == Instr.V0) ret = new InstrLS(Op.sw, reg, tar.spx, Instr.SP);
+        return ret;
+    }
+
     @Override
     public Instr translate() {
         to = to.eqls;
         fr = fr.eqls;
+        if (fr instanceof Put) return loadVar(to, (Put) fr);
         if (to.reg >= 0 && fr.reg >= 0) return new InstrDual(Op.move, to.reg, fr.reg);
         if (to.reg >= 0) return new InstrLS(Op.lw, to.reg, fr.spx, Instr.SP);
         new InstrLS(Op.lw, Instr.V0, fr.spx, Instr.SP);

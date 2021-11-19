@@ -11,6 +11,7 @@ public class Compiler {
         Dojo.translate();
         System.out.println(lang);
         System.out.println(Dojo.toStr());
+//        Dojo.translate();
         file.write(new Data().toString());
         file.write(new Text().toString());
         file.close();

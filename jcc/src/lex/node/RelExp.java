@@ -12,8 +12,8 @@ import word.Typ;
 import java.util.ArrayList;
 
 public class RelExp extends Node {
-    private ArrayList<Node> exp = new ArrayList<>();
-    private ArrayList<Result> opr = new ArrayList<>();
+    private final ArrayList<Node> exp = new ArrayList<>();
+    private final ArrayList<Result> opr = new ArrayList<>();
 
     public RelExp() {
         typ = NTyp.RelExp;
