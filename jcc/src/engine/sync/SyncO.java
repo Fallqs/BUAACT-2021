@@ -3,30 +3,19 @@ package engine.sync;
 import engine.Dojo;
 import engine.Index;
 import meta.Meta;
-import meta.mcode.Call;
-import meta.mcode.Flight;
-import meta.mcode.Phi;
-import meta.mcode.Psi;
-import meta.mcode.Put;
-import meta.mcode.Ret;
+import meta.mcode.*;
 import meta.midt.MFunc;
 import meta.midt.MVar;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Synchronize Operation
  */
 public class SyncO implements Index {
     private final Map<MVar, Meta> mp = new HashMap<>();
-    public final ArrayList<SyncR> legendH = new ArrayList<>();
-    public final ArrayList<SyncR> legendL = new ArrayList<>();
+    public final Set<SyncR> legendH = new HashSet<>();
+    public final Set<SyncR> legendL = new HashSet<>();
     public final Set<Meta> alive = new HashSet<>();
     public final Map<SyncR, ArrayList<Psi>> psi = new HashMap<>();
     public final SyncB blk;
@@ -96,6 +85,7 @@ public class SyncO implements Index {
         for (Map.Entry<MVar, Meta> e : mp.entrySet())
             if (!this.mp.containsKey(e.getKey())) this.mp.put(e.getKey(), e.getValue());
         for (SyncR req : legendH) req.indexOpr(this.mp);
+        for (SyncR req : legendL) req.indexOpr(this.mp);
     }
 
     @Override
@@ -103,17 +93,21 @@ public class SyncO implements Index {
         if (indexCnt < 0) return;
         indexCnt = -1;
         for (Index i : legendH) i.indexPhi();
-        ((Flight) end).addPsi(psi);
     }
 
-    private void phi(Set<MVar> vars, List<SyncR> lgd) {  // deduce (psi) nodes for every branch
+    private void phi(Set<MVar> vars, Set<SyncR> lgd) {  // deduce (psi) nodes for every branch
         for (SyncR req : lgd) {
             psi.put(req, new ArrayList<>());
             for (Map.Entry<MVar, Meta> e : req.mp.entrySet()) {
                 if (!(e.getValue() instanceof Phi) || !e.getValue().valid) continue;
                 if (mp.containsKey(e.getKey())) {
                     vars.add(e.getKey());
-                    psi.get(req).add(new Psi(mp.get(e.getKey()), e.getValue()));
+                    Meta m = mp.get(e.getKey());
+                    psi.get(req).add(new Psi(m, e.getValue()));
+                    if (!alive.contains(m)) {
+                        for (Meta q : alive) func.malloc.add(m, q);
+                        alive.add(m);
+                    }
                 }
             }
         }
@@ -121,7 +115,7 @@ public class SyncO implements Index {
 
     private void call(Call c) {
         for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
-            if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue());
+            if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue().eqls);
         }
         c.sync.entrySet().removeIf(e -> !e.getKey().global);
         for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
@@ -130,28 +124,36 @@ public class SyncO implements Index {
         for (Meta m : alive) if (!c.retrieve.containsValue(m)) c.preserve.add(m);
     }
 
+    private void indexAlive(Meta m) {
+        if (!(m instanceof Cout)) func.malloc.add(m);
+        if (!alive.contains(m) && !m.valid && !(m instanceof Call)) return;
+        alive.remove(m);
+        m.valid = true;
+        if (m instanceof Call) call((Call) m);
+        for (Meta p : m.prevs())
+            if (!alive.contains(p)) {
+                for (Meta q : alive) func.malloc.add(p.eqls, q);
+                alive.add(p.eqls);
+            }
+    }
+
     @Override
     public void indexMeta(Set<Meta> s) {
-        alive.addAll(s);
+        for (Meta m : s) alive.add(m.eqls);
         if (indexCnt < 0) return;
         if (++indexCnt >= legendH.size()) {
             indexCnt = -1;
+            ((Flight) end).addPsi(psi);
             Set<MVar> vars = new HashSet<>();
             phi(vars, legendH);
             phi(vars, legendL);
             for (Map.Entry<MVar, Meta> e : mp.entrySet()) if (vars.contains(e.getKey())) e.getValue().valid = true;
             List<Meta> soup = blk.ms;
+//            for (Meta p : end.prevs()) p.valid = true;
+            end.valid = true;
+            indexAlive(end);
             for (int i = soup.size() - 1; i > -1; --i) {
-                Meta m = soup.get(i);
-                if (m instanceof Call) call((Call) m);
-                if (!alive.contains(m) && !m.valid && !(m instanceof Call)) continue;
-                alive.remove(m);
-                m.valid = true;
-                for (Meta p : m.prevs())
-                    if (!alive.contains(p)) {
-                        for (Meta q : alive) func.malloc.add(p, q);
-                        alive.add(p.eqls);
-                    }
+                indexAlive(soup.get(i));
             }
             blk.req.indexMeta(alive);
         }
@@ -161,7 +163,7 @@ public class SyncO implements Index {
     public void translate() {
         if (indexCnt < 0) return;
         indexCnt = -1;
-        for (Meta m : blk.ms) m.translate();
+        for (Meta m : blk.ms) if (m.valid) m.translate();
         end.translate();
         for (SyncR l : legendH) l.translate();
     }

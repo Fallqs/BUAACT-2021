@@ -1,5 +1,8 @@
 package meta.mcode;
 
+import engine.instr.Instr;
+import engine.instr.InstrLS;
+import engine.instr.Op;
 import meta.Meta;
 import meta.midt.MVar;
 
@@ -47,7 +50,7 @@ public class Phi extends Meta {
 
     @Override
     public String toString() {
-        return " Phi(" + var.name + ')';
+        return " Phi" + id + "(" + var.name + ')';
     }
 
     @Override
@@ -55,5 +58,16 @@ public class Phi extends Meta {
         Set<Meta> ret = new HashSet<>();
         for (Meta m : fr) ret.add(m.eqls);
         return ret.toArray(new Meta[0]);
+    }
+
+    @Override
+    public Instr translate() {
+        Instr ret;
+        if (reg >= 0) ret = new InstrLS(Op.lw, reg, var.base, Instr.bsR(var));
+        else {
+            new InstrLS(Op.lw, Instr.V0, var.base, Instr.bsR(var));
+            ret = new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
+        }
+        return ret;
     }
 }

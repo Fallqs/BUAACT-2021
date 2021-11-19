@@ -19,11 +19,11 @@ public class InstrB extends Instr {
     }
 
     public InstrB(Op op, int rs, int rt, Nop tar) {
-        this(op, rs, rt, tar.toString());
+        this(op, rs, rt, tar.toString(true));
     }
 
     @Override
     public String toString() {
-        return op + " " + getReg(rs) + ", $" + getReg(rt) + ", " + label;
+        return op + " " + getReg(rs) + ", " + getReg(rt) + ", " + label;
     }
 }

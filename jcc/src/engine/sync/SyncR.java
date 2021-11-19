@@ -21,8 +21,8 @@ import java.util.Set;
  */
 public class SyncR implements Index {
     public final Map<MVar, Meta> mp = new HashMap<>();
-    private final Set<Index> oprH = new HashSet<>();
-//    private final Set<Index> oprL = new HashSet<>();
+    protected final Set<Index> oprH = new HashSet<>();
+    //    private final Set<Index> oprL = new HashSet<>();
     public final SyncB blk;
 
     public MFunc func;
@@ -92,8 +92,10 @@ public class SyncR implements Index {
         if (indexCnt < 0) return;
         if (++indexCnt >= oprH.size()) {
             indexCnt = -1;
-            for (Meta p : mp.values()) p.shrink();
+            for (Meta p : mp.values())
+                p.shrink();
             blk.opr.indexPhi();
+            mp.entrySet().removeIf(e -> e.getValue().eqls != e.getValue());
         }
     }
 
@@ -105,6 +107,12 @@ public class SyncR implements Index {
             if (!s.contains(p)) continue;
             s.remove(p);
             p.valid = true;
+            func.malloc.add(p);
+            for (Meta q : p.prevs())
+                if (!s.contains(q)) {
+                    for (Meta r : s) func.malloc.add(p.eqls, r.eqls);
+//                    s.add(q.eqls);
+                }
         }
         for (Index i : oprH) i.indexMeta(new HashSet<>(s));
     }
@@ -120,7 +128,8 @@ public class SyncR implements Index {
         if (++indexCnt < oprH.size()) return;
         indexCnt = -1;
         new Nop(toString());
-        if (func.req == this) new InstrLS(Op.sw, Instr.RA, func.stackSiz - 4, Instr.SP);
+        if (func.req == this && !"main".equals(func.name)) new InstrLS(Op.sw, Instr.RA, func.stackSiz - 4, Instr.SP);
+        for (Meta p : mp.values()) if (p.valid && p.prevs().length == 0) p.translate();
         blk.opr.translate();
     }
 }

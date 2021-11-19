@@ -15,7 +15,7 @@ public class InstrJ extends Instr {
     }
 
     public InstrJ(Op op, Nop tar) {
-        this(op, tar.toString());
+        this(op, tar.toString(true));
     }
 
     @Override

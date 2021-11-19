@@ -86,6 +86,6 @@ public class MVar implements MIdt {
     }
 
     public String tag() {
-        return "var" + id;
+        return name + id;
     }
 }

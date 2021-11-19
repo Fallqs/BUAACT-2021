@@ -31,7 +31,15 @@ public class Meta implements Comparable<Meta> {
         eqls = this;
     }
 
-    public static final Meta Nop = new Meta();
+    private Meta(int x) {
+        legend = (id = ++cnt) << 1;
+        cnst = true;
+        reg = Instr.ZERO;
+        spx = 0;
+        eqls = this;
+    }
+
+    public static final Meta Nop = new Meta(0);
 
     public String toString() {
         return "(=> " + id + ")";
@@ -83,12 +91,14 @@ public class Meta implements Comparable<Meta> {
     }
 
     public int get(int tmp) {
+        if (this == Nop) return Instr.ZERO;
         if (reg >= 0) return reg;
         new InstrLS(Op.lw, tmp, spx, Instr.SP);
         return tmp;
     }
 
     public int gtag(int tmp) {
+        if (this == Nop) return Instr.ZERO;
         return reg >= 0 ? reg : tmp;
     }
 }

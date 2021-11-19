@@ -55,6 +55,7 @@ public class GVal extends Meta {
 
     @Override
     public Instr translate() {
+        for (int i = 0; i < ms.length; ++i) ms[i] = ms[i].eqls;
         int tar = gtag(Instr.V0);
         Instr ret;
         switch (var.typ) {

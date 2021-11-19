@@ -69,10 +69,12 @@ public class Ret extends Meta implements Flight {
         }
 
         new InstrLS(Op.lw, Instr.RA, func.stackSiz - 4, Instr.SP);
-        if (isVoid) return null;
+        if (isVoid) return new Jr();
         Instr ret;
+        vl = vl.eqls;
         if (vl.reg >= 0) ret = new InstrR(Op.or, Instr.V0, vl.reg, Instr.ZERO);
         else ret = new InstrLS(Op.lw, Instr.V0, vl.spx, Instr.SP);
+        new InstrI(Op.addi, Instr.SP, Instr.SP, func.stackSiz);
         new Jr();
         return ret;
     }

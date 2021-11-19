@@ -47,7 +47,7 @@ public class Brc extends Meta implements Flight {
 
     @Override
     public Meta[] prevs() {
-        return new Meta[]{cond};
+        return cond == null ? new Meta[0] : new Meta[]{cond};
     }
 
     @Override
@@ -71,7 +71,7 @@ public class Brc extends Meta implements Flight {
         InstrB cnd = new InstrB(Op.beq, cond.get(Instr.V0), Instr.ZERO, els);
         sync(then);
         new InstrJ(Op.j, then);
-        cnd.label = new Nop().toString();
+        cnd.label = new Nop().toString(true);
         sync(els);
         new InstrJ(Op.j, els);
         return null;

@@ -1,10 +1,6 @@
 package meta.mcode;
 
-import engine.instr.Instr;
-import engine.instr.InstrI;
-import engine.instr.InstrLS;
-import engine.instr.InstrR;
-import engine.instr.Op;
+import engine.instr.*;
 import meta.Meta;
 import meta.midt.MStr;
 
@@ -49,10 +45,12 @@ public class Cout extends Meta {
         if (isStr) {
             new InstrI(Op.addi, Instr.A0, Instr.GP, s.base);
             new InstrI(Op.ori, Instr.V0, Instr.ZERO, 4);
+            new Nop("syscall", true);
         } else {
             if (m.reg >= 0) new InstrR(Op.or, Instr.A0, Instr.ZERO, m.reg);
             else new InstrLS(Op.lw, Instr.A0, m.spx, Instr.SP);
             new InstrI(Op.ori, Instr.V0, Instr.ZERO, 1);
+            new Nop("syscall", true);
         }
         return null;
     }

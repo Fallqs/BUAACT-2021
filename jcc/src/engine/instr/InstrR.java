@@ -1,6 +1,5 @@
 package engine.instr;
 
-import engine.MetaAlloc;
 
 public class InstrR extends Instr {
     public int rd, rs, rt;

@@ -75,7 +75,10 @@ public class Dojo {
             f.req.flushCnt();
         }
         globalReq.indexMeta(new HashSet<>());
-        for (MFunc f : MTable.func) f.memAlloc();
+        for (MFunc f : MTable.func) {
+            f.memAlloc();
+            f.req.flushCnt();
+        }
     }
 
     public static void translate() {

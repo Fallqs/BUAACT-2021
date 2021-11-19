@@ -8,7 +8,7 @@ import meta.Meta;
 
 public class Psi extends Meta {
     public Meta to;
-    public final Meta fr;
+    public Meta fr;
 
     public Psi(Meta fr, Meta to) {
         super(false);
@@ -38,7 +38,9 @@ public class Psi extends Meta {
 
     @Override
     public Instr translate() {
-        if (to.reg >= 0 && fr.reg >= 0) return new InstrDual(Op.mov, to.reg, fr.reg);
+        to = to.eqls;
+        fr = fr.eqls;
+        if (to.reg >= 0 && fr.reg >= 0) return new InstrDual(Op.move, to.reg, fr.reg);
         if (to.reg >= 0) return new InstrLS(Op.lw, to.reg, fr.spx, Instr.SP);
         new InstrLS(Op.lw, Instr.V0, fr.spx, Instr.SP);
         return new InstrLS(Op.sw, Instr.V0, to.spx, Instr.SP);

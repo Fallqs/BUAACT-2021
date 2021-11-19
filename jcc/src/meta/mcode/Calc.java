@@ -1,13 +1,7 @@
 package meta.mcode;
 
 import engine.LgK;
-import engine.instr.Instr;
-import engine.instr.InstrI;
-import engine.instr.InstrLS;
-import engine.instr.InstrDual;
-import engine.instr.InstrR;
-import engine.instr.InstrS;
-import engine.instr.Op;
+import engine.instr.*;
 import meta.Meta;
 import meta.Opr;
 
@@ -24,7 +18,7 @@ public class Calc extends Meta {
     public Calc(Opr opr, Meta ma) {
         this.opr = opr;
         asLegend(this.ma = ma);
-        this.mb = null;
+        this.mb = Nop;
     }
 
     public Calc(int v) {
@@ -109,16 +103,24 @@ public class Calc extends Meta {
 
     @Override
     public Meta[] prevs() {
-        return mb == null ? new Meta[]{ma} : new Meta[]{ma, mb};
+        return mb == Nop ? (ma == Nop ? new Meta[0] : new Meta[]{ma}) : (ma == Nop ? new Meta[]{mb} : new Meta[]{ma, mb});
     }
 
     @Override
     public Instr translate() {
-        int tar = reg >= 0 ? reg : Instr.V0;
+        ma = ma.eqls;
+        mb = mb.eqls;
+        int tar = gtag(Instr.V0);
         Instr ret = null;
-        if (opr == Opr.add) ret = new InstrR(Op.add, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        if (opr == Opr.cnst) ret = new InstrSI(Op.li, tar, val);
+        else if (opr == Opr.add) ret = new InstrR(Op.add, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.sub) ret = new InstrR(Op.sub, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        else if (opr == Opr.and) ret = new InstrR(Op.and, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        else if (opr == Opr.or) ret = new InstrR(Op.or, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.not) ret = new InstrI(Op.sltiu, tar, ma.get(Instr.V0), 1);
+        else if (opr == Opr.lt) ret = new InstrR(Op.slt, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        else if (opr == Opr.gt) ret = new InstrR(Op.slt, tar, mb.get(Instr.A0), ma.get(Instr.V0));
+        else if (opr == Opr.neq) ret = new InstrR(Op.sltu, tar, mb.get(Instr.A0), ma.get(Instr.V0));
         else if (opr == Opr.eql) {
             new InstrR(Op.xor, tar, ma.get(Instr.V0), mb.get(Instr.A0));
             ret = new InstrI(Op.sltiu, tar, tar, 1);

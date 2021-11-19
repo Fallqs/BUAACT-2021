@@ -2,12 +2,7 @@ package engine;
 
 import meta.Meta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MetaAlloc {
     public static final String[] regs = {
@@ -18,20 +13,24 @@ public class MetaAlloc {
     public final Map<Meta, Integer> mp = new HashMap<>();
     private int cnt = 0;
     public int[] regAlloc, stackAlloc, regUse;
+    public final Set<Integer> used = new HashSet<>();
     public int stackSiz = 0;
 
     public MetaAlloc() {
+        G.add(new ArrayList<>());
     }
 
-    public void add(Meta u, Meta v) {
-        if (!mp.containsKey(u)) {
+    public void add(Meta u) {
+        if (u != null && u != Meta.Nop && !mp.containsKey(u)) {
             mp.put(u, ++cnt);
             G.add(new ArrayList<>());
         }
-        if (!mp.containsKey(v)) {
-            mp.put(v, ++cnt);
-            G.add(new ArrayList<>());
-        }
+    }
+
+    public void add(Meta u, Meta v) {
+        if (u == null || v == null || u == Meta.Nop || v == Meta.Nop) return;
+        add(u);
+        add(v);
         int iu = mp.get(u), iv = mp.get(v);
         G.get(iu).add(iv);
         G.get(iv).add(iu);
@@ -109,6 +108,7 @@ public class MetaAlloc {
         order.sort((x, y) -> Integer.compare(colorSum[y], colorSum[x]));
         for (int i = 0; i < order.size(); ++i) colorSum[order.get(i)] = i;
         regAlloc = new int[colors.length];
+        stackAlloc = new int[colors.length];
         for (int i = 1; i < colors.length; ++i) {
             regAlloc[i] = colorSum[colors[i]];
             if (regAlloc[i] >= regs.length) regAlloc[i] = -1;
@@ -128,5 +128,6 @@ public class MetaAlloc {
             e.getKey().spx = stackAlloc[e.getValue()];
         }
         for (Meta m : mp.keySet()) if (m.reg != -1) m.reg = regUse[m.reg];
+        for (int i : regUse) used.add(i);
     }
 }

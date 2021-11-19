@@ -27,4 +27,9 @@ public class Nop extends Instr {
     public String toString() {
         return name == null ? "nop" + id + ":" : pure ? name : name + ":";
     }
+
+    public String toString(boolean pure) {
+        if(pure) return name == null ? "nop" + id : name;
+        return toString();
+    }
 }

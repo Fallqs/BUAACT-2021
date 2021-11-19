@@ -15,12 +15,13 @@ public class Data extends Seg {
         int base = 0;
         for (MVar v : MTable.global) {
             v.base = base;
-            new Array(v.name, v.size, v.putc);
+            new Array(v.tag(), v.size, v.putc);
             base += v.size << 2;
         }
         for (MStr s : MTable.strcon) {
             s.base = base;
             new Asciiz(s.name(), s.cont);
+            for (char c : s.cont.toCharArray()) if ('\\' == c) --base;
             base += s.cont.length() + 1;
         }
     }

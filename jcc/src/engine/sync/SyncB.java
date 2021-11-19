@@ -27,7 +27,9 @@ public class SyncB {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append('\n').append(req).append(":\n");
+        for (Meta m : req.mp.values()) ret.append(m).append('\n');
         for (Meta m : ms) ret.append(m).append('\n');
+        ret.append(opr.end).append('\n');
         return ret.toString();
     }
 }

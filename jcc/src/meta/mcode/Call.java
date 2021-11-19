@@ -57,13 +57,15 @@ public class Call extends Meta {
         for (Map.Entry<MVar, Meta> e : sync.entrySet()) {
             Meta m = e.getValue();
             MVar v = e.getKey();
+            if (m instanceof Phi && ((Phi) m).fr.isEmpty()) continue;
             if (m.reg >= 0) new InstrLS(Op.sw, m.reg, v.base, Instr.GP);
             else {
                 new InstrLS(Op.lw, Instr.V0, m.spx, Instr.SP);
                 new InstrLS(Op.sw, Instr.V0, v.base, Instr.GP);
             }
         }
-        for (Meta m : preserve) if (m.reg >= 0) new InstrLS(Op.sw, m.reg, m.spx, Instr.SP);
+        preserve.removeIf(e -> e.reg < 0 || !func.malloc.used.contains(e.reg) || !e.valid);
+        for (Meta m : preserve) new InstrLS(Op.sw, m.reg, m.spx, Instr.SP);
 
         new InstrI(Op.addi, Instr.SP, Instr.SP, -func.stackSiz);
         for (int i = 0; i < params.length; ++i) {

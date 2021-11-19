@@ -59,7 +59,8 @@ public class MulExp extends Node {
     public Meta translate() {
         Meta ret = uny.get(0).translate();
         for (int i = 1; i < uny.size(); ++i) {
-            ret = new Calc(Opr.mult, ret, uny.get(i).translate());
+            Typ t = opr.get(i).typ;
+            ret = new Calc(t == Typ.MULT ? Opr.mult : t == Typ.DIV ? Opr.div : Opr.mod, ret, uny.get(i).translate());
         }
         return ret;
     }

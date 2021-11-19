@@ -18,6 +18,7 @@ public class Get extends Meta {
     public List<Meta> putv;
 
     public Get(MVar var) {
+        super(false);
         this.var = var;
         putv = new ArrayList<>(var.putv);
     }
@@ -50,12 +51,13 @@ public class Get extends Meta {
 
     @Override
     public Instr translate() {
-        Instr ret;
-        if (reg >= 0) ret = new InstrLS(Op.lw, reg, var.base, var.global || var.cnst ? Instr.GP : Instr.SP);
-        else {
-            new InstrLS(Op.lw, Instr.V0, var.base, var.global || var.cnst ? Instr.GP : Instr.SP);
-            ret = new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
-        }
-        return ret;
+//        Instr ret;
+//        if (reg >= 0) ret = new InstrLS(Op.lw, reg, var.base, Instr.bsR(var));
+//        else {
+//            new InstrLS(Op.lw, Instr.V0, var.base, Instr.bsR(var));
+//            ret = new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
+//        }
+//        return ret;
+        return null;
     }
 }
