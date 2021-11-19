@@ -11,7 +11,6 @@ import engine.instr.Op;
 import engine.sync.SyncR;
 import meta.Meta;
 import meta.midt.MFunc;
-import meta.midt.MVar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,16 +57,6 @@ public class Ret extends Meta implements Flight {
             new Nop("syscall", true);
             return null;
         }
-
-        if (psi != null && psi.containsKey(Dojo.globalReq)) {
-            List<Psi> list = psi.get(Dojo.globalReq);
-            for (Psi p : list)
-                if (p.to instanceof Phi) {
-                    MVar v = ((Phi) p.to).var;
-                    new InstrLS(Op.sw, p.fr.get(Instr.V0), v.base, Instr.bsR(v));
-                }
-        }
-
         new InstrLS(Op.lw, Instr.RA, func.stackSiz - 4, Instr.SP);
         if (isVoid) return new Jr();
         Instr ret;
@@ -82,5 +71,10 @@ public class Ret extends Meta implements Flight {
     @Override
     public void addPsi(Map<SyncR, ArrayList<Psi>> psi) {
         this.psi = psi;
+        if (psi != null && psi.containsKey(Dojo.globalReq)) {
+            List<Psi> list = psi.get(Dojo.globalReq);
+            for (Psi p : list)
+                if (p.to instanceof Phi) p.fr.save = ((Phi) p.to).var;
+        }
     }
 }

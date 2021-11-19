@@ -28,6 +28,7 @@ public class Cin extends Meta {
         new InstrI(Op.ori, Instr.V0, Instr.ZERO, 5);
         new Nop("syscall", true);
         Instr ret;
+        setSave(Instr.V0);
         if (reg >= 0) ret = new InstrR(Op.or, reg, Instr.V0, Instr.ZERO);
         else ret = new InstrLS(Op.lw, Instr.V0, spx, Instr.SP);
         return ret;

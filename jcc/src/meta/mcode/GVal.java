@@ -101,6 +101,7 @@ public class GVal extends Meta {
                 return null;
         }
         if (tar == Instr.V0) ret = new InstrLS(Op.sw, tar, spx, Instr.SP);
+        setSave(tar);
         return ret;
     }
 }

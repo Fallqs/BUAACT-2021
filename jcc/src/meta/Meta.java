@@ -6,6 +6,7 @@ import engine.LgK;
 import engine.instr.InstrLS;
 import engine.instr.Nop;
 import engine.instr.Op;
+import meta.midt.MVar;
 
 public class Meta implements Comparable<Meta> {
     public final int id;
@@ -19,6 +20,7 @@ public class Meta implements Comparable<Meta> {
      * spx : Index of Position on Stack
      */
     public int val = 0, reg = -1, spx = -1;
+    public MVar save;
 
     public Meta() {
         legend = (id = ++cnt) << 1;
@@ -26,7 +28,7 @@ public class Meta implements Comparable<Meta> {
         Dojo.embed(this);
     }
 
-    public Meta (boolean embed) {
+    public Meta(boolean embed) {
         legend = (id = ++cnt) << 1;
         eqls = this;
     }
@@ -100,5 +102,10 @@ public class Meta implements Comparable<Meta> {
     public int gtag(int tmp) {
         if (this == Nop) return Instr.ZERO;
         return reg >= 0 ? reg : tmp;
+    }
+
+    public void setSave(int reg) {
+        if (save != null && save.global)
+            new InstrLS(Op.sw, reg, save.base, Instr.GP);
     }
 }
