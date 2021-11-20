@@ -71,10 +71,10 @@ public class Ret extends Meta implements Flight {
     @Override
     public void addPsi(Map<SyncR, ArrayList<Psi>> psi) {
         this.psi = psi;
-        if (psi != null && psi.containsKey(Dojo.globalReq)) {
+        if (psi != null && psi.containsKey(Dojo.globalReq) && !"main".equals(func.name)) {
             List<Psi> list = psi.get(Dojo.globalReq);
             for (Psi p : list)
-                if (p.to instanceof Phi) func.writes.add(p.fr.save = ((Phi) p.to).var);
+                if (p.to instanceof Phi) func.writes.add(p.fr.eqls.save = ((Phi) p.to.eqls).var);
         }
     }
 }

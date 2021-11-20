@@ -40,7 +40,7 @@ public class GlobalR extends SyncR {
 
     @Override
     public String toString() {
-        return "Global_Seg";
+        return "Global_Req";
     }
 
     @Override

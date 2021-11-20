@@ -55,7 +55,7 @@ public class Calc extends Meta {
                 val = ma.val * mb.val;
                 break;
             case div:
-                val = ma.val / mb.val;
+                val = mb.val == 0 ? ma.val : ma.val / mb.val;
                 break;
             case mod:
                 val = ma.val % mb.val;
@@ -125,6 +125,7 @@ public class Calc extends Meta {
             new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
             ret = new InstrS(Op.mfhi, tar);
         }
+        setSave(tar);
         if (tar == Instr.V0) new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
         return ret;
     }

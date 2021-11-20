@@ -11,10 +11,7 @@ import meta.mcode.Phi;
 import meta.midt.MFunc;
 import meta.midt.MVar;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Synchronize Requirement
@@ -97,20 +94,27 @@ public class SyncR implements Index {
         }
     }
 
+    private final Stack<SyncLog> kills = new Stack<>();
+
     @Override
     public void indexMeta(Set<Meta> s) {
         if (indexCnt < 0) return;
         indexCnt = -1;
+        List<Meta> list = new ArrayList<>();
         for (Meta p : mp.values()) {
             if (!s.contains(p)) continue;
             s.remove(p);
             p.valid = true;
             func.malloc.add(p);
-            for (Meta q : p.prevs())
-                if (!s.contains(q)) {
-                    for (Meta r : s) func.malloc.add(p.eqls, r.eqls);
-                }
+//            for (Meta q : p.prevs())
+//                if (!s.contains(q.eqls)) {
+////                    for (Meta r : s) func.malloc.add(p.eqls, r.eqls);
+//                    kills.push(new SyncLog(p, q));
+//                }
+            for (Meta q : list) func.malloc.add(p.eqls, q);
+            list.add(p.eqls);
         }
+        for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls);
         for (Index i : oprH) i.indexMeta(new HashSet<>(s));
     }
 

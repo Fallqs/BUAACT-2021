@@ -99,15 +99,12 @@ public class SyncO implements Index {
         for (SyncR req : lgd) {
             psi.put(req, new ArrayList<>());
             for (Map.Entry<MVar, Meta> e : req.mp.entrySet()) {
-                if (!(e.getValue() instanceof Phi) || !e.getValue().valid) continue;
+                if (!(e.getValue() instanceof Phi) || e.getValue().eqls != e.getValue()) continue;
                 if (mp.containsKey(e.getKey())) {
                     vars.add(e.getKey());
-                    Meta m = mp.get(e.getKey());
-                    psi.get(req).add(new Psi(m, e.getValue()));
-                    if (!alive.contains(m)) {
-                        for (Meta q : alive) func.malloc.add(m, q);
-                        alive.add(m);
-                    }
+                    Meta m = mp.get(e.getKey()).eqls;
+                    psi.get(req).add(new Psi(m.eqls, e.getValue().eqls));
+                    if (!(m instanceof Put)) alive.add(m);
                 }
             }
         }
@@ -117,23 +114,15 @@ public class SyncO implements Index {
         for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
             if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue().eqls);
         }
-        c.sync.entrySet().removeIf(e -> !e.getKey().global || !e.getValue().valid);
+        c.sync.entrySet().removeIf(e -> !e.getKey().global ||
+                !(e.getValue().valid || e.getValue() instanceof Phi && e.getValue().eqls == e.getValue()));
         for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
             if (alive.contains(e.getValue())) c.retrieve.put(e.getKey(), e.getValue());
         }
         for (Meta m : alive) if (!c.retrieve.containsValue(m)) c.preserve.add(m);
     }
 
-    private static class Log {
-        public final Meta key, value;
-
-        public Log(Meta key, Meta value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
-
-    private final Stack<Log> kills = new Stack<>();
+    private final Stack<SyncLog> kills = new Stack<>();
 
     private void indexAlive(Meta m) {
         if (!(m instanceof Cout)) func.malloc.add(m);
@@ -144,7 +133,7 @@ public class SyncO implements Index {
         for (Meta p : m.prevs())
             if (!alive.contains(p.eqls) && !(p.eqls instanceof Put)) {
 //                for (Meta q : alive) func.malloc.add(p.eqls, q);
-                kills.add(new Log(m, p.eqls));
+                kills.add(new SyncLog(m, p.eqls));
                 alive.add(p.eqls);
             }
     }

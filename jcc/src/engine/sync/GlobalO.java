@@ -40,7 +40,7 @@ public class GlobalO extends SyncO {
 
     @Override
     public String toString() {
-        return "Global_Seg";
+        return "Global_Opr";
     }
 
     @Override

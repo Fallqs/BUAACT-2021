@@ -54,8 +54,8 @@ public class Call extends Meta {
 
     @Override
     public Instr translate() {
-        sync.entrySet().removeIf(e -> !func.writes.contains(e.getKey()));
-        retrieve.entrySet().removeIf(e -> !func.writes.contains(e.getKey()));
+        sync.entrySet().removeIf(e -> !func.writes.contains(e.getKey()) || !e.getValue().valid);
+        retrieve.entrySet().removeIf(e -> !func.writes.contains(e.getKey()) || !e.getValue().valid);
         for (Map.Entry<MVar, Meta> e : sync.entrySet()) {
             Meta m = e.getValue();
             MVar v = e.getKey();

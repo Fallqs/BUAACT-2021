@@ -47,8 +47,9 @@ public class Cout extends Meta {
             new InstrI(Op.ori, Instr.V0, Instr.ZERO, 4);
             new Nop("syscall", true);
         } else {
+            m = m.eqls;
             if (m.reg >= 0) new InstrR(Op.or, Instr.A0, Instr.ZERO, m.reg);
-            else new InstrLS(Op.lw, Instr.A0, m.spx, Instr.SP);
+            else m.get(Instr.A0);
             new InstrI(Op.ori, Instr.V0, Instr.ZERO, 1);
             new Nop("syscall", true);
         }
