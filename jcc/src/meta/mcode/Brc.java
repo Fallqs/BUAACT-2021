@@ -3,6 +3,7 @@ package meta.mcode;
 import engine.instr.*;
 import engine.sync.SyncR;
 import meta.Meta;
+import meta.midt.MPin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,14 +14,16 @@ import java.util.Map;
  * blez $cond, els
  * j then
  */
-public class Brc extends Meta implements Flight {
+public class Brc extends Meta implements Flight, Virtual {
     public SyncR then, els;
+    public MPin pThen = new MPin(""), pEls = new MPin("");
     public Meta cond;
     public Map<SyncR, ArrayList<Psi>> psi;
 
-    public Brc(SyncR then) {
+    public Brc(SyncR then, SyncR els) {
         super(false);
         this.then = then;
+        this.els = els;
     }
 
     public Brc(Meta cond, SyncR then, SyncR els) {
@@ -81,7 +84,7 @@ public class Brc extends Meta implements Flight {
         new InstrDual(Op.move, tar[x], fr);
     }
 
-    private void sync(SyncR req) {
+    protected void sync(SyncR req) {
         if (psi != null && psi.containsKey(req)) {
             List<Psi> list = psi.get(req);
             list.removeIf(e -> !e.to.valid);
@@ -91,10 +94,10 @@ public class Brc extends Meta implements Flight {
             Arrays.fill(tar, -1);
             Arrays.fill(fa, -1);
             for (Psi p : list) {
-                p.to = p.to.eqls;
-                p.fr = p.fr.eqls;
-                if (p.to.reg < 0 || p.fr.reg < 0) p.translate();
-                else if (p.fr.reg != p.to.reg) tar[p.fr.reg] = p.to.reg;
+                p.to = p.to.eqls();
+                p.fr = p.fr.eqls();
+                if (p.to.reg < 0) p.translate();
+                else if (p.fr.reg >= 0 && p.fr.reg != p.to.reg) tar[p.fr.reg] = p.to.reg;
             }
             Arrays.fill(vis, false);
             for (int x = 0; x < 32; ++x) if (tar[x] != -1 && fa[x] == -1) {
@@ -108,6 +111,7 @@ public class Brc extends Meta implements Flight {
                         dfs2(x, Instr.A0);
                     } else dfs2(x, x);
                 }
+            for (Psi p : list) if (p.fr.reg < 0) p.translate();
         }
     }
 
@@ -117,10 +121,12 @@ public class Brc extends Meta implements Flight {
             sync(then);
             return new InstrJ(Op.j, then);
         }
-        InstrB cnd = new InstrB(Op.beq, cond.get(Instr.V0), Instr.ZERO, els);
+//        InstrB cnd = new InstrB(Op.beq, cond.get(Instr.V0), Instr.ZERO, els);
+        pThen.pin = new Nop().toString(true);
         sync(then);
         new InstrJ(Op.j, then);
-        cnd.label = new Nop().toString(true);
+//        cnd.label = new Nop().toString(true);
+        pEls.pin = new Nop().toString(true);
         sync(els);
         new InstrJ(Op.j, els);
         return null;

@@ -29,8 +29,8 @@ public class Calc extends Meta {
     }
 
     public LgK toLgk() {
-        int aid = ma == null || ma.eqls == null ? -1 : ma.eqls.id;
-        int bid = mb == null || mb.eqls == null ? -1 : mb.eqls.id;
+        int aid = ma == null || ma.eqls == null ? -1 : ma.eqls().id;
+        int bid = mb == null || mb.eqls == null ? -1 : mb.eqls().id;
         return new LgK(opr, aid, bid);
     }
 
@@ -58,7 +58,7 @@ public class Calc extends Meta {
                 val = mb.val == 0 ? ma.val : ma.val / mb.val;
                 break;
             case mod:
-                val = ma.val % mb.val;
+                val = mb.val == 0 ? ma.val : ma.val % mb.val;
                 break;
             case and:
                 val = ma.val != 0 && mb.val != 0 ? 1 : 0;
@@ -69,8 +69,18 @@ public class Calc extends Meta {
             case not:
                 val = ma == null || ma.val == 0 ? 1 : 0;
                 break;
-            default:
-                val = 0;
+            case neq:
+                val = ma.val ^ mb.val;
+                break;
+            case lt:
+                val = ma.val < mb.val ? 1: 0;
+                break;
+            case gt:
+                val = ma.val > mb.val ? 1 : 0;
+                break;
+            case eql:
+                val = ma.val == mb.val ? 1 : 0;
+                break;
         }
         return val;
     }
@@ -81,15 +91,15 @@ public class Calc extends Meta {
             opr = Opr.cnst;
             return;
         }
-        ma = ma.eqls;
-        if (mb != null) mb = mb.eqls;
+        ma = ma.eqls();
+        if (mb != null) mb = mb.eqls();
     }
 
     @Override
     public String toString() {
         if (opr == Opr.cnst) return "(" + val + " -> T" + id + ")";
         else if (opr == Opr.not) return "(" + opr + " T" + ma.id + " -> T" + id + ")";
-        return "(T" + ma.id + " " + opr + " T" + mb.id + " -> T" + id + ")";
+        return "(T" + ma.eqls().id + " " + opr + " T" + mb.eqls().id + " -> T" + id + ")";
     }
 
     @Override
@@ -99,8 +109,8 @@ public class Calc extends Meta {
 
     @Override
     public Instr translate() {
-        ma = ma.eqls;
-        mb = mb.eqls;
+        ma = ma.eqls();
+        mb = mb.eqls();
         int tar = gtag(Instr.V0);
         Instr ret = null;
         if (opr == Opr.cnst) ret = new InstrSI(Op.li, tar, val);
@@ -111,7 +121,7 @@ public class Calc extends Meta {
         else if (opr == Opr.not) ret = new InstrI(Op.sltiu, tar, ma.get(Instr.V0), 1);
         else if (opr == Opr.lt) ret = new InstrR(Op.slt, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.gt) ret = new InstrR(Op.slt, tar, mb.get(Instr.A0), ma.get(Instr.V0));
-        else if (opr == Opr.neq) ret = new InstrR(Op.sltu, tar, mb.get(Instr.A0), ma.get(Instr.V0));
+        else if (opr == Opr.neq) ret = new InstrR(Op.xor, tar, mb.get(Instr.A0), ma.get(Instr.V0));
         else if (opr == Opr.eql) {
             new InstrR(Op.xor, tar, ma.get(Instr.V0), mb.get(Instr.A0));
             ret = new InstrI(Op.sltiu, tar, tar, 1);

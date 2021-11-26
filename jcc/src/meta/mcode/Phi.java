@@ -38,14 +38,14 @@ public class Phi extends Meta {
     @Override
     public void shrink() {
         if (fr.isEmpty()) return;
-        fr.removeIf(e -> e.eqls == this);
+        fr.removeIf(e -> e.eqls() == this);
         boolean single = true;
         for (Meta m : fr)
-            if (m.eqls != fr.get(0).eqls) {
+            if (m.eqls != fr.get(0).eqls()) {
                 single = false;
                 break;
             }
-        if (single) this.eqls = fr.isEmpty() ? Nop : fr.get(0).eqls;
+        if (single) this.eqls = fr.isEmpty() ? Nop : fr.get(0).eqls();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Phi extends Meta {
     @Override
     public Meta[] prevs() {
         Set<Meta> ret = new HashSet<>();
-        for (Meta m : fr) ret.add(m.eqls);
+        for (Meta m : fr) ret.add(m.eqls());
         return ret.toArray(new Meta[0]);
     }
 

@@ -1,13 +1,15 @@
 package engine.instr;
 
 import engine.sync.SyncR;
+import meta.midt.MPin;
 
 public class InstrJ extends Instr {
     public String label;
+    public MPin pin;
 
     public InstrJ(Op op, String tar) {
         this.op = op;
-        this.label = tar;
+        pin = new MPin(this.label = tar);
     }
 
     public InstrJ(Op op, SyncR tar) {
@@ -18,8 +20,13 @@ public class InstrJ extends Instr {
         this(op, tar.toString(true));
     }
 
+    public InstrJ(Op op, MPin pin) {
+        this.op = op;
+        this.pin = pin;
+    }
+
     @Override
     public String toString() {
-        return op + " " + label;
+        return op + " " + pin.pin;
     }
 }

@@ -49,7 +49,8 @@ public class If extends Node {
 
     @Override
     public Meta translate() {
-        Brc c1 = new Brc(cond.translate(), null, null);
+        Brc c1 = new Brc(null, null);
+        ((Cond) cond).translate(c1.pThen, c1.pEls);
         Dojo.curOpr.setEnd(c1);
         SyncO o1 = Dojo.curOpr;
 

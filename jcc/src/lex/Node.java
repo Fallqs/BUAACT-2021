@@ -1,18 +1,25 @@
 package lex;
 
+import engine.sync.SyncO;
 import meta.Cursor;
 import meta.Idents;
 import meta.Meta;
 import meta.ident.Var;
+import meta.midt.MPin;
 import word.Result;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public abstract class Node {
     public static Cursor cs;
     public static Idents idt;
     public static List<Compo> output = new ArrayList<>();
+    public static MPin breakPin;
+    public static MPin continuePin;
+    public static final Stack<SyncO> breaks = new Stack<>();
+    public static final Stack<SyncO> continues = new Stack<>();
     public boolean autoDisplay = true;
     public Meta meta;
     protected NTyp typ;

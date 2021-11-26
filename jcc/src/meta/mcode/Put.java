@@ -46,6 +46,13 @@ public class Put extends Meta {
     }
 
     @Override
+    public int get(int tmp, int shift) {
+        if (Instr.bsR(var) == Instr.GP) new InstrLS(Op.lw, tmp, var.base, Instr.bsR(var));
+        else new InstrLS(Op.lw, tmp, var.base + shift, Instr.bsR(var));
+        return tmp;
+    }
+
+    @Override
     public Meta[] prevs() {
         return new Meta[0];
     }

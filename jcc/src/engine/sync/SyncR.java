@@ -90,7 +90,10 @@ public class SyncR implements Index {
             for (Meta p : mp.values())
                 p.shrink();
             blk.opr.indexPhi();
-            mp.entrySet().removeIf(e -> e.getValue().eqls != e.getValue());
+            mp.entrySet().removeIf(e -> {
+                Meta m = e.getValue();
+                return m.eqls() != m; // && !(m instanceof Phi && ((Phi) m).isLoad);
+            });
         }
     }
 
@@ -111,10 +114,10 @@ public class SyncR implements Index {
 ////                    for (Meta r : s) func.malloc.add(p.eqls, r.eqls);
 //                    kills.push(new SyncLog(p, q));
 //                }
-            for (Meta q : list) func.malloc.add(p.eqls, q);
-            list.add(p.eqls);
+            for (Meta q : list) func.malloc.add(p.eqls(), q);
+            list.add(p.eqls());
         }
-        for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls);
+        for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls());
         for (Index i : oprH) i.indexMeta(new HashSet<>(s));
     }
 

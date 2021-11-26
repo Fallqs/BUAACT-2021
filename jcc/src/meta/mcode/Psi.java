@@ -6,7 +6,7 @@ import engine.instr.InstrLS;
 import engine.instr.Op;
 import meta.Meta;
 
-public class Psi extends Meta {
+public class Psi extends Meta implements Virtual {
     public Meta to;
     public Meta fr;
 
@@ -45,8 +45,8 @@ public class Psi extends Meta {
 
     @Override
     public Instr translate() {
-        to = to.eqls;
-        fr = fr.eqls;
+        to = to.eqls();
+        fr = fr.eqls();
         if (fr instanceof Put) return loadVar(to, (Put) fr);
         if (to.reg >= 0 && fr.reg >= 0) return new InstrDual(Op.move, to.reg, fr.reg);
         if (to.reg >= 0) return new InstrLS(Op.lw, to.reg, fr.spx, Instr.SP);

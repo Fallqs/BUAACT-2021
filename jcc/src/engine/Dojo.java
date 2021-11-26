@@ -65,6 +65,7 @@ public class Dojo {
         for (MVar v : MTable.global) globalReq.qry(v);
         for (MVar v : MTable.global) globalOpr.upd(v, new Put(v));
         for (MFunc f : MTable.func) {
+            for (MVar v : f.params) globalOpr.upd(v, new Put(v));
             globalOpr.addLegend(f.req);
             f.req.setFunc(f);
         }

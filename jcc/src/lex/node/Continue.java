@@ -1,8 +1,11 @@
 package lex.node;
 
+import engine.Dojo;
+import engine.sync.SyncB;
 import lex.NTyp;
 import lex.Node;
 import meta.Meta;
+import meta.mcode.BrGoto;
 import word.Typ;
 
 public class Continue extends Node {
@@ -21,6 +24,10 @@ public class Continue extends Node {
 
     @Override
     public Meta translate() {
+        Dojo.curOpr.setEnd(new BrGoto(continuePin));
+        continues.push(Dojo.curOpr);
+        new SyncB();
+        Dojo.curReq.add(continues.peek());
         return null;
     }
 }

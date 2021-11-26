@@ -4,7 +4,7 @@ import engine.instr.*;
 import meta.Meta;
 import meta.midt.MStr;
 
-public class Cout extends Meta {
+public class Cout extends Meta implements Virtual {
     private boolean isStr = false;
     private Meta m;
     private MStr s;
@@ -47,7 +47,7 @@ public class Cout extends Meta {
             new InstrI(Op.ori, Instr.V0, Instr.ZERO, 4);
             new Nop("syscall", true);
         } else {
-            m = m.eqls;
+            m = m.eqls();
             if (m.reg >= 0) new InstrR(Op.or, Instr.A0, Instr.ZERO, m.reg);
             else m.get(Instr.A0);
             new InstrI(Op.ori, Instr.V0, Instr.ZERO, 1);

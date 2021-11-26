@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Ret extends Meta implements Flight {
+public class Ret extends Meta implements Flight, Virtual {
     private Meta vl;
     public boolean isVoid;
     public final MFunc func;
@@ -58,11 +58,12 @@ public class Ret extends Meta implements Flight {
             return null;
         }
         new InstrLS(Op.lw, Instr.RA, func.stackSiz - 4, Instr.SP);
-        if (isVoid) return new Jr();
-        Instr ret;
-        vl = vl.eqls;
-        if (vl.reg >= 0) ret = new InstrR(Op.or, Instr.V0, vl.reg, Instr.ZERO);
-        else ret = new InstrLS(Op.lw, Instr.V0, vl.spx, Instr.SP);
+        Instr ret = null;
+        if (!isVoid) {
+            vl = vl.eqls();
+            if (vl.reg >= 0) ret = new InstrR(Op.or, Instr.V0, vl.reg, Instr.ZERO);
+            else vl.get(Instr.V0);
+        }
         new InstrI(Op.addi, Instr.SP, Instr.SP, func.stackSiz);
         new Jr();
         return ret;
@@ -74,7 +75,7 @@ public class Ret extends Meta implements Flight {
         if (psi != null && psi.containsKey(Dojo.globalReq) && !"main".equals(func.name)) {
             List<Psi> list = psi.get(Dojo.globalReq);
             for (Psi p : list)
-                if (p.to instanceof Phi) func.writes.add(p.fr.eqls.save = ((Phi) p.to.eqls).var);
+                if (p.to instanceof Phi) func.writes.add(p.fr.eqls().save = ((Phi) p.to.eqls()).var);
         }
     }
 }

@@ -23,7 +23,9 @@ public class GVal extends Meta {
 
     @Override
     public boolean isCnst() {
-        return cnst = var.cnst;
+        if (!var.cnst) return false;
+        for (Meta m : ms) if (!m.isCnst()) return false;
+        return true;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class GVal extends Meta {
 
     @Override
     public Instr translate() {
-        for (int i = 0; i < ms.length; ++i) ms[i] = ms[i].eqls;
+        for (int i = 0; i < ms.length; ++i) ms[i] = ms[i].eqls();
         int tar = gtag(Instr.V0);
         Instr ret;
         switch (var.typ) {
@@ -65,11 +67,13 @@ public class GVal extends Meta {
                     ret = var.param ? new InstrI(Op.addi, tar, Instr.bsR(var), var.base) :
                             new InstrLS(Op.lw, tar, var.base, Instr.SP);
                 } else if (!var.param) {
-                    new InstrR(Op.add, Instr.V0, ms[0].get(Instr.V0), Instr.bsR(var));
+                    new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
+                    new InstrR(Op.add, Instr.V0, Instr.V0, Instr.bsR(var));
                     ret = new InstrLS(Op.lw, tar, var.base, Instr.V0);
                 } else {
                     new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
-                    new InstrR(Op.add, Instr.V0, Instr.V0, ms[0].get(Instr.A0));
+                    new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), 2);
+                    new InstrR(Op.add, Instr.V0, Instr.V0, Instr.A0);
                     ret = new InstrLS(Op.lw, tar, 0, Instr.V0);
                 }
                 break;
@@ -80,18 +84,20 @@ public class GVal extends Meta {
                 } else if (ms.length == 1) {
                     if (!var.param) new InstrI(Op.addi, Instr.V0, Instr.bsR(var), var.base);
                     else new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
-                    new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt);
+                    new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt + 2);
                     ret = new InstrR(Op.add, tar, Instr.V0, Instr.A0);
                 } else if (!var.param) {
-                    new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.A0), var.lgt);
-                    new InstrR(Op.add, Instr.V0, Instr.V0, ms[1].get(Instr.A0));
+                    new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.A0), var.lgt + 2);
+                    new InstrI(Op.sll, Instr.A0, ms[1].get(Instr.A0), 2);
+                    new InstrR(Op.add, Instr.V0, Instr.V0, Instr.A0);
                     new InstrR(Op.add, Instr.V0, Instr.V0, Instr.bsR(var));
                     ret = new InstrLS(Op.lw, tar, var.base, Instr.V0);
                 } else {
                     new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
-                    new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt);
+                    new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt + 2);
                     new InstrR(Op.add, Instr.V0, Instr.V0, Instr.A0);
-                    new InstrR(Op.add, Instr.V0, Instr.V0, ms[1].get(Instr.A0));
+                    new InstrI(Op.sll, Instr.A0, ms[1].get(Instr.A0), 2);
+                    new InstrR(Op.add, Instr.V0, Instr.V0, Instr.A0);
                     ret = new InstrLS(Op.lw, tar, 0, Instr.V0);
                 }
                 break;

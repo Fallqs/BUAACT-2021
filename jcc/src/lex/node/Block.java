@@ -56,7 +56,7 @@ public class Block extends Node {
         if (!(fa instanceof Ref)) MTable.newBlock();
         for (Node o : lines) {
             o.translate();
-            if (o instanceof Return) break;
+            if (o instanceof Return || o instanceof Break || o instanceof Continue) break;
         }
         if (!(fa instanceof Ref)) MTable.popBlock();
         return null;

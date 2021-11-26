@@ -99,11 +99,11 @@ public class SyncO implements Index {
         for (SyncR req : lgd) {
             psi.put(req, new ArrayList<>());
             for (Map.Entry<MVar, Meta> e : req.mp.entrySet()) {
-                if (!(e.getValue() instanceof Phi) || e.getValue().eqls != e.getValue()) continue;
+                if (!(e.getValue() instanceof Phi) || e.getValue().eqls() != e.getValue()) continue;
                 if (mp.containsKey(e.getKey())) {
                     vars.add(e.getKey());
-                    Meta m = mp.get(e.getKey()).eqls;
-                    psi.get(req).add(new Psi(m.eqls, e.getValue().eqls));
+                    Meta m = mp.get(e.getKey()).eqls();
+                    psi.get(req).add(new Psi(m.eqls(), e.getValue().eqls()));
                     if (!(m instanceof Put)) alive.add(m);
                 }
             }
@@ -112,10 +112,10 @@ public class SyncO implements Index {
 
     private void call(Call c) {
         for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
-            if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue().eqls);
+            if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue().eqls());
         }
         c.sync.entrySet().removeIf(e -> !e.getKey().global ||
-                !(e.getValue().valid || e.getValue() instanceof Phi && e.getValue().eqls == e.getValue()));
+                !(e.getValue().valid || e.getValue() instanceof Phi && e.getValue().eqls() == e.getValue()));
         for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
             if (alive.contains(e.getValue())) c.retrieve.put(e.getKey(), e.getValue());
         }
@@ -125,28 +125,30 @@ public class SyncO implements Index {
     private final Stack<SyncLog> kills = new Stack<>();
 
     private void indexAlive(Meta m) {
-        if (!(m instanceof Cout)) func.malloc.add(m);
+        if (!(m instanceof Virtual)) func.malloc.add(m);
         if (!alive.contains(m) && !m.valid && !(m instanceof Call)) return;
         alive.remove(m);
         m.valid = true;
         if (m instanceof Call) call((Call) m);
         for (Meta p : m.prevs())
-            if (!alive.contains(p.eqls) && !(p.eqls instanceof Put)) {
+            if (!alive.contains(p.eqls()) && !(p.eqls() instanceof Put)) {
 //                for (Meta q : alive) func.malloc.add(p.eqls, q);
-                kills.add(new SyncLog(m, p.eqls));
-                alive.add(p.eqls);
+                kills.add(new SyncLog(m, p.eqls()));
+                alive.add(p.eqls());
             }
     }
 
     private void indexKill(Meta m) {
         while (!kills.isEmpty() && kills.peek().key == m) alive.remove(kills.pop().value);
-        for (Meta n : alive) func.malloc.add(m, n.eqls);
-        alive.add(m);
+        if (!(m instanceof Virtual)) {
+            for (Meta n : alive) func.malloc.add(m, n.eqls());
+            alive.add(m);
+        }
     }
 
     @Override
     public void indexMeta(Set<Meta> s) {
-        for (Meta m : s) alive.add(m.eqls);
+        for (Meta m : s) alive.add(m.eqls());
         if (indexCnt < 0) return;
         if (++indexCnt >= legendH.size()) {
             indexCnt = -1;
@@ -154,10 +156,10 @@ public class SyncO implements Index {
             phi(vars, legendH);
             phi(vars, legendL);
             ((Flight) end).addPsi(psi);
-            for (Map.Entry<MVar, Meta> e : mp.entrySet()) if (vars.contains(e.getKey())) e.getValue().valid = true;
+            for (Map.Entry<MVar, Meta> e : mp.entrySet()) if (vars.contains(e.getKey())) e.getValue().eqls().valid = true;
             List<Meta> soup = blk.ms;
             end.valid = true;
-            alive.removeIf(e -> e.eqls instanceof Put);
+            alive.removeIf(e -> e.eqls() instanceof Put);
             indexAlive(end);
             for (int i = soup.size() - 1; i > -1; --i) {
                 indexAlive(soup.get(i));

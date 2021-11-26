@@ -58,7 +58,7 @@ public class MVar implements MIdt {
 
     public int ix(int... i) {
         int ix = 0;
-        if (typ == MTyp.Int && i.length > 0) ix = i[0];
+        if (typ == MTyp.Arr && i.length > 0) ix = i[0];
         else if (typ == MTyp.Mat) {
             if (i.length > 0) ix = (i[0] << lgt);
             if (i.length > 1) ix += i[1];

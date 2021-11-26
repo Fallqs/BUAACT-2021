@@ -2,16 +2,18 @@ package engine.instr;
 
 import engine.MetaAlloc;
 import engine.sync.SyncR;
+import meta.midt.MPin;
 
 public class InstrB extends Instr {
     public int rs, rt;
     public String label;
+    public MPin pin;
 
     public InstrB(Op op, int rs, int rt, String tar) {
         this.op = op;
         this.rs = rs;
         this.rt = rt;
-        this.label = tar;
+        pin = new MPin(this.label = tar);
     }
 
     public InstrB(Op op, int rs, int rt, SyncR tar) {
@@ -22,8 +24,15 @@ public class InstrB extends Instr {
         this(op, rs, rt, tar.toString(true));
     }
 
+    public InstrB(Op op, int rs, int rt, MPin pin) {
+        this.op = op;
+        this.rs = rs;
+        this.rt = rt;
+        this.pin = pin;
+    }
+
     @Override
     public String toString() {
-        return op + " " + getReg(rs) + ", " + getReg(rt) + ", " + label;
+        return op + " " + getReg(rs) + ", " + getReg(rt) + ", " + pin.pin;
     }
 }

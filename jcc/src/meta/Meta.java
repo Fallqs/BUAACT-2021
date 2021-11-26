@@ -1,11 +1,8 @@
 package meta;
 
 import engine.Dojo;
-import engine.instr.Instr;
+import engine.instr.*;
 import engine.LgK;
-import engine.instr.InstrLS;
-import engine.instr.Nop;
-import engine.instr.Op;
 import meta.midt.MVar;
 
 public class Meta implements Comparable<Meta> {
@@ -62,6 +59,10 @@ public class Meta implements Comparable<Meta> {
     public void shrink() {
     }
 
+    public Meta eqls() {
+        return this.eqls == this? this : this.eqls.eqls();
+    }
+
     public void addLegend(Meta m) {
         legend = Integer.min(legend, m.legend);
         legend = Integer.min(legend, m.id * 2 - 1);
@@ -86,8 +87,23 @@ public class Meta implements Comparable<Meta> {
 
     public int get(int tmp) {
         if (this == Nop) return Instr.ZERO;
+//        if (this.isCnst()) {
+//            new InstrSI(Op.li, tmp, calc());
+//            return tmp;
+//        }
         if (reg >= 0) return reg;
         new InstrLS(Op.lw, tmp, spx, Instr.SP);
+        return tmp;
+    }
+
+    public int get(int tmp, int shift) {
+        if (this == Nop) return Instr.ZERO;
+//        if (this.isCnst()) {
+//            new InstrSI(Op.li, tmp, calc());
+//            return tmp;
+//        }
+        if (reg >= 0) return reg;
+        new InstrLS(Op.lw, tmp, spx + shift, Instr.SP);
         return tmp;
     }
 

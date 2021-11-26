@@ -5,14 +5,16 @@ import lex.New;
 import lex.Node;
 import meta.Meta;
 import meta.Opr;
+import meta.mcode.Brp;
 import meta.mcode.Calc;
+import meta.midt.MPin;
 import word.Typ;
 
 import java.util.ArrayList;
 
 public class LAndExp extends Node {
-    private ArrayList<Node> bl = new ArrayList<>();
-    private Node bl0;
+    private final ArrayList<Node> bl = new ArrayList<>();
+//    private Node bl0;
 
     public LAndExp() {
         typ = NTyp.LAndExp;
@@ -24,7 +26,7 @@ public class LAndExp extends Node {
     public boolean forward() {
         Node ch = New.typ(NTyp.EqExp);
         if (!ch.fwd()) return false;
-        bl0 = ch;
+        bl.add(ch);
         dump(typ);
         while (cs.isTyp(Typ.AND)) {
             cs.nex();
@@ -44,10 +46,17 @@ public class LAndExp extends Node {
      * Short-cut Deducing Unimplemented
      * @return new Calc
      */
-    @Override
-    public Meta translate() {
-        Meta ret = new Calc(Opr.not, bl0.translate());
-        for (Node o : bl) ret = new Calc(Opr.or, ret, new Calc(Opr.not, o.translate()));
-        return new Calc(Opr.not, ret, Meta.Nop);
+//    @Override
+//    public Meta translate() {
+//        Meta ret = new Calc(Opr.not, bl0.translate());
+//        for (Node o : bl) ret = new Calc(Opr.or, ret, new Calc(Opr.not, o.translate()));
+//        return new Calc(Opr.not, ret, Meta.Nop);
+//    }
+
+    public Meta translate(MPin pThen, MPin pEls) {
+        if (bl.size() <= 1) return bl.get(0).translate();
+        for (Node o : bl) new Brp(o.translate(), null, pEls);
+        new Brp(null, pThen, null);
+        return null;
     }
 }

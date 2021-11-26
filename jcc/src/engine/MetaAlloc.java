@@ -1,6 +1,7 @@
 package engine;
 
 import meta.Meta;
+import meta.mcode.Put;
 
 import java.util.*;
 
@@ -28,7 +29,8 @@ public class MetaAlloc {
     }
 
     public void add(Meta u, Meta v) {
-        if (u == null || v == null || u == Meta.Nop || v == Meta.Nop) return;
+        if (u == null || v == null || u == Meta.Nop || v == Meta.Nop
+                || u instanceof Put || v instanceof Put) return;
         add(u);
         add(v);
         int iu = mp.get(u), iv = mp.get(v);

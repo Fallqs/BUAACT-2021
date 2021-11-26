@@ -61,22 +61,23 @@ public class PVal extends Meta {
             return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.bsR(var));
         } else if (var.typ == MTyp.Arr) {
             if (!var.param) {
-                new InstrR(Op.add, Instr.A0, ms[0].get(Instr.A0), Instr.bsR(var));
-                return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
-            } else {
-                new InstrLS(Op.lw, Instr.A0, var.base, Instr.SP);
-                new InstrR(Op.add, Instr.A0, Instr.A0, ms[0].get(Instr.V0));
-                return new InstrLS(Op.sw, fr.get(Instr.V0), 0, Instr.A0);
-            }
-        } else if (var.typ == MTyp.Mat) {
-            if (!var.param) {
-                new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt);
-                new InstrR(Op.add, Instr.A0, Instr.A0, ms[1].get(Instr.V0));
+                new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), 2);
                 new InstrR(Op.add, Instr.A0, Instr.A0, Instr.bsR(var));
                 return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
             } else {
-                new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt);
-                new InstrR(Op.add, Instr.A0, Instr.A0, ms[1].get(Instr.V0));
+                new InstrLS(Op.lw, Instr.A0, var.base, Instr.SP);
+                new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
+                new InstrR(Op.add, Instr.A0, Instr.A0, Instr.V0);
+                return new InstrLS(Op.sw, fr.get(Instr.V0), 0, Instr.A0);
+            }
+        } else if (var.typ == MTyp.Mat) {
+            new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt + 2);
+            new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
+            new InstrR(Op.add, Instr.A0, Instr.A0, Instr.V0);
+            if (!var.param) {
+                new InstrR(Op.add, Instr.A0, Instr.A0, Instr.bsR(var));
+                return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
+            } else {
                 new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
                 new InstrR(Op.add, Instr.A0, Instr.A0, Instr.V0);
                 return new InstrLS(Op.sw, fr.get(Instr.V0), 0, Instr.A0);

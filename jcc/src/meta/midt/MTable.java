@@ -52,6 +52,7 @@ public class MTable {
             if ("$".equals(log.peek())) break;
             cur.get(log.pop()).pop();
         }
+        log.pop();
         --nw;
     }
 
@@ -61,7 +62,8 @@ public class MTable {
             strcon.add((MStr) x);
             return true;
         }
-        if (!cur.get(x.name()).push(x)) return false;
+        if (!cur.get(x.name()).push(x))
+            return false;
         if (x.typ() == MTyp.Func) {
             if ("main".equals(((MFunc) x).name)) {
                 Dojo.globalReq.func = (MFunc) x;
