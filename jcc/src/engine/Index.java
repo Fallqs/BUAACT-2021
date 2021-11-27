@@ -12,6 +12,7 @@ public interface Index {
     void flushCnt();
     void indexOpr(Map<MVar, Meta> mp);
     void indexPhi();
+    void indexPhi(boolean isLoop);
     void indexMeta(Set<Meta> s);
     void translate();
 }

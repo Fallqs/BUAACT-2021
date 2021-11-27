@@ -16,8 +16,8 @@ public abstract class Node {
     public static Cursor cs;
     public static Idents idt;
     public static List<Compo> output = new ArrayList<>();
-    public static MPin breakPin;
-    public static MPin continuePin;
+    public static final Stack<MPin> breakPin = new Stack<>();
+    public static final Stack<MPin> continuePin = new Stack<>();
     public static final Stack<SyncO> breaks = new Stack<>();
     public static final Stack<SyncO> continues = new Stack<>();
     public boolean autoDisplay = true;

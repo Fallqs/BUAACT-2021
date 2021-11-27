@@ -8,6 +8,7 @@ import engine.instr.Op;
 import meta.Meta;
 import meta.midt.MVar;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,5 +64,10 @@ public class PArr extends Meta {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "PArr " + var.toString() + " " + id;
     }
 }

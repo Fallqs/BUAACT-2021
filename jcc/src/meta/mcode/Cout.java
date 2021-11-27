@@ -32,7 +32,7 @@ public class Cout extends Meta implements Virtual {
 
     @Override
     public String toString() {
-        return " cout << " + (isStr ? s.toString() : "T" + m.id);
+        return " cout << " + (isStr ? s.toString() : "T" + m.eqls().id);
     }
 
     @Override

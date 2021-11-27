@@ -41,7 +41,7 @@ public class Phi extends Meta {
         fr.removeIf(e -> e.eqls() == this);
         boolean single = true;
         for (Meta m : fr)
-            if (m.eqls != fr.get(0).eqls()) {
+            if (m.eqls() != fr.get(0).eqls()) {
                 single = false;
                 break;
             }

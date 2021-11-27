@@ -59,7 +59,7 @@ public class SyncO implements Index {
         return new HashMap<>(mp);
     }
 
-    private int indexCnt = 0;
+    public int indexCnt = 0;
 
     @Override
     public void setFunc(MFunc f) {
@@ -71,11 +71,13 @@ public class SyncO implements Index {
 
     @Override
     public void flushCnt() {
-        if (indexCnt != 0) {
-            indexCnt = 0;
-            for (Index i : legendH) i.flushCnt();
-            blk.req.flushCnt();
-        }
+        for (Index i : legendH) i.flushCnt();
+        indexCnt = 0;
+//        if (indexCnt != 0) {
+//            indexCnt = 0;
+//            for (Index i : legendH) i.flushCnt();
+//            blk.req.flushCnt();
+//        }
     }
 
     @Override
@@ -92,7 +94,15 @@ public class SyncO implements Index {
     public void indexPhi() {
         if (indexCnt < 0) return;
         indexCnt = -1;
-        for (Index i : legendH) i.indexPhi();
+        if (!((end instanceof BrGoto) && ((BrGoto) end).isBreak)) for (Index i : legendH) i.indexPhi();
+    }
+
+    @Override
+    public void indexPhi(boolean isBreak) {
+        if (indexCnt < -1) return;
+        indexCnt = -2;
+        if ((end instanceof BrGoto) && ((BrGoto) end).isBreak) for (Index i : legendH) i.indexPhi();
+        else for (Index i:legendH)i.indexPhi(true);
     }
 
     private void phi(Set<MVar> vars, Set<SyncR> lgd) {  // deduce (psi) nodes for every branch
@@ -153,7 +163,7 @@ public class SyncO implements Index {
         if (++indexCnt >= legendH.size()) {
             indexCnt = -1;
             Set<MVar> vars = new HashSet<>();
-            phi(vars, legendH);
+            if (!(end instanceof Ret) || !"main".equals(this.func.name)) phi(vars, legendH);
             phi(vars, legendL);
             ((Flight) end).addPsi(psi);
             for (Map.Entry<MVar, Meta> e : mp.entrySet()) if (vars.contains(e.getKey())) e.getValue().eqls().valid = true;

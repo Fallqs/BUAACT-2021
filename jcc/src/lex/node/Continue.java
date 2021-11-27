@@ -24,7 +24,7 @@ public class Continue extends Node {
 
     @Override
     public Meta translate() {
-        Dojo.curOpr.setEnd(new BrGoto(continuePin));
+        Dojo.curOpr.setEnd(new BrGoto(continuePin.peek(), false));
         continues.push(Dojo.curOpr);
         new SyncB();
         Dojo.curReq.add(continues.peek());

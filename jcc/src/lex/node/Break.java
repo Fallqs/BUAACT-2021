@@ -24,10 +24,10 @@ public class Break extends Node {
 
     @Override
     public Meta translate() {
-        Dojo.curOpr.setEnd(new BrGoto(breakPin));
+        Dojo.curOpr.setEnd(new BrGoto(breakPin.peek(), true));
         breaks.push(Dojo.curOpr);
-        new SyncB();
-        Dojo.curReq.add(breaks.peek());
+//        new SyncB();
+//        Dojo.curReq.add(breaks.peek());
         return null;
     }
 }

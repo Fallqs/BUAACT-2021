@@ -6,13 +6,20 @@ import engine.instr.Op;
 import meta.midt.MPin;
 
 public class BrGoto extends Brc {
-    public BrGoto(MPin pin) {
+    public final boolean isBreak;
+    public BrGoto(MPin pin, boolean isBreak) {
         pThen = pin;
+        this.isBreak = isBreak;
     }
 
     @Override
     public Instr translate() {
         sync(pThen.req);
         return new InstrJ(Op.j, pThen.req);
+    }
+
+    @Override
+    public String toString() {
+        return " GOTO " + pThen.req.toString();
     }
 }

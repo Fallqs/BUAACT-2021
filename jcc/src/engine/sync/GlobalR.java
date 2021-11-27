@@ -22,6 +22,10 @@ public class GlobalR extends SyncR {
     }
 
     @Override
+    public void flushCnt() {
+    }
+
+    @Override
     public void setFunc(MFunc f) {
     }
 
@@ -36,6 +40,10 @@ public class GlobalR extends SyncR {
 
     @Override
     public void indexPhi() {
+    }
+
+    @Override
+    public void indexPhi(boolean isLoop) {
     }
 
     @Override

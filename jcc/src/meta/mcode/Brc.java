@@ -40,7 +40,7 @@ public class Brc extends Meta implements Flight, Virtual {
     @Override
     public String toString() {
         String ret = " Jmp " + then;
-        if (cond != null) ret = " Branch " + els + "\n" + ret;
+        if (els != null) ret = " Branch " + els + "\n" + ret;
         return ret;
     }
 

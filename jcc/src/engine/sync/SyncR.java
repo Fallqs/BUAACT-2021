@@ -21,6 +21,7 @@ public class SyncR implements Index {
     protected final Set<Index> oprH = new HashSet<>();
     //    private final Set<Index> oprL = new HashSet<>();
     public final SyncB blk;
+    public boolean isLoop = false, endLoop = false;
 
     public MFunc func;
 
@@ -49,7 +50,7 @@ public class SyncR implements Index {
         return mp.get(v);
     }
 
-    private int indexCnt = 0;
+    public int indexCnt = 0;
 
     @Override
     public void setFunc(MFunc f) {
@@ -61,11 +62,13 @@ public class SyncR implements Index {
 
     @Override
     public void flushCnt() {
-        if (indexCnt != 0) {
-            indexCnt = 0;
-            for (Index i : oprH) i.flushCnt();
-            this.blk.opr.flushCnt();
-        }
+        this.blk.opr.flushCnt();
+        indexCnt = 0;
+//        if (indexCnt != 0) {
+//            indexCnt = 0;
+//            for (Index i : oprH) i.flushCnt();
+//            this.blk.opr.flushCnt();
+//        }
     }
 
     @Override
@@ -90,11 +93,16 @@ public class SyncR implements Index {
             for (Meta p : mp.values())
                 p.shrink();
             blk.opr.indexPhi();
-            mp.entrySet().removeIf(e -> {
-                Meta m = e.getValue();
-                return m.eqls() != m; // && !(m instanceof Phi && ((Phi) m).isLoad);
-            });
+            for (Meta p : mp.values())
+                p.shrink();
+            if (isLoop) blk.opr.indexPhi(true);
         }
+    }
+
+    @Override
+    public void indexPhi(boolean isLoop) {
+        if (!this.isLoop && !this.endLoop)
+            blk.opr.indexPhi(true);
     }
 
     private final Stack<SyncLog> kills = new Stack<>();

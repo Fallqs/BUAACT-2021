@@ -20,7 +20,7 @@ public class Ret extends Meta implements Flight, Virtual {
     private Meta vl;
     public boolean isVoid;
     public final MFunc func;
-    public Map<SyncR, ArrayList<Psi>> psi;
+    public List<Psi> psi;
 
     public Ret(Meta v) {
         super(false);
@@ -58,6 +58,9 @@ public class Ret extends Meta implements Flight, Virtual {
             return null;
         }
         new InstrLS(Op.lw, Instr.RA, func.stackSiz - 4, Instr.SP);
+        for (Psi p : psi) {
+            new InstrLS(Op.sw, p.fr.get(Instr.V0), ((Phi) p.to).var.base, Instr.bsR(((Phi) p.to).var));
+        }
         Instr ret = null;
         if (!isVoid) {
             vl = vl.eqls();
@@ -71,11 +74,11 @@ public class Ret extends Meta implements Flight, Virtual {
 
     @Override
     public void addPsi(Map<SyncR, ArrayList<Psi>> psi) {
-        this.psi = psi;
         if (psi != null && psi.containsKey(Dojo.globalReq) && !"main".equals(func.name)) {
-            List<Psi> list = psi.get(Dojo.globalReq);
-            for (Psi p : list)
+            this.psi = psi.get(Dojo.globalReq);
+            for (Psi p : this.psi)
                 if (p.to instanceof Phi) func.writes.add(p.fr.eqls().save = ((Phi) p.to.eqls()).var);
+            this.psi.removeIf(p -> !(p.fr instanceof Put) || !(p.to instanceof Phi));
         }
     }
 }

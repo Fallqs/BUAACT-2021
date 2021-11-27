@@ -50,9 +50,10 @@ public class While extends Node {
         SyncR r2 = Dojo.curReq;
         c1.then = r2;
         r2.add(o1);
+        r2.isLoop = true;
 
-        MPin pCon = continuePin = new MPin(null);
-        MPin pBre = breakPin = new MPin(null);
+        MPin pCon = continuePin.push(new MPin(null));
+        MPin pBre = breakPin.push(new MPin(null));
         breaks.push(null);
         continues.push(null);
         stmt.translate();
@@ -61,10 +62,12 @@ public class While extends Node {
         new SyncB();
         SyncR rt = Dojo.curReq;
         rt.add(ot);
+        rt.endLoop = true;
         while(!continues.empty() && continues.peek() != null) rt.add(continues.pop());
         continues.pop();
         ot.setEnd(new Brc(rt, null));
         pCon.req = rt;
+        continuePin.pop();
 
         Brc c2 = new Brc(null, null);
         ((Cond) cond).translate(c2.pThen, c2.pEls);
@@ -80,6 +83,7 @@ public class While extends Node {
         while (!breaks.empty() && breaks.peek() != null) r3.add(breaks.pop());
         breaks.pop();
         pBre.req = r3;
+        breakPin.pop();
         return null;
     }
 }

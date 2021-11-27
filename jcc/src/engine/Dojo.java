@@ -76,6 +76,10 @@ public class Dojo {
         globalOpr.flushCnt();
         globalOpr.indexPhi();
         globalOpr.flushCnt();
+//        for (SyncB b : blks) {
+//            if (b.req.indexCnt != 0) System.out.println("reqx" + b.id);
+//            if (b.opr.indexCnt != 0) System.out.println("oprx" + b.id);
+//        }
         globalReq.indexMeta(new HashSet<>());
         globalOpr.flushCnt();
         for (MFunc f : MTable.func) f.memAlloc();
