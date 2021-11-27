@@ -49,7 +49,7 @@ public class FuncFParam extends Node {
         int[] dim = new int[ind.size()];
         for (int i = 1; i < dim.length; ++i) dim[i] = ind.get(i).translate().calc();
         MVar ret = new MVar(name.text, dim);
-        ret.param = true;
+        ret.isParam = true;
         if (!MTable.newIdt(ret)) {
             // cs.chkErr(Typ.IDENFR, name);
             return ret;

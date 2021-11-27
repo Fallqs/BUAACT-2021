@@ -1,9 +1,11 @@
 package meta.mcode;
 
 import engine.instr.Instr;
+import engine.instr.InstrI;
 import engine.instr.InstrLS;
 import engine.instr.Op;
 import meta.Meta;
+import meta.midt.MTyp;
 import meta.midt.MVar;
 
 /**
@@ -47,8 +49,13 @@ public class Put extends Meta {
 
     @Override
     public int get(int tmp, int shift) {
-        if (Instr.bsR(var) == Instr.GP) new InstrLS(Op.lw, tmp, var.base, Instr.bsR(var));
-        else new InstrLS(Op.lw, tmp, var.base + shift, Instr.bsR(var));
+        if (var.typ != MTyp.Int) {
+            if (Instr.bsR(var) == Instr.GP) new InstrI(Op.addi, tmp, Instr.GP, var.base);
+            else new InstrI(Op.addi, tmp, Instr.SP, var.base + shift);
+        } else {
+            if (Instr.bsR(var) == Instr.GP) new InstrLS(Op.lw, tmp, var.base, Instr.bsR(var));
+            else new InstrLS(Op.lw, tmp, var.base + shift, Instr.bsR(var));
+        }
         return tmp;
     }
 

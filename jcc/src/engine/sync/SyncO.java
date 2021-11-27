@@ -124,7 +124,7 @@ public class SyncO implements Index {
         for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
             if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue().eqls());
         }
-        c.sync.entrySet().removeIf(e -> !e.getKey().global ||
+        c.sync.entrySet().removeIf(e -> !e.getKey().global || e.getValue() instanceof Virtual ||
                 !(e.getValue().valid || e.getValue() instanceof Phi && e.getValue().eqls() == e.getValue()));
         for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
             if (alive.contains(e.getValue())) c.retrieve.put(e.getKey(), e.getValue());

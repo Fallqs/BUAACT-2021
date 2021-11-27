@@ -12,7 +12,7 @@ public class MVar implements MIdt {
     public String name;
     public int base = 0, size = 1, lgt = 0, dim = 1;
     public int reg = -1;
-    public boolean cnst = false, init = false, param = false, global;
+    public boolean cnst = false, init = false, isParam = false, global;
     public int[] putc;
     public List<Meta> putv = new ArrayList<>();
 
@@ -66,6 +66,10 @@ public class MVar implements MIdt {
         return ix;
     }
 
+    public int xi(int i) {
+        return ix(i / dim, i % dim);
+    }
+
     public int gval(int... i) {
         return init ? putc[ix(i) % putc.length] : 0;
     }
@@ -74,7 +78,7 @@ public class MVar implements MIdt {
         init = true;
         putc = new int[size];
         Arrays.fill(putc, 0);
-        for (int i = 0; i < vals.length; ++i) putc[ix(i / dim, i % dim)] = vals[i];
+        for (int i = 0; i < vals.length; ++i) putc[xi(i)] = vals[i];
     }
 
     @Override

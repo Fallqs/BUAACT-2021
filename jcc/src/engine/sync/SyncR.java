@@ -63,7 +63,7 @@ public class SyncR implements Index {
     @Override
     public void flushCnt() {
         this.blk.opr.flushCnt();
-        indexCnt = 0;
+        indexCnt = loopCnt = 0;
 //        if (indexCnt != 0) {
 //            indexCnt = 0;
 //            for (Index i : oprH) i.flushCnt();
@@ -99,10 +99,15 @@ public class SyncR implements Index {
         }
     }
 
+    private int loopCnt = 0;
+
     @Override
     public void indexPhi(boolean isLoop) {
-        if (!this.isLoop && !this.endLoop)
+        if (loopCnt < 0) return;
+        if (!this.isLoop && !this.endLoop && ++loopCnt >= oprH.size()) {
+            loopCnt = -1;
             blk.opr.indexPhi(true);
+        }
     }
 
     private final Stack<SyncLog> kills = new Stack<>();

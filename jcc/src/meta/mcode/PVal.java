@@ -10,11 +10,9 @@ import meta.Meta;
 import meta.midt.MTyp;
 import meta.midt.MVar;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-public class PVal extends Meta {
+public class PVal extends Meta implements Virtual {
     public Meta fr;
     public MVar var;
     protected Meta[] ms;
@@ -25,6 +23,7 @@ public class PVal extends Meta {
         this.var = var;
         this.ms = ms;
         Dojo.curFunc.write(Dojo.curOpr);
+        valid = true;
     }
 
     @Override
@@ -40,7 +39,7 @@ public class PVal extends Meta {
     @Override
     public String toString() {
         StringBuilder ans = new StringBuilder();
-        ans.append("(").append(fr.id).append("->").append(var.name);
+        ans.append("(T").append(fr.id).append(" -> ").append(var.name);
         for (Meta mi : ms) {
             ans.append("[T").append(mi.id).append("]");
         }
@@ -60,7 +59,7 @@ public class PVal extends Meta {
         if (var.typ == MTyp.Int) {
             return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.bsR(var));
         } else if (var.typ == MTyp.Arr) {
-            if (!var.param) {
+            if (!var.isParam) {
                 new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), 2);
                 new InstrR(Op.add, Instr.A0, Instr.A0, Instr.bsR(var));
                 return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
@@ -72,9 +71,9 @@ public class PVal extends Meta {
             }
         } else if (var.typ == MTyp.Mat) {
             new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt + 2);
-            new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
+            new InstrI(Op.sll, Instr.V0, ms[1].get(Instr.V0), 2);
             new InstrR(Op.add, Instr.A0, Instr.A0, Instr.V0);
-            if (!var.param) {
+            if (!var.isParam) {
                 new InstrR(Op.add, Instr.A0, Instr.A0, Instr.bsR(var));
                 return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
             } else {

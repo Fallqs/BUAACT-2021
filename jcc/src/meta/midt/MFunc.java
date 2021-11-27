@@ -6,10 +6,8 @@ import engine.sync.SyncO;
 import engine.sync.SyncR;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class MFunc implements MIdt {
@@ -65,7 +63,7 @@ public class MFunc implements MIdt {
             stackSiz += m.size << 2;
         }
         for (MVar p : params) {
-            p.param = true;
+            p.isParam = true;
             p.base = stackSiz;
             stackSiz += 4;
         }

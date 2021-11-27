@@ -47,6 +47,7 @@ public class Psi extends Meta implements Virtual {
     public Instr translate() {
         to = to.eqls();
         fr = fr.eqls();
+        if (fr instanceof Virtual) return null;
         if (fr instanceof Put) return loadVar(to, (Put) fr);
         if (to.reg >= 0 && fr.reg >= 0) return new InstrDual(Op.move, to.reg, fr.reg);
         if (to.reg >= 0) return new InstrLS(Op.lw, to.reg, fr.spx, Instr.SP);

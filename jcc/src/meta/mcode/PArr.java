@@ -1,10 +1,7 @@
 package meta.mcode;
 
 import engine.Dojo;
-import engine.instr.Instr;
-import engine.instr.InstrLS;
-import engine.instr.InstrSI;
-import engine.instr.Op;
+import engine.instr.*;
 import meta.Meta;
 import meta.midt.MVar;
 
@@ -12,7 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PArr extends Meta {
+public class PArr extends Meta implements Virtual {
     public Meta[] fr;
     public boolean[] ban;
     public final MVar var;
@@ -25,6 +22,7 @@ public class PArr extends Meta {
         var.putv.add(this);
         Dojo.upd(var, this);
         for (Meta m : fr) m.addLegend(this);
+        valid = true;
     }
 
     @Override
@@ -54,14 +52,22 @@ public class PArr extends Meta {
     }
 
     @Override
+    public int get(int tmp, int shift) {
+        if (Instr.bsR(var) == Instr.GP) new InstrI(Op.addi, tmp, Instr.GP, var.base);
+        else if (var.isParam) new InstrLS(Op.lw, tmp, var.base + shift, Instr.SP);
+        else new InstrI(Op.addi, tmp, Instr.SP, var.base + shift);
+        return tmp;
+    }
+
+    @Override
+    public int get(int tmp) {
+        return get(tmp, 0);
+    }
+
+    @Override
     public Instr translate() {
         for (int i = 0; i < fr.length; ++i) {
-            if (fr[i].isCnst()) {
-                new InstrSI(Op.li, Instr.V0, fr[i].calc());
-                new InstrLS(Op.sw, Instr.V0, var.base + (i << 2), Instr.bsR(var));
-            } else {
-                new InstrLS(Op.sw, fr[i].get(Instr.V0), var.base + (i << 2), Instr.bsR(var));
-            }
+            new InstrLS(Op.sw, fr[i].get(Instr.V0), var.base + (var.xi(i) << 2), Instr.bsR(var));
         }
         return null;
     }
