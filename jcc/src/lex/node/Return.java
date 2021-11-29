@@ -45,7 +45,8 @@ public class Return extends Node {
     public Meta translate() {
         Ret ret = val == null ? new Ret() : new Ret(val.translate());
         Dojo.curOpr.setEnd(ret);
-        if (!"main".equals(Dojo.curFunc.name)) Dojo.globalReq.add(Dojo.curOpr);
+//        if (!"main".equals(Dojo.curFunc.name))
+            Dojo.globalReq.add(Dojo.curOpr);
         return ret;
     }
 }

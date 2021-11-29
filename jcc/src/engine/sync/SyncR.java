@@ -18,8 +18,8 @@ import java.util.*;
  */
 public class SyncR implements Index {
     public final Map<MVar, Meta> mp = new TreeMap<>();
-    protected final Set<Index> oprH = new TreeSet<>();
-    private final Set<Index> oprL = new HashSet<>();
+    public final Set<Index> oprH = new TreeSet<>();
+    public final Set<Index> oprL = new HashSet<>();
     public final SyncB blk;
     public boolean isLoop = false, endLoop = false;
 
@@ -119,6 +119,13 @@ public class SyncR implements Index {
 
     @Override
     public void indexMeta(Set<Meta> s, boolean isLight) {
+//        if (func.name.equals("main")) {
+//            System.out.print("REQ" + blk.id + ": ");
+//            for (Index o : oprH) System.out.print(((SyncO) o).blk.id + ", ");
+//            System.out.print("; ");
+//            for (Index o : oprL) System.out.print(((SyncO) o).blk.id + ", ");
+//            System.out.println();
+//        }
         if (indexCnt < 0) return;
         indexCnt = -1;
         List<Meta> list = new ArrayList<>();
@@ -166,6 +173,7 @@ public class SyncR implements Index {
         if (o instanceof GlobalR) return -1;
         if (o instanceof SyncO) {
             SyncO q = (SyncO) o;
+            if (blk.id == q.blk.id) return 1;
             return Integer.compare(blk.id, q.blk.id);
         } else {
             SyncR q = (SyncR) o;

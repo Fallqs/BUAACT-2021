@@ -161,6 +161,7 @@ public class SyncO implements Index {
 
     @Override
     public void indexMeta(Set<Meta> s, boolean isLight) {
+//        if (func.name.equals("main")) System.out.println("OPR" + blk.id + ", " + isLight + ", " + indexCnt + "/" + legendH.size());
         for (Meta m : s) alive.add(m.eqls());
         if (!isLight && indexCnt >= 0 && ++indexCnt >= legendH.size()) {
             indexCnt = -1;
@@ -217,6 +218,7 @@ public class SyncO implements Index {
             return Integer.compare(blk.id, q.blk.id);
         } else {
             SyncR q = (SyncR) o;
+            if (blk.id == q.blk.id) return -1;
             return Integer.compare(blk.id, q.blk.id);
         }
     }

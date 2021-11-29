@@ -66,6 +66,22 @@ public class Dojo {
             globalOpr.addLegend(f.req);
             f.req.setFunc(f);
         }
+//        for (SyncB blk : blks) {
+//            SyncR req = blk.req;
+//            SyncO opr = blk.opr;
+//            if (!req.func.name.equals("main")) continue;
+//            System.out.printf("REQ%d <= ", blk.id);
+//            for (Index x : req.oprH) System.out.printf("OPR%d, ", ((SyncO) x).blk.id);
+//            System.out.print("; ");
+//            for (Index x : req.oprL) System.out.printf("OPR%d, ", ((SyncO) x).blk.id);
+//            System.out.println();
+//
+//            System.out.printf("OPR%d => ", blk.id);
+//            for (SyncR x : opr.legendH) System.out.printf("REQ%d, ", x.blk.id);
+//            System.out.print("; ");
+//            for (SyncR x : opr.legendL) System.out.printf("REQ%d, ", x.blk.id);
+//            System.out.println();
+//        }
         globalOpr.flushCnt();
         globalOpr.indexOpr(new TreeMap<>(), false);
         globalOpr.flushCnt();
