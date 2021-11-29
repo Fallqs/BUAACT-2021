@@ -56,29 +56,31 @@ public class PVal extends Meta implements Virtual {
 
     @Override
     public Instr translate() {
+        for (int i = 0; i < ms.length; ++i) ms[i] = ms[i].eqls();
+        fr = fr.eqls();
         if (var.typ == MTyp.Int) {
             return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.bsR(var));
         } else if (var.typ == MTyp.Arr) {
             if (!var.isParam) {
                 new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), 2);
-                new InstrR(Op.add, Instr.A0, Instr.A0, Instr.bsR(var));
+                new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.bsR(var));
                 return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
             } else {
                 new InstrLS(Op.lw, Instr.A0, var.base, Instr.SP);
                 new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
-                new InstrR(Op.add, Instr.A0, Instr.A0, Instr.V0);
+                new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.V0);
                 return new InstrLS(Op.sw, fr.get(Instr.V0), 0, Instr.A0);
             }
         } else if (var.typ == MTyp.Mat) {
             new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt + 2);
             new InstrI(Op.sll, Instr.V0, ms[1].get(Instr.V0), 2);
-            new InstrR(Op.add, Instr.A0, Instr.A0, Instr.V0);
+            new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.V0);
             if (!var.isParam) {
-                new InstrR(Op.add, Instr.A0, Instr.A0, Instr.bsR(var));
+                new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.bsR(var));
                 return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
             } else {
                 new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
-                new InstrR(Op.add, Instr.A0, Instr.A0, Instr.V0);
+                new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.V0);
                 return new InstrLS(Op.sw, fr.get(Instr.V0), 0, Instr.A0);
             }
         }

@@ -5,7 +5,7 @@ import meta.Meta;
 
 import java.util.ArrayList;
 
-public class SyncB {
+public class SyncB implements Comparable<SyncB> {
     public final SyncR req = new SyncR(this);
     public final SyncO opr = new SyncO(this);
     public final ArrayList<Meta> ms = new ArrayList<>();
@@ -29,8 +29,13 @@ public class SyncB {
         if (req.func != null && req.func.req == req) ret.append('\n').append(req.func);
         ret.append('\n').append(req).append(":\n");
         for (Meta m : req.mp.values()) if (m.valid) ret.append(m).append('\n');
-        for (Meta m : ms) ret.append(m).append('\n');
+        for (Meta m : ms) if (m.valid) ret.append(m).append('\n');
         ret.append(opr.end).append('\n');
         return ret.toString();
+    }
+
+    @Override
+    public int compareTo(SyncB o) {
+        return Integer.compare(id, o.id);
     }
 }

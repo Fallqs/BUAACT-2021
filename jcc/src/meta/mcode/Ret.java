@@ -78,7 +78,7 @@ public class Ret extends Meta implements Flight, Virtual {
             this.psi = psi.get(Dojo.globalReq);
             for (Psi p : this.psi)
                 if (p.to instanceof Phi) func.writes.add(p.fr.eqls().save = ((Phi) p.to.eqls()).var);
-            this.psi.removeIf(p -> !(p.fr instanceof Put) || !(p.to instanceof Phi));
+            this.psi.removeIf(p -> p.fr instanceof Put && p.to instanceof Phi && ((Put)p.fr).var == ((Phi) p.to).var);
         }
     }
 }

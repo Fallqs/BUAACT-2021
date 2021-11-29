@@ -13,11 +13,11 @@ import java.util.*;
  * Synchronize Operation
  */
 public class SyncO implements Index {
-    protected final Map<MVar, Meta> mp = new HashMap<>();
-    public final Set<SyncR> legendH = new HashSet<>();
-    public final Set<SyncR> legendL = new HashSet<>();
-    public final Set<Meta> alive = new HashSet<>();
-    public final Map<SyncR, ArrayList<Psi>> psi = new HashMap<>();
+    protected final Map<MVar, Meta> mp = new TreeMap<>();
+    public final Set<SyncR> legendH = new TreeSet<>();
+    public final Set<SyncR> legendL = new TreeSet<>();
+    public final Set<Meta> alive = new TreeSet<>();
+    public final Map<SyncR, ArrayList<Psi>> psi = new TreeMap<>();
     public final SyncB blk;
     public final SyncR rq;
     public Meta end;
@@ -56,7 +56,7 @@ public class SyncO implements Index {
     }
 
     public Map<MVar, Meta> save() {
-        return new HashMap<>(mp);
+        return new TreeMap<>(mp);
     }
 
     public int indexCnt = 0;
@@ -81,13 +81,13 @@ public class SyncO implements Index {
     }
 
     @Override
-    public void indexOpr(Map<MVar, Meta> mp) {
+    public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
         if (indexCnt < 0) return;
         indexCnt = -1;
         for (Map.Entry<MVar, Meta> e : mp.entrySet())
             this.mp.putIfAbsent(e.getKey(), e.getValue());
-        for (SyncR req : legendH) req.indexOpr(this.mp);
-        for (SyncR req : legendL) req.indexOpr(this.mp);
+        for (SyncR req : legendH) req.indexOpr(this.mp, false);
+        for (SyncR req : legendL) req.indexOpr(this.mp, true);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class SyncO implements Index {
         if (indexCnt < -1) return;
         indexCnt = -2;
         if ((end instanceof BrGoto) && ((BrGoto) end).isBreak) for (Index i : legendH) i.indexPhi();
-        else for (Index i:legendH)i.indexPhi(true);
+        else for (Index i : legendH) i.indexPhi(true);
     }
 
     private void phi(Set<MVar> vars, Set<SyncR> lgd) {  // deduce (psi) nodes for every branch
@@ -122,10 +122,11 @@ public class SyncO implements Index {
 
     private void call(Call c) {
         for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
-            if (!c.sync.containsKey(e.getKey())) c.sync.put(e.getKey(), e.getValue().eqls());
+            if (!c.sync.containsKey(e.getKey()) &&
+                    !(e.getValue().valid || e.getValue() instanceof Phi && e.getValue().eqls() == e.getValue()))
+                c.sync.put(e.getKey(), e.getValue().eqls());
         }
-        c.sync.entrySet().removeIf(e -> !e.getKey().global || e.getValue() instanceof Virtual ||
-                !(e.getValue().valid || e.getValue() instanceof Phi && e.getValue().eqls() == e.getValue()));
+        c.sync.entrySet().removeIf(e -> !e.getKey().global || e.getValue() instanceof Virtual);
         for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
             if (alive.contains(e.getValue())) c.retrieve.put(e.getKey(), e.getValue());
         }
@@ -162,11 +163,12 @@ public class SyncO implements Index {
         if (indexCnt < 0) return;
         if (++indexCnt >= legendH.size()) {
             indexCnt = -1;
-            Set<MVar> vars = new HashSet<>();
+            Set<MVar> vars = new TreeSet<>();
             if (!(end instanceof Ret) || !"main".equals(this.func.name)) phi(vars, legendH);
             phi(vars, legendL);
             ((Flight) end).addPsi(psi);
-            for (Map.Entry<MVar, Meta> e : mp.entrySet()) if (vars.contains(e.getKey())) e.getValue().eqls().valid = true;
+            for (Map.Entry<MVar, Meta> e : mp.entrySet())
+                if (vars.contains(e.getKey())) e.getValue().eqls().valid = true;
             List<Meta> soup = blk.ms;
             end.valid = true;
             alive.removeIf(e -> e.eqls() instanceof Put);
@@ -174,7 +176,7 @@ public class SyncO implements Index {
             for (int i = soup.size() - 1; i > -1; --i) {
                 indexAlive(soup.get(i));
             }
-            blk.req.indexMeta(new HashSet<>(alive));
+            blk.req.indexMeta(new TreeSet<>(alive));
             for (Meta m : soup) if (m.valid) indexKill(m);
         }
     }
@@ -196,5 +198,18 @@ public class SyncO implements Index {
 
     public void setEnd() {
         if (end == null) setEnd(new Ret());
+    }
+
+    @Override
+    public int compareTo(Index o) {
+        if (o instanceof GlobalO) return 1;
+        if (o instanceof GlobalR) return -1;
+        if (o instanceof SyncO) {
+            SyncO q = (SyncO) o;
+            return Integer.compare(blk.id, q.blk.id);
+        } else {
+            SyncR q = (SyncR) o;
+            return Integer.compare(blk.id, q.blk.id);
+        }
     }
 }

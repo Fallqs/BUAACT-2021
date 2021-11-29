@@ -17,8 +17,8 @@ import java.util.*;
  * Synchronize Requirement
  */
 public class SyncR implements Index {
-    public final Map<MVar, Meta> mp = new HashMap<>();
-    protected final Set<Index> oprH = new HashSet<>();
+    public final Map<MVar, Meta> mp = new TreeMap<>();
+    protected final Set<Index> oprH = new TreeSet<>();
     //    private final Set<Index> oprL = new HashSet<>();
     public final SyncB blk;
     public boolean isLoop = false, endLoop = false;
@@ -57,6 +57,7 @@ public class SyncR implements Index {
         if (func == null) {
             func = f;
             blk.opr.setFunc(f);
+            for (MVar v : mp.keySet()) if (v.global) func.reads.add(v);
         }
     }
 
@@ -72,16 +73,16 @@ public class SyncR implements Index {
     }
 
     @Override
-    public void indexOpr(Map<MVar, Meta> mp) {
+    public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
         for (Map.Entry<MVar, Meta> e : mp.entrySet()) {
             Phi p = (Phi) this.mp.get(e.getKey());
             if (p == null) this.mp.put(e.getKey(), (p = new Phi(e.getKey())).addFr(e.getValue()));
             p.fr.add(e.getValue());
         }
-        if (indexCnt < 0) return;
+        if (indexCnt < 0 || isLight) return;
         if (++indexCnt >= oprH.size()) {
             indexCnt = -1;
-            blk.opr.indexOpr(this.mp);
+            blk.opr.indexOpr(this.mp, false);
         }
     }
 
@@ -92,6 +93,10 @@ public class SyncR implements Index {
             indexCnt = -1;
             for (Meta p : mp.values())
                 p.shrink();
+//            if (blk.id == 8) {
+//                for (Meta m : mp.values()) System.out.println(m + "; " + m.eqls());
+//                System.out.println("<BR>\n");
+//            }
             blk.opr.indexPhi();
             for (Meta p : mp.values())
                 p.shrink();
@@ -131,7 +136,7 @@ public class SyncR implements Index {
             list.add(p.eqls());
         }
         for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls());
-        for (Index i : oprH) i.indexMeta(new HashSet<>(s));
+        for (Index i : oprH) i.indexMeta(new TreeSet<>(s));
     }
 
     @Override
@@ -151,5 +156,18 @@ public class SyncR implements Index {
         } else for (Meta p : mp.values()) if (p.valid) ((Phi) p).save();
 
         blk.opr.translate();
+    }
+
+    @Override
+    public int compareTo(Index o) {
+        if (o instanceof GlobalO) return 1;
+        if (o instanceof GlobalR) return -1;
+        if (o instanceof SyncO) {
+            SyncO q = (SyncO) o;
+            return Integer.compare(blk.id, q.blk.id);
+        } else {
+            SyncR q = (SyncR) o;
+            return Integer.compare(blk.id, q.blk.id);
+        }
     }
 }

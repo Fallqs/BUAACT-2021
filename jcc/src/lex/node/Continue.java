@@ -24,10 +24,11 @@ public class Continue extends Node {
 
     @Override
     public Meta translate() {
-        Dojo.curOpr.setEnd(new BrGoto(continuePin.peek(), false));
+        Meta ret = new BrGoto(continuePin.peek(), false);
+        Dojo.curOpr.setEnd(ret);
         continues.push(Dojo.curOpr);
         new SyncB();
         Dojo.curReq.add(continues.peek());
-        return null;
+        return ret;
     }
 }

@@ -60,7 +60,7 @@ public class Meta implements Comparable<Meta> {
     }
 
     public Meta eqls() {
-        return this.eqls == this? this : this.eqls.eqls();
+        return eqls = this.eqls == this ? this : this.eqls.eqls();
     }
 
     public void addLegend(Meta m) {
@@ -74,7 +74,7 @@ public class Meta implements Comparable<Meta> {
 
     @Override
     public int compareTo(Meta o) {
-        return Integer.compare(legend, o.legend);
+        return legend != o.legend ? Integer.compare(legend, o.legend) : Integer.compare(id, o.id);
     }
 
     public Instr translate() {

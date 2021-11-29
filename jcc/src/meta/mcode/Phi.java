@@ -13,11 +13,12 @@ import java.util.Set;
 
 public class Phi extends Meta {
     public MVar var;
-    public List<Meta> fr = new ArrayList<>();
+    public final List<Meta> fr = new ArrayList<>();
 
     public Phi(MVar v) {
         super(false);
         this.var = v;
+//        System.out.println(this);
     }
 
     public Phi addFr(Meta m) {
@@ -45,6 +46,13 @@ public class Phi extends Meta {
                 single = false;
                 break;
             }
+//        if (var.name.equals("p")) {
+//            System.out.println(this.id);
+//            for (Meta m : fr) {
+//                System.out.println(m + "; " + m.eqls());
+//            }
+//            System.out.println("<BR>\n");
+//        }
         if (single) this.eqls = fr.isEmpty() ? Nop : fr.get(0).eqls();
     }
 

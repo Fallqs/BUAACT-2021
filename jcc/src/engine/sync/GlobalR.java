@@ -9,6 +9,7 @@ import meta.midt.MVar;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class GlobalR extends SyncR {
     @Override
@@ -30,12 +31,12 @@ public class GlobalR extends SyncR {
     }
 
     @Override
-    public void indexOpr(Map<MVar, Meta> mp) {
+    public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
     }
 
     @Override
     public void indexMeta(Set<Meta> s) {
-        for (Index i : oprH) i.indexMeta(new HashSet<>());
+        for (Index i : oprH) i.indexMeta(new TreeSet<>());
     }
 
     @Override
@@ -53,5 +54,10 @@ public class GlobalR extends SyncR {
 
     @Override
     public void translate() {
+    }
+
+    @Override
+    public int compareTo(Index o) {
+        return o == this ? 0 : 1;
     }
 }

@@ -15,6 +15,7 @@ public class Data extends Seg {
         int base = 0;
         for (MVar v : MTable.global) {
             v.base = base;
+            if (!v.putv.isEmpty() && v.putc.length < v.size) v.putv.get(0).toCnst();
             new Array(v.tag(), v.size, v.putc);
             base += v.size << 2;
         }

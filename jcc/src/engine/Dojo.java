@@ -7,10 +7,7 @@ import meta.midt.MFunc;
 import meta.midt.MTable;
 import meta.midt.MVar;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class Dojo {
     private static final ArrayList<SyncB> blks = new ArrayList<>();
@@ -70,7 +67,7 @@ public class Dojo {
             f.req.setFunc(f);
         }
         globalOpr.flushCnt();
-        globalOpr.indexOpr(new HashMap<>());
+        globalOpr.indexOpr(new TreeMap<>(), false);
         globalOpr.flushCnt();
         globalOpr.indexPhi();
         globalOpr.flushCnt();
@@ -80,7 +77,7 @@ public class Dojo {
 //            if (b.req.indexCnt != 0) System.out.println("reqx" + b.id);
 //            if (b.opr.indexCnt != 0) System.out.println("oprx" + b.id);
 //        }
-        globalReq.indexMeta(new HashSet<>());
+        globalReq.indexMeta(new TreeSet<>());
         globalOpr.flushCnt();
         for (MFunc f : MTable.func) f.memAlloc();
     }

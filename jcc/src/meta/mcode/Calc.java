@@ -114,8 +114,8 @@ public class Calc extends Meta {
         int tar = gtag(Instr.V0);
         Instr ret = null;
         if (opr == Opr.cnst) ret = new InstrSI(Op.li, tar, val);
-        else if (opr == Opr.add) ret = new InstrR(Op.add, tar, ma.get(Instr.V0), mb.get(Instr.A0));
-        else if (opr == Opr.sub) ret = new InstrR(Op.sub, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        else if (opr == Opr.add) ret = new InstrR(Op.addu, tar, ma.get(Instr.V0), mb.get(Instr.A0));
+        else if (opr == Opr.sub) ret = new InstrR(Op.subu, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.and) ret = new InstrR(Op.and, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.or) ret = new InstrR(Op.or, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.not) ret = new InstrI(Op.sltiu, tar, ma.get(Instr.V0), 1);

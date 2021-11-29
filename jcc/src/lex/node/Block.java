@@ -6,6 +6,8 @@ import lex.Node;
 import lex.nd.Ref;
 import meta.Meta;
 import meta.ident.Env;
+import meta.mcode.BrGoto;
+import meta.mcode.Ret;
 import meta.midt.MTable;
 import word.Typ;
 
@@ -15,7 +17,6 @@ public class Block extends Node {
     private final ArrayList<Node> lines = new ArrayList<>();
     public boolean func = false;
     private int endp;
-    private Env env;
 
     public Block() {
         typ = NTyp.Block;
@@ -36,7 +37,7 @@ public class Block extends Node {
 
     @Override
     public void logIdt() {
-        env = func ? idt.cur : idt.cur.chEnv();
+        Env env = func ? idt.cur : idt.cur.chEnv();
         for (Node i : lines) i.logIdt();
         if (!func) idt.cur.faEnv();
         if (func && idt.cur.retErr() && !ret()) cs.chkErr(Typ.NULLRET, endp);
@@ -55,8 +56,8 @@ public class Block extends Node {
     public Meta translate() {
         if (!(fa instanceof Ref)) MTable.newBlock();
         for (Node o : lines) {
-            o.translate();
-            if (o instanceof Return || o instanceof Break || o instanceof Continue) break;
+            Meta r = o.translate();
+            if (r instanceof BrGoto || r instanceof Ret) break;
         }
         if (!(fa instanceof Ref)) MTable.popBlock();
         return null;

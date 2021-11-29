@@ -11,10 +11,9 @@ import meta.Meta;
 import meta.midt.MFunc;
 import meta.midt.MVar;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Call extends Meta {
     public final MFunc func;
@@ -49,13 +48,17 @@ public class Call extends Meta {
 
     @Override
     public Meta[] prevs() {
-        return params;
+        List<Meta> ret = Stream.of(params).collect(Collectors.toList());
+        for (Map.Entry<MVar, Meta> e : sync.entrySet())
+            if (func.reads.contains(e.getKey())) ret.add(e.getValue());
+        return ret.toArray(new Meta[0]);
     }
 
     @Override
     public Instr translate() {
         sync.entrySet().removeIf(e ->
-                !func.writes.contains(e.getKey()) || !e.getValue().valid || e.getValue() instanceof Put);
+                (!func.reads.contains(e.getKey())) ||
+                        !e.getValue().valid || e.getValue() instanceof Put);
         retrieve.entrySet().removeIf(e -> !func.writes.contains(e.getKey()) || !e.getValue().valid);
         for (Map.Entry<MVar, Meta> e : sync.entrySet()) {
             Meta m = e.getValue();

@@ -15,12 +15,10 @@ import java.util.List;
  */
 public class Get extends Meta {
     public MVar var;
-    public List<Meta> putv;
 
     public Get(MVar var) {
         super(false);
         this.var = var;
-        putv = new ArrayList<>(var.putv);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class Get extends Meta {
 
     @Override
     public Meta[] prevs() {
-        return putv.toArray(new Meta[0]);
+        return var.putv.toArray(new Meta[0]);
     }
 
     @Override

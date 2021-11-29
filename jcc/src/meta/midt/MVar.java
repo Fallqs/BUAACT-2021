@@ -2,19 +2,20 @@ package meta.midt;
 
 import engine.Dojo;
 import meta.Meta;
+import meta.mcode.PArr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MVar implements MIdt {
+public class MVar implements MIdt, Comparable<MVar> {
     public MTyp typ;
     public String name;
     public int base = 0, size = 1, lgt = 0, dim = 1;
     public int reg = -1;
     public boolean cnst = false, init = false, isParam = false, global;
     public int[] putc;
-    public List<Meta> putv = new ArrayList<>();
+    public List<PArr> putv = new ArrayList<>();
 
     private static int cnt = 0;
     private final int id;
@@ -91,5 +92,10 @@ public class MVar implements MIdt {
 
     public String tag() {
         return name + id;
+    }
+
+    @Override
+    public int compareTo(MVar o) {
+        return Integer.compare(id, o.id);
     }
 }

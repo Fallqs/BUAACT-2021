@@ -25,8 +25,8 @@ public class GlobalO extends SyncO {
     }
 
     @Override
-    public void indexOpr(Map<MVar, Meta> mp) {
-        for (SyncR req : legendH) req.indexOpr(this.mp);
+    public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
+        for (SyncR req : legendH) req.indexOpr(this.mp, false);
     }
 
     @Override
@@ -45,5 +45,10 @@ public class GlobalO extends SyncO {
 
     @Override
     public void translate() {
+    }
+
+    @Override
+    public int compareTo(Index o) {
+        return o == this ? 0 : -1;
     }
 }
