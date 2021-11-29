@@ -13,6 +13,6 @@ public interface Index extends Comparable<Index> {
     void indexOpr(Map<MVar, Meta> mp, boolean isLight);
     void indexPhi();
     void indexPhi(boolean isLoop);
-    void indexMeta(Set<Meta> s);
+    void indexMeta(Set<Meta> s, boolean isLight);
     void translate();
 }

@@ -17,6 +17,7 @@ public class SyncO implements Index {
     public final Set<SyncR> legendH = new TreeSet<>();
     public final Set<SyncR> legendL = new TreeSet<>();
     public final Set<Meta> alive = new TreeSet<>();
+    public final Set<Meta> llive = new TreeSet<>();
     public final Map<SyncR, ArrayList<Psi>> psi = new TreeMap<>();
     public final SyncB blk;
     public final SyncR rq;
@@ -59,7 +60,7 @@ public class SyncO implements Index {
         return new TreeMap<>(mp);
     }
 
-    public int indexCnt = 0;
+    public int indexCnt = 0, lightCnt = 0;
 
     @Override
     public void setFunc(MFunc f) {
@@ -72,12 +73,8 @@ public class SyncO implements Index {
     @Override
     public void flushCnt() {
         for (Index i : legendH) i.flushCnt();
-        indexCnt = 0;
-//        if (indexCnt != 0) {
-//            indexCnt = 0;
-//            for (Index i : legendH) i.flushCnt();
-//            blk.req.flushCnt();
-//        }
+        indexCnt = lightCnt = 0;
+        if (legendL.isEmpty()) lightCnt = -1;
     }
 
     @Override
@@ -134,6 +131,7 @@ public class SyncO implements Index {
     }
 
     private final Stack<SyncLog> kills = new Stack<>();
+    private final Stack<Meta> killsBuf = new Stack<>();
 
     private void indexAlive(Meta m) {
         if (!(m instanceof Virtual)) func.malloc.add(m);
@@ -150,18 +148,21 @@ public class SyncO implements Index {
     }
 
     private void indexKill(Meta m) {
-        while (!kills.isEmpty() && kills.peek().key == m) alive.remove(kills.pop().value);
+        while (!kills.isEmpty() && kills.peek().key == m) {
+            if (!llive.contains(kills.peek().value)) alive.remove(kills.pop().value);
+            else killsBuf.push(kills.pop().value);
+        }
         if (!(m instanceof Virtual)) {
             for (Meta n : alive) func.malloc.add(m, n.eqls());
             alive.add(m);
         }
+        while (!killsBuf.empty()) alive.remove(killsBuf.pop());
     }
 
     @Override
-    public void indexMeta(Set<Meta> s) {
+    public void indexMeta(Set<Meta> s, boolean isLight) {
         for (Meta m : s) alive.add(m.eqls());
-        if (indexCnt < 0) return;
-        if (++indexCnt >= legendH.size()) {
+        if (!isLight && indexCnt >= 0 && ++indexCnt >= legendH.size()) {
             indexCnt = -1;
             Set<MVar> vars = new TreeSet<>();
             if (!(end instanceof Ret) || !"main".equals(this.func.name)) phi(vars, legendH);
@@ -176,9 +177,16 @@ public class SyncO implements Index {
             for (int i = soup.size() - 1; i > -1; --i) {
                 indexAlive(soup.get(i));
             }
-            blk.req.indexMeta(new TreeSet<>(alive));
-            for (Meta m : soup) if (m.valid) indexKill(m);
+            blk.req.indexMeta(new TreeSet<>(alive), false);
+            for (Meta m : blk.ms) if (m.valid) indexKill(m);
         }
+        if (isLight && lightCnt >= 0) {
+            if (++lightCnt >= legendL.size()) lightCnt = -1;
+            llive.addAll(s);
+        }
+//        if (indexCnt < 0 && lightCnt < 0) {
+//            for (Meta m : blk.ms) if (m.valid) indexKill(m);
+//        }
     }
 
     @Override

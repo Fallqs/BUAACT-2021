@@ -19,7 +19,7 @@ import java.util.*;
 public class SyncR implements Index {
     public final Map<MVar, Meta> mp = new TreeMap<>();
     protected final Set<Index> oprH = new TreeSet<>();
-    //    private final Set<Index> oprL = new HashSet<>();
+    private final Set<Index> oprL = new HashSet<>();
     public final SyncB blk;
     public boolean isLoop = false, endLoop = false;
 
@@ -41,7 +41,7 @@ public class SyncR implements Index {
     }
 
     public void addL(SyncO opr) {
-//        oprL.add(opr);
+        oprL.add(opr);
         opr.addLegendL(this);
     }
 
@@ -115,10 +115,10 @@ public class SyncR implements Index {
         }
     }
 
-    private final Stack<SyncLog> kills = new Stack<>();
+//    private final Stack<SyncLog> kills = new Stack<>();
 
     @Override
-    public void indexMeta(Set<Meta> s) {
+    public void indexMeta(Set<Meta> s, boolean isLight) {
         if (indexCnt < 0) return;
         indexCnt = -1;
         List<Meta> list = new ArrayList<>();
@@ -136,7 +136,8 @@ public class SyncR implements Index {
             list.add(p.eqls());
         }
         for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls());
-        for (Index i : oprH) i.indexMeta(new TreeSet<>(s));
+        for (Index i : oprH) i.indexMeta(new TreeSet<>(s), false);
+        for (Index i: oprL) i.indexMeta(new TreeSet<>(s), true);
     }
 
     @Override
@@ -150,7 +151,8 @@ public class SyncR implements Index {
         if (++indexCnt < oprH.size()) return;
         indexCnt = -1;
         new Nop(toString());
-        if (func.req == this && !"main".equals(func.name)) new InstrLS(Op.sw, Instr.RA, func.stackSiz - 4, Instr.SP);
+        if (func.req == this && !"main".equals(func.name))
+            new InstrLS(Op.sw, Instr.RA, func.stackSiz - 4, Instr.SP);
         if (func.req == this) {
             for (Meta p : mp.values()) if (p.valid) p.translate();
         } else for (Meta p : mp.values()) if (p.valid) ((Phi) p).save();
