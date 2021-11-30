@@ -118,7 +118,7 @@ public class SyncR implements Index {
 //    private final Stack<SyncLog> kills = new Stack<>();
 
     @Override
-    public void indexMeta(Set<Meta> s, boolean isLight) {
+    public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
 //        if (func.name.equals("main")) {
 //            System.out.print("REQ" + blk.id + ": ");
 //            for (Index o : oprH) System.out.print(((SyncO) o).blk.id + ", ");
@@ -143,8 +143,8 @@ public class SyncR implements Index {
             list.add(p.eqls());
         }
         for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls());
-        for (Index i : oprH) i.indexMeta(new TreeSet<>(s), false);
-        for (Index i: oprL) i.indexMeta(new TreeSet<>(s), true);
+        for (Index i : oprH) i.indexMeta(new TreeSet<>(s), false, kill);
+        for (Index i: oprL) i.indexMeta(new TreeSet<>(s), true, kill);
     }
 
     @Override

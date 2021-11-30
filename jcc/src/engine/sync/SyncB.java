@@ -1,6 +1,7 @@
 package engine.sync;
 
 import engine.Dojo;
+import engine.instr.Instr;
 import meta.Meta;
 
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ public class SyncB implements Comparable<SyncB> {
         StringBuilder ret = new StringBuilder();
         if (req.func != null && req.func.req == req) ret.append('\n').append(req.func);
         ret.append('\n').append(req).append(":\n");
-        for (Meta m : req.mp.values()) if (m.valid) ret.append(m).append('\n');
-        for (Meta m : ms) if (m.valid) ret.append(m).append('\n');
+        for (Meta m : req.mp.values()) if (m.valid) ret.append(m).append(": ").append(Instr.getReg(m.reg)).append('\n');
+        for (Meta m : ms) if (m.valid) ret.append(m).append(": ").append(Instr.getReg(m.reg)).append('\n');
         ret.append(opr.end).append('\n');
         return ret.toString();
     }

@@ -102,15 +102,15 @@ public class SyncO implements Index {
         else for (Index i : legendH) i.indexPhi(true);
     }
 
-    private void phi(Set<MVar> vars, Set<SyncR> lgd) {  // deduce (psi) nodes for every branch
+    private void phi(Set<MVar> vars, Set<SyncR> lgd, boolean kill) {  // deduce (psi) nodes for every branch
         for (SyncR req : lgd) {
-            psi.put(req, new ArrayList<>());
+            if (!psi.containsKey(req)) psi.put(req, new ArrayList<>());
             for (Map.Entry<MVar, Meta> e : req.mp.entrySet()) {
                 if (!(e.getValue() instanceof Phi) || e.getValue().eqls() != e.getValue()) continue;
                 if (mp.containsKey(e.getKey())) {
                     vars.add(e.getKey());
                     Meta m = mp.get(e.getKey()).eqls();
-                    psi.get(req).add(new Psi(m.eqls(), e.getValue().eqls()));
+                    if (kill) psi.get(req).add(new Psi(m.eqls(), e.getValue().eqls()));
                     if (!(m instanceof Put)) alive.add(m);
                 }
             }
@@ -132,9 +132,10 @@ public class SyncO implements Index {
 
     private final Stack<SyncLog> kills = new Stack<>();
     private final Stack<Meta> killsBuf = new Stack<>();
+//    private final Set<Meta> saves = new TreeSet<>();
 
-    private void indexAlive(Meta m) {
-        if (!(m instanceof Virtual)) func.malloc.add(m);
+    private void indexAlive(Meta m, boolean kill) {
+//        if (!(m instanceof Virtual)) func.malloc.add(m);
         if (!alive.contains(m) && !m.valid && !(m instanceof Call)) return;
         alive.remove(m);
         m.valid = true;
@@ -142,51 +143,61 @@ public class SyncO implements Index {
         for (Meta p : m.prevs())
             if (!alive.contains(p.eqls()) && !(p.eqls() instanceof Put)) {
 //                for (Meta q : alive) func.malloc.add(p.eqls, q);
-                kills.add(new SyncLog(m, p.eqls()));
+                if (kill) kills.add(new SyncLog(m, p.eqls()));
                 alive.add(p.eqls());
             }
     }
 
     private void indexKill(Meta m) {
+        func.malloc.add(m);
         while (!kills.isEmpty() && kills.peek().key == m) {
-            if (!llive.contains(kills.peek().value)) alive.remove(kills.pop().value);
-            else killsBuf.push(kills.pop().value);
+            if (!llive.contains(kills.peek().value)) alive.remove(kills.peek().value);
+//            else killsBuf.push(kills.peek().value);
+            kills.pop();
         }
         if (!(m instanceof Virtual)) {
             for (Meta n : alive) func.malloc.add(m, n.eqls());
             alive.add(m);
         }
-        while (!killsBuf.empty()) alive.remove(killsBuf.pop());
+//        while (!killsBuf.empty()) alive.remove(killsBuf.pop());
     }
 
     @Override
-    public void indexMeta(Set<Meta> s, boolean isLight) {
+    public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
 //        if (func.name.equals("main")) System.out.println("OPR" + blk.id + ", " + isLight + ", " + indexCnt + "/" + legendH.size());
-        for (Meta m : s) alive.add(m.eqls());
+        for (Meta m : s) {
+            alive.add(m.eqls());
+            llive.add(m.eqls());
+        }
         if (!isLight && indexCnt >= 0 && ++indexCnt >= legendH.size()) {
             indexCnt = -1;
             Set<MVar> vars = new TreeSet<>();
-            if (!(end instanceof Ret) || !"main".equals(this.func.name)) phi(vars, legendH);
-            phi(vars, legendL);
-            ((Flight) end).addPsi(psi);
+            if (!(end instanceof Ret) || !"main".equals(this.func.name)) phi(vars, legendH, kill);
+            phi(vars, legendL, kill);
+            if (kill) ((Flight) end).addPsi(psi);
             for (Map.Entry<MVar, Meta> e : mp.entrySet())
                 if (vars.contains(e.getKey())) e.getValue().eqls().valid = true;
             List<Meta> soup = blk.ms;
             end.valid = true;
             alive.removeIf(e -> e.eqls() instanceof Put);
-            indexAlive(end);
+            indexAlive(end, kill);
             for (int i = soup.size() - 1; i > -1; --i) {
-                indexAlive(soup.get(i));
+                indexAlive(soup.get(i), kill);
             }
-            blk.req.indexMeta(new TreeSet<>(alive), false);
-            for (Meta m : blk.ms) if (m.valid) indexKill(m);
+            blk.req.indexMeta(new TreeSet<>(alive), false, kill);
+            if (kill) {
+//                alive.addAll(llive);
+                for (Meta m : blk.ms) if (m.valid) indexKill(m);
+            }
+//            System.out.println("HEAVY : " + blk.id);
         }
-        if (isLight && lightCnt >= 0) {
-            if (++lightCnt >= legendL.size()) lightCnt = -1;
-            llive.addAll(s);
-        }
+//        if (isLight && lightCnt >= 0) {
+//            if (++lightCnt >= legendL.size()) lightCnt = -1;
+//            llive.addAll(s);
+//        }
 //        if (indexCnt < 0 && lightCnt < 0) {
-//            for (Meta m : blk.ms) if (m.valid) indexKill(m);
+////            for (Meta m : blk.ms) if (m.valid) indexKill(m);
+//            System.out.println("LIGHT + HEAVY : " + blk.id);
 //        }
     }
 

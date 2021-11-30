@@ -35,9 +35,9 @@ public class GlobalR extends SyncR {
     }
 
     @Override
-    public void indexMeta(Set<Meta> s, boolean isLight) {
+    public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
         for (Index i : oprH)
-            i.indexMeta(new TreeSet<>(), false);
+            i.indexMeta(new TreeSet<>(), false, kill);
     }
 
     @Override

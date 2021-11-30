@@ -30,7 +30,7 @@ public class GlobalO extends SyncO {
     }
 
     @Override
-    public void indexMeta(Set<Meta> s, boolean isLight) {
+    public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
     }
 
     @Override

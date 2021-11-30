@@ -10,7 +10,7 @@ public class MetaAlloc {
             "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
             "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "fp", "v1"
     };
-    public final List<List<Integer>> G = new ArrayList<>();
+    public final List<Set<Integer>> G = new ArrayList<>();
     public final Map<Meta, Integer> mp = new HashMap<>();
     private int cnt = 0;
     public int[] regAlloc, stackAlloc, regUse;
@@ -18,13 +18,13 @@ public class MetaAlloc {
     public int stackSiz = 0;
 
     public MetaAlloc() {
-        G.add(new ArrayList<>());
+        G.add(new HashSet<>());
     }
 
     public void add(Meta u) {
         if (u != null && u != Meta.Nop && !mp.containsKey(u)) {
             mp.put(u, ++cnt);
-            G.add(new ArrayList<>());
+            G.add(new HashSet<>());
         }
     }
 
