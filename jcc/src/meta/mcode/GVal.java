@@ -34,7 +34,7 @@ public class GVal extends Meta {
         for (int i = 0; i < ms.length; ++i) {
             ix[i] = ms[i].calc();
         }
-        return var.gval(ix);
+        return val = var.gval(ix);
     }
 
     @Override

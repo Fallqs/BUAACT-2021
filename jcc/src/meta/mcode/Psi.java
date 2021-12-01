@@ -23,7 +23,7 @@ public class Psi extends Meta implements Virtual {
 
     @Override
     public int calc() {
-        return fr.calc();
+        return val = fr.calc();
     }
 
     @Override

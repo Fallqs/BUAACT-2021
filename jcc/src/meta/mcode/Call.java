@@ -36,7 +36,7 @@ public class Call extends Meta {
 
     @Override
     public int calc() {
-        return 0;
+        return val = 0;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class Call extends Meta {
                 new InstrLS(Op.sw, Instr.V0, m.spx, Instr.SP);
             }
         }
-        for (Meta m : preserve) if (m.reg >= 0) new InstrLS(Op.lw, m.reg, m.spx, Instr.SP);
+        for (Meta m : preserve) if (m.reg >= 0 && !(m instanceof Virtual)) new InstrLS(Op.lw, m.reg, m.spx, Instr.SP);
 
         return ret;
     }

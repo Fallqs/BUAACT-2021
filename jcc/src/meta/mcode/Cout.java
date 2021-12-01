@@ -27,7 +27,7 @@ public class Cout extends Meta implements Virtual {
 
     @Override
     public int calc() {
-        return isStr ? s.size : m.calc();
+        return val = isStr ? s.size : m.calc();
     }
 
     @Override

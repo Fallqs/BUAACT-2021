@@ -28,7 +28,7 @@ public class Get extends Meta {
 
     @Override
     public int calc() {
-        return var.gval();
+        return val = var.gval();
     }
 
     @Override

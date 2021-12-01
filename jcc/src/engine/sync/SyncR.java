@@ -65,11 +65,6 @@ public class SyncR implements Index {
     public void flushCnt() {
         this.blk.opr.flushCnt();
         indexCnt = loopCnt = 0;
-//        if (indexCnt != 0) {
-//            indexCnt = 0;
-//            for (Index i : oprH) i.flushCnt();
-//            this.blk.opr.flushCnt();
-//        }
     }
 
     @Override
@@ -93,10 +88,6 @@ public class SyncR implements Index {
             indexCnt = -1;
             for (Meta p : mp.values())
                 p.shrink();
-//            if (blk.id == 8) {
-//                for (Meta m : mp.values()) System.out.println(m + "; " + m.eqls());
-//                System.out.println("<BR>\n");
-//            }
             blk.opr.indexPhi();
             for (Meta p : mp.values())
                 p.shrink();
@@ -115,17 +106,8 @@ public class SyncR implements Index {
         }
     }
 
-//    private final Stack<SyncLog> kills = new Stack<>();
-
     @Override
     public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
-//        if (func.name.equals("main")) {
-//            System.out.print("REQ" + blk.id + ": ");
-//            for (Index o : oprH) System.out.print(((SyncO) o).blk.id + ", ");
-//            System.out.print("; ");
-//            for (Index o : oprL) System.out.print(((SyncO) o).blk.id + ", ");
-//            System.out.println();
-//        }
         if (indexCnt < 0) return;
         indexCnt = -1;
         List<Meta> list = new ArrayList<>();
@@ -134,11 +116,6 @@ public class SyncR implements Index {
             s.remove(p);
             p.valid = true;
             func.malloc.add(p);
-//            for (Meta q : p.prevs())
-//                if (!s.contains(q.eqls)) {
-////                    for (Meta r : s) func.malloc.add(p.eqls, r.eqls);
-//                    kills.push(new SyncLog(p, q));
-//                }
             for (Meta q : list) func.malloc.add(p.eqls(), q);
             list.add(p.eqls());
         }

@@ -41,7 +41,7 @@ public class PArr extends Meta implements Virtual {
 
     @Override
     public int calc() {
-        return 0;
+        return val = var.base;
     }
 
     @Override

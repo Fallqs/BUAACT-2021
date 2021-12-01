@@ -30,7 +30,8 @@ public class SyncB implements Comparable<SyncB> {
         if (req.func != null && req.func.req == req) ret.append('\n').append(req.func);
         ret.append('\n').append(req).append(":\n");
         for (Meta m : req.mp.values()) if (m.valid) ret.append(m).append(": ").append(Instr.getReg(m.reg)).append('\n');
-        for (Meta m : ms) if (m.valid) ret.append(m).append(": ").append(Instr.getReg(m.reg)).append('\n');
+        for (Meta m : ms) if (m.valid) ret.append(m).append(": ").append(m.legend).append("; ")
+                .append(Instr.getReg(m.reg)).append('\n');
         ret.append(opr.end).append('\n');
         return ret.toString();
     }

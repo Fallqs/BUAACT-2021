@@ -28,7 +28,7 @@ public class Phi extends Meta {
 
     @Override
     public int calc() {
-        return var.gval();
+        return val = var.gval();
     }
 
     @Override
@@ -46,13 +46,6 @@ public class Phi extends Meta {
                 single = false;
                 break;
             }
-//        if (var.name.equals("p")) {
-//            System.out.println(this.id);
-//            for (Meta m : fr) {
-//                System.out.println(m + "; " + m.eqls());
-//            }
-//            System.out.println("<BR>\n");
-//        }
         if (single) this.eqls = fr.isEmpty() ? Nop : fr.get(0).eqls();
     }
 

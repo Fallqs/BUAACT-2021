@@ -131,18 +131,14 @@ public class SyncO implements Index {
     }
 
     private final Stack<SyncLog> kills = new Stack<>();
-    private final Stack<Meta> killsBuf = new Stack<>();
-//    private final Set<Meta> saves = new TreeSet<>();
 
     private void indexAlive(Meta m, boolean kill) {
-//        if (!(m instanceof Virtual)) func.malloc.add(m);
         if (!alive.contains(m) && !m.valid && !(m instanceof Call)) return;
         alive.remove(m);
         m.valid = true;
         if (m instanceof Call) call((Call) m);
         for (Meta p : m.prevs())
             if (!alive.contains(p.eqls()) && !(p.eqls() instanceof Put)) {
-//                for (Meta q : alive) func.malloc.add(p.eqls, q);
                 if (kill) kills.add(new SyncLog(m, p.eqls()));
                 alive.add(p.eqls());
             }
@@ -152,19 +148,16 @@ public class SyncO implements Index {
         func.malloc.add(m);
         while (!kills.isEmpty() && kills.peek().key == m) {
             if (!llive.contains(kills.peek().value)) alive.remove(kills.peek().value);
-//            else killsBuf.push(kills.peek().value);
             kills.pop();
         }
         if (!(m instanceof Virtual)) {
             for (Meta n : alive) func.malloc.add(m, n.eqls());
             alive.add(m);
         }
-//        while (!killsBuf.empty()) alive.remove(killsBuf.pop());
     }
 
     @Override
     public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
-//        if (func.name.equals("main")) System.out.println("OPR" + blk.id + ", " + isLight + ", " + indexCnt + "/" + legendH.size());
         for (Meta m : s) {
             alive.add(m.eqls());
             llive.add(m.eqls());

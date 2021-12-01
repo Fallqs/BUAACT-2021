@@ -7,7 +7,7 @@ import meta.midt.MVar;
 
 public class Meta implements Comparable<Meta> {
     public final int id;
-    private int legend;
+    public int legend;
     public boolean cnst = false, valid = false;
     public Meta eqls;
     public static int cnt = 0;
