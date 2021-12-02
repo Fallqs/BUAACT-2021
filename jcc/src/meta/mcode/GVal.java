@@ -69,6 +69,7 @@ public class GVal extends Meta {
                 } else if (!var.isParam) {
                     new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
                     new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.bsR(var));
+//                    if (!var.global && !var.cnst) new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.SP);
                     ret = new InstrLS(Op.lw, tar, var.base, Instr.V0);
                 } else {
                     new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
@@ -91,6 +92,7 @@ public class GVal extends Meta {
                     new InstrI(Op.sll, Instr.A0, ms[1].get(Instr.A0), 2);
                     new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.A0);
                     new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.bsR(var));
+//                    if (!var.global && !var.cnst) new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.SP);
                     ret = new InstrLS(Op.lw, tar, var.base, Instr.V0);
                 } else {
                     new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
