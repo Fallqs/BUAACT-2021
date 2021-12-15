@@ -89,15 +89,18 @@ public class SyncR implements Index {
                 this.mp.put(e.getKey(), (p = new Phi(e.getKey())));
                 blk.opr.syncOpr(p);
                 ans = false;
+            } else if (!p.fr.contains(e.getValue())) {
+                p.fr.add(e.getValue());
+                ans = false;
             }
-            p.fr.add(e.getValue());
         }
         return ans;
     }
 
     public boolean transPhi() {
         boolean ans = true;
-        for (Meta p : mp.values()) ans &= ((Phi) p).shrank();
+        for (Meta p : mp.values())
+            ans &= ((Phi) p).shrank();
         return ans;
     }
 

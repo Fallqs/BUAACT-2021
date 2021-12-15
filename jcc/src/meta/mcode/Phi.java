@@ -8,10 +8,7 @@ import meta.Meta;
 import meta.midt.MTyp;
 import meta.midt.MVar;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Phi extends Meta {
     public MVar var;
@@ -20,7 +17,6 @@ public class Phi extends Meta {
     public Phi(MVar v) {
         super(false);
         this.var = v;
-//        System.out.println(this);
     }
 
     public Phi addFr(Meta m) {
@@ -53,6 +49,7 @@ public class Phi extends Meta {
 
     public boolean shrank() {
         boolean ans = (this.eqls == this);
+        fr.removeIf(e -> e.eqls() == this);
         Set<Meta> eq = new HashSet<>();
         Set<Meta> ne = new HashSet<>();
         for (Meta m : fr) if (m != m.eqls()) {
@@ -62,7 +59,7 @@ public class Phi extends Meta {
         fr.removeIf(ne::contains);
         fr.addAll(eq);
         if (fr.size() == 1) this.eqls = fr.iterator().next();
-        return ans == (this.eqls == this);
+        return ans == (this.eqls == this) && ne.isEmpty();
     }
 
     @Override

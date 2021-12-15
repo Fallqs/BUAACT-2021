@@ -88,7 +88,7 @@ public class SyncO implements Index {
     }
 
     public void syncOpr(Phi p) {
-        this.mp.put(p.var, p);
+        this.mp.putIfAbsent(p.var, p);
     }
 
     public boolean transOpr() {
@@ -190,19 +190,9 @@ public class SyncO implements Index {
             }
             blk.req.indexMeta(new TreeSet<>(alive), false, kill);
             if (kill) {
-//                alive.addAll(llive);
                 for (Meta m : blk.ms) if (m.valid) indexKill(m);
             }
-//            System.out.println("HEAVY : " + blk.id);
         }
-//        if (isLight && lightCnt >= 0) {
-//            if (++lightCnt >= legendL.size()) lightCnt = -1;
-//            llive.addAll(s);
-//        }
-//        if (indexCnt < 0 && lightCnt < 0) {
-////            for (Meta m : blk.ms) if (m.valid) indexKill(m);
-//            System.out.println("LIGHT + HEAVY : " + blk.id);
-//        }
     }
 
     @Override

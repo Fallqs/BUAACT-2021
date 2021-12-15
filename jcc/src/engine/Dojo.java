@@ -85,9 +85,9 @@ public class Dojo {
 //        globalOpr.indexPhi();
 //        globalOpr.flushCnt();
 //        globalOpr.indexPhi();
-//        globalOpr.flushCnt();
-//        globalReq.indexMeta(new TreeSet<>(), false, false);
-//        globalOpr.flushCnt();
+        globalOpr.flushCnt();
+        globalReq.indexMeta(new TreeSet<>(), false, false);
+        globalOpr.flushCnt();
         globalReq.indexMeta(new TreeSet<>(), false, true);
         globalOpr.flushCnt();
         for (MFunc f : MTable.func) f.memAlloc();
