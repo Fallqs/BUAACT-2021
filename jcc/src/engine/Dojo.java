@@ -66,15 +66,28 @@ public class Dojo {
             globalOpr.addLegend(f.req);
             f.req.setFunc(f);
         }
-        globalOpr.flushCnt();
-        globalOpr.indexOpr(new TreeMap<>(), false);
-        globalOpr.flushCnt();
-        globalOpr.indexPhi();
-        globalOpr.flushCnt();
-        globalOpr.indexPhi();
-        globalOpr.flushCnt();
-        globalReq.indexMeta(new TreeSet<>(), false, false);
-        globalOpr.flushCnt();
+
+        boolean status = false;
+        while (!status) {
+            status = globalOpr.transOpr();
+            for (SyncB blk : blks) status &= blk.opr.transOpr();
+        }
+
+        status = false;
+        while (!status) {
+            status = globalReq.transPhi();
+            for (SyncB blk : blks) status &= blk.req.transPhi();
+        }
+
+//        globalOpr.flushCnt();
+//        globalOpr.indexOpr(new TreeMap<>(), false);
+//        globalOpr.flushCnt();
+//        globalOpr.indexPhi();
+//        globalOpr.flushCnt();
+//        globalOpr.indexPhi();
+//        globalOpr.flushCnt();
+//        globalReq.indexMeta(new TreeSet<>(), false, false);
+//        globalOpr.flushCnt();
         globalReq.indexMeta(new TreeSet<>(), false, true);
         globalOpr.flushCnt();
         for (MFunc f : MTable.func) f.memAlloc();

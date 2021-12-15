@@ -35,6 +35,11 @@ public class GlobalR extends SyncR {
     }
 
     @Override
+    public boolean transOpr(Map<MVar, Meta> mp) {
+        return true;
+    }
+
+    @Override
     public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
         for (Index i : oprH)
             i.indexMeta(new TreeSet<>(), false, kill);

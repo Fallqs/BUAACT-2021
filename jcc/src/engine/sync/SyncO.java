@@ -60,7 +60,7 @@ public class SyncO implements Index {
         return new TreeMap<>(mp);
     }
 
-    public int indexCnt = 0, lightCnt = 0;
+    public int indexCnt = 0, lightCnt = 0, breakCnt = 0;
 
     @Override
     public void setFunc(MFunc f) {
@@ -73,18 +73,29 @@ public class SyncO implements Index {
     @Override
     public void flushCnt() {
         for (Index i : legendH) i.flushCnt();
-        indexCnt = lightCnt = 0;
+        indexCnt = lightCnt = breakCnt = 0;
         if (legendL.isEmpty()) lightCnt = -1;
     }
 
     @Override
     public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
-        if (indexCnt < 0) return;
-        indexCnt = -1;
         for (Map.Entry<MVar, Meta> e : mp.entrySet())
             this.mp.putIfAbsent(e.getKey(), e.getValue());
+        if (isLight || indexCnt < 0) return;
+        indexCnt = -1;
         for (SyncR req : legendH) req.indexOpr(this.mp, false);
         for (SyncR req : legendL) req.indexOpr(this.mp, true);
+    }
+
+    public void syncOpr(Phi p) {
+        this.mp.put(p.var, p);
+    }
+
+    public boolean transOpr() {
+        boolean ans = true;
+        for (SyncR req : legendH) ans &= req.transOpr(this.mp);
+        for (SyncR req : legendL) ans &= req.transOpr(this.mp);
+        return ans;
     }
 
     @Override
@@ -96,8 +107,8 @@ public class SyncO implements Index {
 
     @Override
     public void indexPhi(boolean isBreak) {
-        if (indexCnt < -1) return;
-        indexCnt = -2;
+        if (breakCnt < 0) return;
+        breakCnt = -1;
         if ((end instanceof BrGoto) && ((BrGoto) end).isBreak) for (Index i : legendH) i.indexPhi();
         else for (Index i : legendH) i.indexPhi(true);
     }

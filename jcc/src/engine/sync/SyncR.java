@@ -71,7 +71,7 @@ public class SyncR implements Index {
     public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
         for (Map.Entry<MVar, Meta> e : mp.entrySet()) {
             Phi p = (Phi) this.mp.get(e.getKey());
-            if (p == null) this.mp.put(e.getKey(), (p = new Phi(e.getKey())).addFr(e.getValue()));
+            if (p == null) this.mp.put(e.getKey(), (p = new Phi(e.getKey())));
             p.fr.add(e.getValue());
         }
         if (indexCnt < 0 || isLight) return;
@@ -79,6 +79,26 @@ public class SyncR implements Index {
             indexCnt = -1;
             blk.opr.indexOpr(this.mp, false);
         }
+    }
+
+    public boolean transOpr(Map<MVar, Meta> mp) {
+        boolean ans = true;
+        for (Map.Entry<MVar, Meta> e : mp.entrySet()) {
+            Phi p = (Phi) this.mp.get(e.getKey());
+            if (p == null) {
+                this.mp.put(e.getKey(), (p = new Phi(e.getKey())));
+                blk.opr.syncOpr(p);
+                ans = false;
+            }
+            p.fr.add(e.getValue());
+        }
+        return ans;
+    }
+
+    public boolean transPhi() {
+        boolean ans = true;
+        for (Meta p : mp.values()) ans &= ((Phi) p).shrank();
+        return ans;
     }
 
     @Override
@@ -100,7 +120,7 @@ public class SyncR implements Index {
     @Override
     public void indexPhi(boolean isLoop) {
         if (loopCnt < 0) return;
-        if (!this.isLoop && !this.endLoop && ++loopCnt >= oprH.size()) {
+        if (!this.isLoop && !this.endLoop && ++loopCnt >= oprL.size()) {
             loopCnt = -1;
             blk.opr.indexPhi(true);
         }
@@ -121,7 +141,7 @@ public class SyncR implements Index {
         }
         for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls());
         for (Index i : oprH) i.indexMeta(new TreeSet<>(s), false, kill);
-        for (Index i: oprL) i.indexMeta(new TreeSet<>(s), true, kill);
+        for (Index i : oprL) i.indexMeta(new TreeSet<>(s), true, kill);
     }
 
     @Override

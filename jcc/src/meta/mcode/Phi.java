@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class Phi extends Meta {
     public MVar var;
-    public final List<Meta> fr = new ArrayList<>();
+    public final Set<Meta> fr = new HashSet<>();
 
     public Phi(MVar v) {
         super(false);
@@ -44,11 +44,31 @@ public class Phi extends Meta {
         fr.removeIf(e -> e.eqls() == this);
         boolean single = true;
         for (Meta m : fr)
-            if (m.eqls() != fr.get(0).eqls()) {
+            if (m.eqls() != fr.iterator().next().eqls()) {
                 single = false;
                 break;
             }
-        if (single) this.eqls = fr.isEmpty() ? Nop : fr.get(0).eqls();
+        if (single) this.eqls = fr.isEmpty() ? this : fr.iterator().next().eqls();
+    }
+
+    public boolean shrank() {
+        boolean ans = (this.eqls == this);
+        Set<Meta> eq = new HashSet<>();
+        Set<Meta> ne = new HashSet<>();
+        for (Meta m : fr) if (m != m.eqls()) {
+            ne.add(m);
+            eq.add(m.eqls());
+        }
+        fr.removeIf(ne::contains);
+        fr.addAll(eq);
+        if (fr.size() == 1) this.eqls = fr.iterator().next();
+        return ans == (this.eqls == this);
+    }
+
+    @Override
+    public Meta eqls() {
+//        shrink();
+        return eqls =  eqls == this ? this : eqls.eqls();
     }
 
     @Override
@@ -65,6 +85,7 @@ public class Phi extends Meta {
 
     @Override
     public int get(int tmp, int shift) {
+        if (!fr.isEmpty() && var.typ == MTyp.Int) return super.get(tmp, shift);
         if (var.typ != MTyp.Int) {
             if (Instr.bsR(var) == Instr.GP) new InstrI(Op.addi, tmp, Instr.GP, var.base);
             else new InstrI(Op.addi, tmp, Instr.SP, var.base + shift);
