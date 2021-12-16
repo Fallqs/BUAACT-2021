@@ -8,6 +8,7 @@ import engine.instr.Nop;
 import engine.instr.Op;
 import meta.Meta;
 import meta.mcode.Phi;
+import meta.mcode.Ret;
 import meta.midt.MFunc;
 import meta.midt.MVar;
 
@@ -20,6 +21,7 @@ public class SyncR implements Index {
     public final Map<MVar, Meta> mp = new TreeMap<>();
     public final Set<Index> oprH = new TreeSet<>();
     public final Set<Index> oprL = new HashSet<>();
+    public final Set<Meta> llive = new HashSet<>();
     public final SyncB blk;
     public boolean isLoop = false, endLoop = false;
 
@@ -101,6 +103,13 @@ public class SyncR implements Index {
         boolean ans = true;
         for (Meta p : mp.values())
             ans &= ((Phi) p).shrank();
+        return ans;
+    }
+
+    public boolean transLive() {
+        boolean ans = true;
+        Set<Meta> rlive = blk.opr.llive.keySet();
+
         return ans;
     }
 

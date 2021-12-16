@@ -17,7 +17,8 @@ public class SyncO implements Index {
     public final Set<SyncR> legendH = new TreeSet<>();
     public final Set<SyncR> legendL = new TreeSet<>();
     public final Set<Meta> alive = new TreeSet<>();
-    public final Set<Meta> llive = new TreeSet<>();
+    public final Set<Meta> lLive = new TreeSet<>(), rlive = new HashSet<>();
+    public final Map<Meta, Integer> llive = new HashMap<>();
     public final Map<SyncR, ArrayList<Psi>> psi = new TreeMap<>();
     public final SyncB blk;
     public final SyncR rq;
@@ -98,6 +99,24 @@ public class SyncO implements Index {
         return ans;
     }
 
+    public boolean transMeta() {
+        int siz = llive.size();
+        if (!(end instanceof Ret) || !((Ret) end).func.name.equals("main")) {
+            for (SyncR lgd : legendH) rlive.addAll(lgd.llive);
+            for (SyncR lgd : legendL) rlive.addAll(lgd.llive);
+        }
+        rlive.forEach(e -> llive.merge(e, 1, Integer::sum));
+        for (int i = blk.ms.size() - 1; i >= 0; --i) {
+            Meta m = blk.ms.get(i).eqls();
+            if (!m.valid && !rlive.contains(m)) continue;
+            m.valid = true;
+            llive.remove(m);
+            for (Meta n : m.prevs()) llive.merge(n.eqls(), 1, Integer::sum);
+        }
+        if (llive.size() != siz) blk.req.transLive();
+        return llive.size() == siz;
+    }
+
     @Override
     public void indexPhi() {
         if (indexCnt < 0) return;
@@ -158,7 +177,7 @@ public class SyncO implements Index {
     private void indexKill(Meta m) {
         func.malloc.add(m);
         while (!kills.isEmpty() && kills.peek().key == m) {
-            if (!llive.contains(kills.peek().value)) alive.remove(kills.peek().value);
+            if (!lLive.contains(kills.peek().value)) alive.remove(kills.peek().value);
             kills.pop();
         }
         if (!(m instanceof Virtual)) {
@@ -171,7 +190,7 @@ public class SyncO implements Index {
     public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
         for (Meta m : s) {
             alive.add(m.eqls());
-            llive.add(m.eqls());
+            lLive.add(m.eqls());
         }
         if (!isLight && indexCnt >= 0 && ++indexCnt >= legendH.size()) {
             indexCnt = -1;
