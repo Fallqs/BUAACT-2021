@@ -42,7 +42,7 @@ public class Ret extends Meta implements Flight, Virtual {
 
     @Override
     public String toString() {
-        return " Ret " + (isVoid ? "void" : "T" + vl.id);
+        return " Ret " + (isVoid ? "void" : "T" + vl.eqls().id);
     }
 
     @Override

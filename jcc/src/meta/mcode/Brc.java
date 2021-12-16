@@ -96,6 +96,7 @@ public class Brc extends Meta implements Flight, Virtual {
             for (Psi p : list) {
                 p.to = p.to.eqls();
                 p.fr = p.fr.eqls();
+                if (p.fr == p.to) continue;
                 if (p.to.reg < 0) p.translate();
                 else if (p.fr.reg >= 0 && p.fr.reg != p.to.reg) tar[p.fr.reg] = p.to.reg;
             }

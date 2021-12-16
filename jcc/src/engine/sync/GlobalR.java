@@ -16,7 +16,7 @@ public class GlobalR extends SyncR {
     public Meta qry(MVar v) {
         if (!mp.containsKey(v)) {
             Phi p = new Phi(v);
-//            p.valid = true;
+            p.valid = true;
             mp.put(v, p);
         }
         return mp.get(v);

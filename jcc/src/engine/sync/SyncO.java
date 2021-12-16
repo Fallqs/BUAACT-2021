@@ -20,7 +20,6 @@ public class SyncO implements Index {
     public final Set<Meta> lLive = new TreeSet<>(), rlive = new HashSet<>();
     public final Map<Meta, Integer> llive = new HashMap<>();
     public final Map<SyncR, ArrayList<Psi>> psi = new TreeMap<>();
-    public final Set<Meta> loaded = new HashSet<>();
     public final SyncB blk;
     public final SyncR rq;
     public Meta end;
@@ -117,20 +116,19 @@ public class SyncO implements Index {
             loadRlive(legendH);
             loadRlive(legendL);
         }
-        for (Meta m : end.prevs()) m.valid = true;
-        rlive.forEach(e -> {
-            if (!loaded.contains(e)) llive.merge(e, 1, Integer::sum);
-            loaded.add(e);
-        });
+        for (Meta m : end.prevs()) {
+            m.eqls().valid = true;
+            llive.putIfAbsent(m.eqls(), 0);
+        }
+        rlive.forEach(e -> llive.putIfAbsent(e, 0));
         for (int i = blk.ms.size() - 1; i >= 0; --i) {
             Meta m = blk.ms.get(i).eqls();
-            if (!m.valid && !rlive.contains(m) || loaded.contains(m)) continue;
+            if (!m.valid && !rlive.contains(m)) continue;
             m.valid = true;
             llive.remove(m);
-            loaded.add(m);
             for (Meta n : m.prevs()) {
                 n.eqls().valid = true;
-                llive.merge(n.eqls(), 1, Integer::sum);
+                llive.putIfAbsent(n.eqls(), 0);
             }
         }
         if (llive.size() != siz) blk.req.transMeta();
@@ -148,8 +146,9 @@ public class SyncO implements Index {
     }
 
     private void transCall(Call c) {
-        for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
-            if (e.getValue().valid) c.sync.put(e.getKey(), e.getValue().eqls());
+        for (Map.Entry<MVar, Meta> e : rq.mp.entrySet()) {
+            if (e.getValue().eqls().valid && !(e.getValue().eqls() instanceof Put))
+                c.sync.put(e.getKey(), e.getValue().eqls());
         }
         c.sync.entrySet().removeIf(e -> !e.getKey().global || e.getValue() instanceof Virtual);
         for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
@@ -162,14 +161,24 @@ public class SyncO implements Index {
         setPsi(legendH);
         setPsi(legendL);
         ((Flight) end).addPsi(psi);
+        for (Meta m : rlive) llive.merge(m, 1, Integer::sum);
+        Map<Meta, Integer> ref = new HashMap<>();
+        for (int i = blk.ms.size() - 1; i >= 0; --i) {
+            Meta m = blk.ms.get(i);
+            if (!m.valid) continue;
+            ref.put(m, llive.getOrDefault(m, 0));
+            llive.remove(m);
+            for (Meta n : m.prevs()) llive.merge(n.eqls(), 1, Integer::sum);
+        }
         for (int i = 0; i < blk.ms.size(); ++i) {
             Meta m = blk.ms.get(i);
             if (!m.valid) continue;
-            if (! (m instanceof Virtual)) func.malloc.add(m);
+            if (!(m instanceof Virtual)) func.malloc.add(m);
             for (Meta p : m.prevs()) llive.merge(p.eqls(), -1, Integer::sum);
             llive.entrySet().removeIf(e -> e.getValue() <= 0);
             if (m instanceof Call) transCall((Call) m);
             if (!(m instanceof Virtual)) for (Meta n : llive.keySet()) func.malloc.add(m, n.eqls());
+            llive.put(m, ref.getOrDefault(m, 0));
         }
     }
 
