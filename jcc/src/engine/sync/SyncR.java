@@ -121,6 +121,7 @@ public class SyncR implements Index {
     public void transLive() {
         mp.entrySet().removeIf(e -> !e.getValue().valid);
         for (Meta m : mp.values()) {
+            func.malloc.add(m);
             mp.values().forEach(n -> func.malloc.add(m, n));
             llive.forEach(n -> func.malloc.add(m, n));
         }

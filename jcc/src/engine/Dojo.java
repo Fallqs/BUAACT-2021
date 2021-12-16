@@ -82,7 +82,7 @@ public class Dojo {
         status = false;
         while (!status) {
             status = true;
-            for (SyncB blk : blks) status &= blk.opr.transMeta();
+            for (int i = blks.size() - 1; i >= 0; --i) status &= blks.get(i).opr.transMeta();
         }
 
         for (SyncB blk : blks) {
@@ -100,7 +100,7 @@ public class Dojo {
 //        globalReq.indexMeta(new TreeSet<>(), false, false);
 //        globalOpr.flushCnt();
 //        globalReq.indexMeta(new TreeSet<>(), false, true);
-        globalOpr.flushCnt();
+//        globalOpr.flushCnt();
         for (MFunc f : MTable.func) f.memAlloc();
     }
 

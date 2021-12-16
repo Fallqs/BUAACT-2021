@@ -117,6 +117,7 @@ public class SyncO implements Index {
             loadRlive(legendH);
             loadRlive(legendL);
         }
+        for (Meta m : end.prevs()) m.valid = true;
         rlive.forEach(e -> {
             if (!loaded.contains(e)) llive.merge(e, 1, Integer::sum);
             loaded.add(e);
@@ -127,7 +128,10 @@ public class SyncO implements Index {
             m.valid = true;
             llive.remove(m);
             loaded.add(m);
-            for (Meta n : m.prevs()) llive.merge(n.eqls(), 1, Integer::sum);
+            for (Meta n : m.prevs()) {
+                n.eqls().valid = true;
+                llive.merge(n.eqls(), 1, Integer::sum);
+            }
         }
         if (llive.size() != siz) blk.req.transMeta();
         return llive.size() == siz;
@@ -157,9 +161,11 @@ public class SyncO implements Index {
     public void transLive() {
         setPsi(legendH);
         setPsi(legendL);
+        ((Flight) end).addPsi(psi);
         for (int i = 0; i < blk.ms.size(); ++i) {
             Meta m = blk.ms.get(i);
             if (!m.valid) continue;
+            if (! (m instanceof Virtual)) func.malloc.add(m);
             for (Meta p : m.prevs()) llive.merge(p.eqls(), -1, Integer::sum);
             llive.entrySet().removeIf(e -> e.getValue() <= 0);
             if (m instanceof Call) transCall((Call) m);

@@ -31,7 +31,7 @@ public class MetaAlloc {
 
     public void add(Meta u, Meta v) {
         if (u == null || v == null || u == Meta.Nop || v == Meta.Nop
-                || u instanceof Put || v instanceof Put
+                || u instanceof Put || v instanceof Put || u == v
                 || u instanceof Virtual || v instanceof Virtual
         ) return;
         add(u);
