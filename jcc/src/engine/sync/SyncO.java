@@ -20,6 +20,7 @@ public class SyncO implements Index {
     public final Set<Meta> lLive = new TreeSet<>(), rlive = new HashSet<>();
     public final Map<Meta, Integer> llive = new HashMap<>();
     public final Map<SyncR, ArrayList<Psi>> psi = new TreeMap<>();
+    public final Set<Meta> loaded = new HashSet<>();
     public final SyncB blk;
     public final SyncR rq;
     public Meta end;
@@ -99,22 +100,71 @@ public class SyncO implements Index {
         return ans;
     }
 
+    private void loadRlive(Set<SyncR> legend) {
+        for (SyncR lgd : legend) {
+            rlive.addAll(lgd.llive);
+            for (Meta p : lgd.mp.values())
+                if (p.valid) {
+                    MVar var = ((Phi) p).var;
+                    if (mp.containsKey(var)) rlive.add(mp.get(var).eqls());
+                }
+        }
+    }
+
     public boolean transMeta() {
         int siz = llive.size();
         if (!(end instanceof Ret) || !((Ret) end).func.name.equals("main")) {
-            for (SyncR lgd : legendH) rlive.addAll(lgd.llive);
-            for (SyncR lgd : legendL) rlive.addAll(lgd.llive);
+            loadRlive(legendH);
+            loadRlive(legendL);
         }
-        rlive.forEach(e -> llive.merge(e, 1, Integer::sum));
+        rlive.forEach(e -> {
+            if (!loaded.contains(e)) llive.merge(e, 1, Integer::sum);
+            loaded.add(e);
+        });
         for (int i = blk.ms.size() - 1; i >= 0; --i) {
             Meta m = blk.ms.get(i).eqls();
-            if (!m.valid && !rlive.contains(m)) continue;
+            if (!m.valid && !rlive.contains(m) || loaded.contains(m)) continue;
             m.valid = true;
             llive.remove(m);
+            loaded.add(m);
             for (Meta n : m.prevs()) llive.merge(n.eqls(), 1, Integer::sum);
         }
-        if (llive.size() != siz) blk.req.transLive();
+        if (llive.size() != siz) blk.req.transMeta();
         return llive.size() == siz;
+    }
+
+    private void setPsi(Set<SyncR> legend) {
+        for (SyncR lgd : legend) {
+            psi.putIfAbsent(lgd, new ArrayList<>());
+            for (Meta p : lgd.mp.values())
+                if (p.valid && mp.containsKey(((Phi) p).var)) {
+                    psi.get(lgd).add(new Psi(mp.get(((Phi) p).var).eqls(), p));
+                }
+        }
+    }
+
+    private void transCall(Call c) {
+        for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
+            if (e.getValue().valid) c.sync.put(e.getKey(), e.getValue().eqls());
+        }
+        c.sync.entrySet().removeIf(e -> !e.getKey().global || e.getValue() instanceof Virtual);
+        for (Map.Entry<MVar, Meta> e : c.sync.entrySet()) {
+            if (llive.containsKey(e.getValue())) c.retrieve.put(e.getKey(), e.getValue());
+        }
+        for (Meta m : llive.keySet()) if (!c.retrieve.containsValue(m)) c.preserve.add(m);
+    }
+
+    public void transLive() {
+        setPsi(legendH);
+        setPsi(legendL);
+        for (int i = 0; i < blk.ms.size(); ++i) {
+            Meta m = blk.ms.get(i);
+            if (!m.valid) continue;
+            for (Meta p : m.prevs()) llive.merge(p.eqls(), -1, Integer::sum);
+            llive.entrySet().removeIf(e -> e.getValue() <= 0);
+            if (m instanceof Call) transCall((Call) m);
+            if (!(m instanceof Virtual)) for (Meta n : llive.keySet()) func.malloc.add(m, n.eqls());
+        }
     }
 
     @Override
@@ -134,7 +184,7 @@ public class SyncO implements Index {
 
     private void phi(Set<MVar> vars, Set<SyncR> lgd, boolean kill) {  // deduce (psi) nodes for every branch
         for (SyncR req : lgd) {
-            if (!psi.containsKey(req)) psi.put(req, new ArrayList<>());
+            psi.putIfAbsent(req, new ArrayList<>());
             for (Map.Entry<MVar, Meta> e : req.mp.entrySet()) {
                 if (!(e.getValue() instanceof Phi) || e.getValue().eqls() != e.getValue()) continue;
                 if (mp.containsKey(e.getKey())) {
@@ -149,8 +199,8 @@ public class SyncO implements Index {
 
     private void call(Call c) {
         for (Map.Entry<MVar, Meta> e : blk.req.mp.entrySet()) {
-            if (!c.sync.containsKey(e.getKey()) &&
-                    !(e.getValue().valid || e.getValue() instanceof Phi && e.getValue().eqls() == e.getValue()))
+            if (!c.sync.containsKey(e.getKey()) && !(e.getValue().valid
+                    || e.getValue() instanceof Phi && e.getValue().eqls() == e.getValue()))
                 c.sync.put(e.getKey(), e.getValue().eqls());
         }
         c.sync.entrySet().removeIf(e -> !e.getKey().global || e.getValue() instanceof Virtual);

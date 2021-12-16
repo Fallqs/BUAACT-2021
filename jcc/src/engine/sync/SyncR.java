@@ -106,11 +106,24 @@ public class SyncR implements Index {
         return ans;
     }
 
-    public boolean transLive() {
-        boolean ans = true;
+    public boolean transMeta() {
+        int siz = llive.size();
         Set<Meta> rlive = blk.opr.llive.keySet();
+        for (Meta p : mp.values()) {
+            if (!rlive.contains(p)) continue;
+            rlive.remove(p);
+            p.valid = true;
+        }
+        llive.addAll(rlive);
+        return llive.size() == siz;
+    }
 
-        return ans;
+    public void transLive() {
+        mp.entrySet().removeIf(e -> !e.getValue().valid);
+        for (Meta m : mp.values()) {
+            mp.values().forEach(n -> func.malloc.add(m, n));
+            llive.forEach(n -> func.malloc.add(m, n));
+        }
     }
 
     @Override

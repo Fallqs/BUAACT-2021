@@ -79,16 +79,27 @@ public class Dojo {
             for (SyncB blk : blks) status &= blk.req.transPhi();
         }
 
+        status = false;
+        while (!status) {
+            status = true;
+            for (SyncB blk : blks) status &= blk.opr.transMeta();
+        }
+
+        for (SyncB blk : blks) {
+            blk.req.transLive();
+            blk.opr.transLive();
+        }
+
 //        globalOpr.flushCnt();
 //        globalOpr.indexOpr(new TreeMap<>(), false);
 //        globalOpr.flushCnt();
 //        globalOpr.indexPhi();
 //        globalOpr.flushCnt();
 //        globalOpr.indexPhi();
-        globalOpr.flushCnt();
-        globalReq.indexMeta(new TreeSet<>(), false, false);
-        globalOpr.flushCnt();
-        globalReq.indexMeta(new TreeSet<>(), false, true);
+//        globalOpr.flushCnt();
+//        globalReq.indexMeta(new TreeSet<>(), false, false);
+//        globalOpr.flushCnt();
+//        globalReq.indexMeta(new TreeSet<>(), false, true);
         globalOpr.flushCnt();
         for (MFunc f : MTable.func) f.memAlloc();
     }
