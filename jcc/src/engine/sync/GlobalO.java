@@ -20,25 +20,6 @@ public class GlobalO extends SyncO {
     }
 
     @Override
-    public void flushCnt() {
-        for (Index i : legendH) i.flushCnt();
-    }
-
-    @Override
-    public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
-        for (SyncR req : legendH) req.indexOpr(this.mp, false);
-    }
-
-    @Override
-    public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
-    }
-
-    @Override
-    public void indexPhi() {
-        for (Index i : legendH) i.indexPhi();
-    }
-
-    @Override
     public String toString() {
         return "Global_Opr";
     }

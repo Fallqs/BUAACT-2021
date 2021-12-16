@@ -63,26 +63,6 @@ public class SyncR implements Index {
         }
     }
 
-    @Override
-    public void flushCnt() {
-        this.blk.opr.flushCnt();
-        indexCnt = loopCnt = 0;
-    }
-
-    @Override
-    public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
-        for (Map.Entry<MVar, Meta> e : mp.entrySet()) {
-            Phi p = (Phi) this.mp.get(e.getKey());
-            if (p == null) this.mp.put(e.getKey(), (p = new Phi(e.getKey())));
-            p.fr.add(e.getValue());
-        }
-        if (indexCnt < 0 || isLight) return;
-        if (++indexCnt >= oprH.size()) {
-            indexCnt = -1;
-            blk.opr.indexOpr(this.mp, false);
-        }
-    }
-
     public boolean transOpr(Map<MVar, Meta> mp) {
         boolean ans = true;
         for (Map.Entry<MVar, Meta> e : mp.entrySet()) {
@@ -126,49 +106,6 @@ public class SyncR implements Index {
             liv.forEach(n -> func.malloc.add(m, n));
             llive.forEach(n -> func.malloc.add(m, n));
         }
-    }
-
-    @Override
-    public void indexPhi() {
-        if (indexCnt < 0) return;
-        if (++indexCnt >= oprH.size()) {
-            indexCnt = -1;
-            for (Meta p : mp.values())
-                p.shrink();
-            blk.opr.indexPhi();
-            for (Meta p : mp.values())
-                p.shrink();
-            if (isLoop) blk.opr.indexPhi(true);
-        }
-    }
-
-    private int loopCnt = 0;
-
-    @Override
-    public void indexPhi(boolean isLoop) {
-        if (loopCnt < 0) return;
-        if (!this.isLoop && !this.endLoop && ++loopCnt >= oprL.size()) {
-            loopCnt = -1;
-            blk.opr.indexPhi(true);
-        }
-    }
-
-    @Override
-    public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
-        if (indexCnt < 0) return;
-        indexCnt = -1;
-        List<Meta> list = new ArrayList<>();
-        for (Meta p : mp.values()) {
-            if (!s.contains(p)) continue;
-            s.remove(p);
-            p.valid = true;
-            func.malloc.add(p);
-            for (Meta q : list) func.malloc.add(p.eqls(), q);
-            list.add(p.eqls());
-        }
-        for (Meta q : list) for (Meta r : s) func.malloc.add(q, r.eqls());
-        for (Index i : oprH) i.indexMeta(new TreeSet<>(s), false, kill);
-        for (Index i : oprL) i.indexMeta(new TreeSet<>(s), true, kill);
     }
 
     @Override

@@ -23,34 +23,12 @@ public class GlobalR extends SyncR {
     }
 
     @Override
-    public void flushCnt() {
-    }
-
-    @Override
     public void setFunc(MFunc f) {
-    }
-
-    @Override
-    public void indexOpr(Map<MVar, Meta> mp, boolean isLight) {
     }
 
     @Override
     public boolean transOpr(Map<MVar, Meta> mp) {
         return true;
-    }
-
-    @Override
-    public void indexMeta(Set<Meta> s, boolean isLight, boolean kill) {
-        for (Index i : oprH)
-            i.indexMeta(new TreeSet<>(), false, kill);
-    }
-
-    @Override
-    public void indexPhi() {
-    }
-
-    @Override
-    public void indexPhi(boolean isLoop) {
     }
 
     @Override
