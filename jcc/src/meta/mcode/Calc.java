@@ -4,6 +4,7 @@ import engine.LgK;
 import engine.instr.*;
 import meta.Meta;
 import meta.Opr;
+import meta.midt.MPin;
 
 public class Calc extends Meta {
     private Meta ma, mb;
@@ -73,7 +74,7 @@ public class Calc extends Meta {
                 val = ma.val ^ mb.val;
                 break;
             case lt:
-                val = ma.val < mb.val ? 1: 0;
+                val = ma.val < mb.val ? 1 : 0;
                 break;
             case gt:
                 val = ma.val > mb.val ? 1 : 0;
@@ -107,6 +108,108 @@ public class Calc extends Meta {
         return mb == Nop ? (ma == Nop ? new Meta[0] : new Meta[]{ma}) : (ma == Nop ? new Meta[]{mb} : new Meta[]{ma, mb});
     }
 
+    private int madd(int tar, boolean save) {
+        long b = mb.calc();
+        int lg = 0;
+        for (long x = Math.abs(b) - 1; x > 0; x >>= 1) ++lg;
+        long magic = (1L << 31 + lg) / b + (b >= 0 ? 1 : -1); // b != 2^n, \forall n \in N
+        int rega;
+        if ((magic & 1) != 0) {
+            rega = ma.get(Instr.A0);
+            new InstrR(Op.slt, Instr.V0, rega, Instr.ZERO);
+            new InstrR(Op.subu, Instr.V0, Instr.ZERO, Instr.V0);
+            new InstrS(Op.mthi, Instr.V0);
+
+            if (save && rega == tar) {
+                new InstrDual(Op.move, Instr.A0, rega);
+                rega = Instr.A0;
+            }
+            new InstrI(Op.sra, Instr.V0, rega, 1);
+            new InstrS(Op.mtlo, Instr.V0);
+            new InstrSI(Op.li, Instr.V0, (int) (magic / 2));
+            new InstrDual(Op.madd, Instr.V0, rega);
+        } else {
+            new InstrSI(Op.li, Instr.V0, (int) (magic / 2));
+            new InstrDual(Op.mult, Instr.V0, rega = ma.get(Instr.A0));
+            if (save && rega == tar) {
+                new InstrDual(Op.move, Instr.A0, rega);
+                rega = Instr.A0;
+            }
+        }
+        new InstrS(Op.mfhi, tar);
+        if (lg > 2) new InstrI(Op.sra, tar, tar, lg - 2);
+        MPin pin = new MPin("");
+        new InstrBZ(Op.bgez, tar, pin);
+        new InstrI(Op.addi, tar, tar, 1);
+        pin.pin = new Nop().toString(true);
+        return rega;
+    }
+
+    private Instr div(int tar) {
+        if (!mb.isCnst()) {
+            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
+            return new InstrS(Op.mflo, tar);
+        }
+        if (ma.isCnst()) return new InstrSI(Op.li, tar, ma.calc() / mb.calc());
+
+        long b = mb.calc(), c = Math.abs(b);
+        if (c == (c & -c)) {
+            int rgx = ma.get(Instr.V0);
+            if (b == 1) {
+                if (ma.get(tar) != tar) new InstrDual(Op.move, tar, ma.get(tar));
+                return null;
+            } else if (b == -1) {
+                return new InstrR(Op.subu, tar, Instr.ZERO, ma.get(tar));
+            }
+            if (b < 0) {
+                new InstrR(Op.subu, Instr.V0, Instr.ZERO, rgx);
+                rgx = Instr.V0;
+            }
+            int lg = 0;
+            for (long x = c; (x >>= 1) > 0; ) ++lg;
+            if (lg > 0) new InstrI(Op.sra, tar, rgx, lg);
+
+            MPin pin1 = new MPin("");
+            new InstrBZ(Op.bgez, rgx, pin1);
+            new InstrI(Op.andi, Instr.A0, rgx, (int) (c - 1));
+            new InstrR(Op.slt, Instr.A0, Instr.ZERO, Instr.A0);
+            new InstrR(Op.addu, tar, tar, Instr.A0);
+            pin1.pin = new Nop().toString(true);
+            return null;
+        }
+
+        madd(tar, false);
+        return null;
+    }
+
+    private Instr mod(int tar) {
+        if (!mb.isCnst()) {
+            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
+            return new InstrS(Op.mfhi, tar);
+        }
+        if (ma.isCnst()) return new InstrSI(Op.li, tar, ma.calc() % mb.calc());
+
+        long b = mb.calc();
+        b = Math.abs(b);
+        if (b == (b & -b)) {
+            if (b == 1) return new InstrDual(Op.move, tar, Instr.ZERO);
+            int rgx = ma.get(Instr.V0);
+            new InstrI(Op.andi, tar, rgx, (int) (b - 1));
+            MPin pin = new MPin("");
+            new InstrBZ(Op.bgez, rgx, pin);
+            new InstrI(Op.addi, tar, tar, -(int) b);
+            pin.pin = new Nop().toString(true);
+            return null;
+        }
+        int rgx = madd(tar, true);
+//        new InstrS(Op.mtlo, rgx);
+        new InstrSI(Op.li, Instr.V0, mb.calc());
+        new InstrDual(Op.mult, Instr.V0, tar);
+        new InstrS(Op.mflo, tar);
+        return new InstrR(Op.subu, tar, rgx, tar);
+//        return new InstrS(Op.mflo, tar);
+    }
+
     @Override
     public Instr translate() {
         ma = ma.eqls();
@@ -129,11 +232,13 @@ public class Calc extends Meta {
             new InstrDual(Op.mult, ma.get(Instr.V0), mb.get(Instr.A0));
             ret = new InstrS(Op.mflo, tar);
         } else if (opr == Opr.div) {
-            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
-            ret = new InstrS(Op.mflo, tar);
+//            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
+//            ret = new InstrS(Op.mflo, tar);
+            ret = div(tar);
         } else if (opr == Opr.mod) {
-            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
-            ret = new InstrS(Op.mfhi, tar);
+//            new InstrDual(Op.div, ma.get(Instr.V0), mb.get(Instr.A0));
+//            ret = new InstrS(Op.mfhi, tar);
+            ret = mod(tar);
         }
         setSave(tar);
         if (tar == Instr.V0) new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
