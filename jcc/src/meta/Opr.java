@@ -9,6 +9,6 @@ package meta;
 public enum Opr {
     add, sub, mult, div, mod,
     and, or, not,
-    eql, neq, lt, gt,
+    eql, neq, lt,
     lw, sw, mov, cnst,
 }

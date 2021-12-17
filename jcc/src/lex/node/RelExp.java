@@ -49,9 +49,9 @@ public class RelExp extends Node {
         for (int i = 1; i < exp.size(); ++i) {
             Typ t = opr.get(i).typ;
             if (t == Typ.LSS) ret = new Calc(Opr.lt, ret, exp.get(i).translate());
-            else if (t == Typ.LEQ) ret = new Calc(Opr.not, new Calc(Opr.gt, ret, exp.get(i).translate()));
+            else if (t == Typ.LEQ) ret = new Calc(Opr.not, new Calc(Opr.lt, exp.get(i).translate(), ret));
             else if (t == Typ.GEQ) ret = new Calc(Opr.not, new Calc(Opr.lt, ret, exp.get(i).translate()));
-            else ret = new Calc(Opr.gt, ret, exp.get(i).translate());
+            else ret = new Calc(Opr.lt, exp.get(i).translate(), ret);
         }
         return ret;
     }

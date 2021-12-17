@@ -67,6 +67,8 @@ public class Dojo {
             f.req.setFunc(f);
         }
 
+        for (SyncB blk : blks) new DAG(blk.ms).shrink();
+
         boolean status = false;
         while (!status) {
             status = globalOpr.transOpr();

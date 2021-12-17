@@ -45,7 +45,7 @@ public class Meta implements Comparable<Meta> {
     }
 
     public LgK toLgk() {
-        return new LgK(Opr.lw, id, id);
+        return new LgK(Opr.lw, this, this);
     }
 
     public int calc() {
