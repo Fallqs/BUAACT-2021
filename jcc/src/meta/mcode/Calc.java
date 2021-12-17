@@ -105,6 +105,10 @@ public class Calc extends Meta {
 
     @Override
     public Meta[] prevs() {
+        if (isCnst()) {
+            calc();
+            return new Meta[0];
+        }
         return mb == Nop ? (ma == Nop ? new Meta[0] : new Meta[]{ma}) : (ma == Nop ? new Meta[]{mb} : new Meta[]{ma, mb});
     }
 
@@ -216,7 +220,7 @@ public class Calc extends Meta {
         mb = mb.eqls();
         int tar = gtag(Instr.V0);
         Instr ret = null;
-        if (opr == Opr.cnst) ret = new InstrSI(Op.li, tar, val);
+        if (opr == Opr.cnst || isCnst()) ret = new InstrSI(Op.li, tar, calc());
         else if (opr == Opr.add) ret = new InstrR(Op.addu, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.sub) ret = new InstrR(Op.subu, tar, ma.get(Instr.V0), mb.get(Instr.A0));
         else if (opr == Opr.and) ret = new InstrR(Op.and, tar, ma.get(Instr.V0), mb.get(Instr.A0));

@@ -2,7 +2,7 @@ package engine.instr;
 
 import meta.midt.MPin;
 
-public class InstrBZ extends Instr {
+public class InstrBZ extends Instr implements InstrBJ {
     public int rt;
     public MPin pin;
 
@@ -15,5 +15,15 @@ public class InstrBZ extends Instr {
     @Override
     public String toString() {
         return op + " " + getReg(rt) + ", " + pin.pin;
+    }
+
+    @Override
+    public String getPin() {
+        return pin.pin;
+    }
+
+    @Override
+    public void setPin(String tar) {
+        pin.pin = tar;
     }
 }

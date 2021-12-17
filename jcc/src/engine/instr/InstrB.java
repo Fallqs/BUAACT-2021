@@ -4,7 +4,7 @@ import engine.MetaAlloc;
 import engine.sync.SyncR;
 import meta.midt.MPin;
 
-public class InstrB extends Instr {
+public class InstrB extends Instr implements InstrBJ {
     public int rs, rt;
     public String label;
     public MPin pin;
@@ -34,5 +34,15 @@ public class InstrB extends Instr {
     @Override
     public String toString() {
         return op + " " + getReg(rs) + ", " + getReg(rt) + ", " + pin.pin;
+    }
+
+    @Override
+    public String getPin() {
+        return pin.pin;
+    }
+
+    @Override
+    public void setPin(String tar) {
+        pin.pin = tar;
     }
 }

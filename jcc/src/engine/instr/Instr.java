@@ -28,6 +28,11 @@ public class Instr {
         (this.nex = n).prv = this;
     }
 
+    public void reMov() {
+        if (nex != null) nex.prv = prv;
+        if (prv != null) prv.nex = nex;
+    }
+
     public static final int V0 = -2, A0 = -3, RA = -4, SP = -5, GP = -6, ZERO = -7;
 
     public static String getReg(int x) {

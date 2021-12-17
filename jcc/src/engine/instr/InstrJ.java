@@ -3,7 +3,7 @@ package engine.instr;
 import engine.sync.SyncR;
 import meta.midt.MPin;
 
-public class InstrJ extends Instr {
+public class InstrJ extends Instr implements InstrBJ {
     public String label;
     public MPin pin;
 
@@ -28,5 +28,15 @@ public class InstrJ extends Instr {
     @Override
     public String toString() {
         return op + " " + pin.pin;
+    }
+
+    @Override
+    public String getPin() {
+        return pin.pin;
+    }
+
+    @Override
+    public void setPin(String tar) {
+        pin.pin = tar;
     }
 }
