@@ -46,6 +46,7 @@ public class PArr extends Meta implements Virtual, Concrete {
 
     @Override
     public Meta[] prevs() {
+        if (isCnst()) return new Meta[0];
         List<Meta> ret = new LinkedList<>();
         for (int i = 0; i < fr.length; ++i) if (!ban[i]) ret.add(fr[i]);
         return ret.toArray(new Meta[0]);
@@ -66,6 +67,7 @@ public class PArr extends Meta implements Virtual, Concrete {
 
     @Override
     public Instr translate() {
+        if (isCnst()) return null;
         for (int i = 0; i < fr.length; ++i) {
             new InstrLS(Op.sw, fr[i].get(Instr.V0), var.base + (var.xi(i) << 2), Instr.bsR(var));
         }
@@ -79,6 +81,6 @@ public class PArr extends Meta implements Virtual, Concrete {
 
     @Override
     public boolean be() {
-        return var.global;
+        return !isCnst();
     }
 }

@@ -38,9 +38,10 @@ public class Psi extends Meta implements Virtual {
 
     private Instr loadVar(Meta tar, Put p) {
         int reg = tar.gtag(Instr.V0);
-        Instr ret = new InstrLS(Op.lw, reg, p.var.base, Instr.bsR(p.var));
-        if (reg == Instr.V0) ret = new InstrLS(Op.sw, reg, tar.spx, Instr.SP);
-        return ret;
+        p.get(reg);
+//        Instr ret = new InstrLS(Op.lw, reg, p.var.base, Instr.bsR(p.var));
+        if (reg == Instr.V0) return new InstrLS(Op.sw, reg, tar.spx, Instr.SP);
+        return null;
     }
 
     @Override

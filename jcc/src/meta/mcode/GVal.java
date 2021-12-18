@@ -53,6 +53,15 @@ public class GVal extends Meta {
         return ms;
     }
 
+    private int fetch(int tar) {
+        int base = var.reg;
+        if (base == -1) {
+            new InstrLS(Op.lw, tar, var.base, Instr.SP);
+            base = tar;
+        }
+        return base;
+    }
+
     @Override
     public Instr translate() {
         for (int i = 0; i < ms.length; ++i) ms[i] = ms[i].eqls();
@@ -69,12 +78,11 @@ public class GVal extends Meta {
                 } else if (!var.isParam) {
                     new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
                     new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.bsR(var));
-//                    if (!var.global && !var.cnst) new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.SP);
                     ret = new InstrLS(Op.lw, tar, var.base, Instr.V0);
                 } else {
-                    new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
+                    int base = fetch(Instr.V0);
                     new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), 2);
-                    new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.A0);
+                    new InstrR(Op.addu, Instr.V0, base, Instr.A0);
                     ret = new InstrLS(Op.lw, tar, 0, Instr.V0);
                 }
                 break;
@@ -95,9 +103,9 @@ public class GVal extends Meta {
 //                    if (!var.global && !var.cnst) new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.SP);
                     ret = new InstrLS(Op.lw, tar, var.base, Instr.V0);
                 } else {
-                    new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
+                    int base = fetch(Instr.V0);
                     new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt + 2);
-                    new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.A0);
+                    new InstrR(Op.addu, Instr.V0, base, Instr.A0);
                     new InstrI(Op.sll, Instr.A0, ms[1].get(Instr.A0), 2);
                     new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.A0);
                     ret = new InstrLS(Op.lw, tar, 0, Instr.V0);

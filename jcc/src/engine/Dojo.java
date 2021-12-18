@@ -12,8 +12,8 @@ import java.util.*;
 
 public class Dojo {
     private static final ArrayList<SyncB> blks = new ArrayList<>();
-    public static SyncR globalReq = new GlobalR();
-    public static SyncO globalOpr = new GlobalO();
+    public static GlobalR globalReq = new GlobalR();
+    public static GlobalO globalOpr = new GlobalO();
     public static SyncR curReq;
     public static SyncO curOpr;
     public static SyncB curB;
@@ -147,6 +147,7 @@ public class Dojo {
         }
 
         for (MFunc f : MTable.func) f.memAlloc();
+//        globalOpr.setReg();
 
         status = false;
         while (!status) {

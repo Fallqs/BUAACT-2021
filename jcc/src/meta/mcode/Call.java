@@ -1,12 +1,7 @@
 package meta.mcode;
 
 import engine.Dojo;
-import engine.instr.Instr;
-import engine.instr.InstrI;
-import engine.instr.InstrJ;
-import engine.instr.InstrLS;
-import engine.instr.InstrR;
-import engine.instr.Op;
+import engine.instr.*;
 import meta.Meta;
 import meta.midt.MFunc;
 import meta.midt.MVar;
@@ -72,8 +67,8 @@ public class Call extends Meta implements Concrete {
         for (int i = 0; i < params.length; ++i) {
             Meta u = params[i].eqls();
             MVar v = func.params.get(i);
-//            if (!(u instanceof Put))
-            new InstrLS(Op.sw, u.get(Instr.V0, func.stackSiz), v.base, Instr.SP);
+            if (v.reg == -1) new InstrLS(Op.sw, u.get(Instr.V0, func.stackSiz), v.base, Instr.SP);
+            else new InstrDual(Op.move, v.reg, u.get(Instr.V0, func.stackSiz));
         }
 
         new InstrJ(Op.jal, func.req);

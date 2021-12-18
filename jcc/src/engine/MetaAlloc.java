@@ -16,6 +16,7 @@ public class MetaAlloc {
     private int cnt = 0;
     public int[] regAlloc, stackAlloc, regUse;
     public final Set<Integer> used = new HashSet<>();
+    private final Set<Put> params = new HashSet<>();
     public int stackSiz = 0;
 
     public MetaAlloc() {
@@ -26,14 +27,19 @@ public class MetaAlloc {
         if (u != null && u != Meta.Nop && !mp.containsKey(u)) {
             mp.put(u, ++cnt);
             G.add(new HashSet<>());
+            if (u instanceof Put) {
+                for (Put v : params) add(u, v);
+                params.add((Put) u);
+            }
         }
     }
 
     public void add(Meta u, Meta v) {
-        if (u == null || v == null || u == Meta.Nop || v == Meta.Nop
-                || u instanceof Put || v instanceof Put || u == v
+        if (u == null || v == null || u == Meta.Nop || v == Meta.Nop || u == v
                 || u instanceof Virtual || v instanceof Virtual
         ) return;
+        if (u instanceof Put && !((Put) u).var.isParam) return;
+        if (v instanceof Put && !((Put) v).var.isParam) return;
         add(u);
         add(v);
         int iu = mp.get(u), iv = mp.get(v);

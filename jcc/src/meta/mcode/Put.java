@@ -41,14 +41,20 @@ public class Put extends Meta {
     public void shrink() {
     }
 
+    public void setReg() {
+        var.reg = reg;
+    }
+
     @Override
     public int get(int tmp) {
+        if (var.reg != -1) return var.reg;
         new InstrLS(Op.lw, tmp, var.base, Instr.bsR(var));
         return tmp;
     }
 
     @Override
     public int get(int tmp, int shift) {
+        if (var.reg != -1) return var.reg;
         if (var.typ != MTyp.Int) {
             if (Instr.bsR(var) == Instr.GP) new InstrI(Op.addi, tmp, Instr.GP, var.base);
             else new InstrLS(Op.lw, tmp, var.base + shift, Instr.SP);

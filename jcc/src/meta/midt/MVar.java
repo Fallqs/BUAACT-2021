@@ -33,7 +33,7 @@ public class MVar implements MIdt, Comparable<MVar> {
             size = dims[0] * (1 << lgt);
         }
         putc = new int[]{0};
-        global = Dojo.curFunc == null;  // || "main".equals(Dojo.curFunc.name);
+        global = Dojo.curFunc == null || "main".equals(Dojo.curFunc.name) && typ != MTyp.Int;
     }
 
     public MVar(String name, int... dims) {

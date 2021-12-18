@@ -54,6 +54,15 @@ public class PVal extends Meta implements Virtual, Concrete {
         return ret;
     }
 
+    private int fetch(int tar) {
+        int base = var.reg;
+        if (base == -1) {
+            new InstrLS(Op.lw, tar, var.base, Instr.SP);
+            base = tar;
+        }
+        return base;
+    }
+
     @Override
     public Instr translate() {
         for (int i = 0; i < ms.length; ++i) ms[i] = ms[i].eqls();
@@ -64,12 +73,11 @@ public class PVal extends Meta implements Virtual, Concrete {
             if (!var.isParam) {
                 new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), 2);
                 new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.bsR(var));
-//                if (!var.global && !var.cnst) new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.SP);
                 return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
             } else {
-                new InstrLS(Op.lw, Instr.A0, var.base, Instr.SP);
+                int base = fetch(Instr.A0);
                 new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.V0), 2);
-                new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.V0);
+                new InstrR(Op.addu, Instr.A0, base, Instr.V0);
                 return new InstrLS(Op.sw, fr.get(Instr.V0), 0, Instr.A0);
             }
         } else if (var.typ == MTyp.Mat) {
@@ -81,8 +89,8 @@ public class PVal extends Meta implements Virtual, Concrete {
 //                if (!var.global && !var.cnst) new InstrR(Op.addu, Instr.V0, Instr.V0, Instr.SP);
                 return new InstrLS(Op.sw, fr.get(Instr.V0), var.base, Instr.A0);
             } else {
-                new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
-                new InstrR(Op.addu, Instr.A0, Instr.A0, Instr.V0);
+                int base = fetch(Instr.V0);
+                new InstrR(Op.addu, Instr.A0, Instr.A0, base);
                 return new InstrLS(Op.sw, fr.get(Instr.V0), 0, Instr.A0);
             }
         }
