@@ -70,4 +70,10 @@ public class MFunc implements MIdt {
         }
         stackSiz += 4;
     }
+
+    public boolean updRegUse(Set<Integer> s) {
+        int siz = malloc.used.size();
+        malloc.used.addAll(s);
+        return malloc.used.size() == siz;
+    }
 }

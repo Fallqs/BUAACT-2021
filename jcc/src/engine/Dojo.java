@@ -2,6 +2,7 @@ package engine;
 
 import engine.sync.*;
 import meta.Meta;
+import meta.mcode.Call;
 import meta.mcode.Put;
 import meta.midt.MFunc;
 import meta.midt.MTable;
@@ -127,13 +128,6 @@ public class Dojo {
             for (int i = blks.size() - 1; i >= 0; --i) status &= blks.get(i).checkForeign();
         }
 
-//        status = false;
-//        while (!status) {
-//            status = true;
-//            for (int i = blks.size() - 1; i >= 0; --i)
-//                status &= blks.get(i).checkForeign();
-//        }
-
         for (SyncB blk : blks)
             if (blk.fa.foreign == blk.fa || blk.fa.valid) blk.valid = true;
 
@@ -153,6 +147,14 @@ public class Dojo {
         }
 
         for (MFunc f : MTable.func) f.memAlloc();
+
+        status = false;
+        while (!status) {
+            status = true;
+            for (SyncB blk : blks)
+                for (Meta m : blk.ms)
+                    if (m instanceof Call) status &= blk.req.func.updRegUse(((Call) m).func.malloc.used);
+        }
     }
 
     public static void translate() {
