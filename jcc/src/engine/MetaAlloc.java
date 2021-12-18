@@ -119,9 +119,9 @@ public class MetaAlloc {
             if (regAlloc[i] >= regs.length) regAlloc[i] = -1;
             stackAlloc[i] = colors[i] << 2;
         }
-        order.clear();  // Random Shuffle
+        order.clear();
         for (int i = 0; i < regs.length; ++i) order.add(i);
-        Collections.shuffle(order);
+        Collections.shuffle(order);  // Random Shuffle
         regUse = new int[Math.min(regs.length, colors.length)];
         for (int i = 0; i < regUse.length; ++i) regUse[i] = order.get(i);
     }

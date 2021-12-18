@@ -140,17 +140,18 @@ public class SyncO implements Index {
             loadRPhi(legendH);
             loadRPhi(legendL);
         }
-        if (end instanceof Concrete) for (Meta m : end.prevs()) {
+        end.concrete |= blk.fa.valid;
+        if (end instanceof Concrete || end.concrete) for (Meta m : end.prevs()) {
             m.eqls().valid = m.eqls().concrete = true;
             llive.putIfAbsent(m.eqls(), 0);
-            blk.valid = true;
+            blk.fa.valid = true;
         }
         rlive.forEach(e -> llive.putIfAbsent(e, 0));
         for (int i = blk.ms.size() - 1; i >= 0; --i) {
             Meta m = blk.ms.get(i).eqls();
             if (!( m.concrete || m instanceof Concrete && ((Concrete) m).be()) && !rlive.contains(m)) continue;
             m.valid = m.concrete = true;
-            blk.valid |= rlive.contains(m);
+            blk.fa.valid |= rlive.contains(m);
             llive.remove(m);
             for (Meta n : m.prevs()) {
                 n.eqls().concrete = n.eqls().valid = true;

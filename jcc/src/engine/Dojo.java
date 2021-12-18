@@ -116,12 +116,6 @@ public class Dojo {
         }
 
         for (SyncB blk : blks) blk.checkValid();
-        status = false;
-        while (!status) {
-            status = true;
-            for (int i = blks.size() - 1; i >= 0; --i) status &= blks.get(i).opr.transValid();
-        }
-
         for (SyncB blk : blks) if (blk.vis == 0) tarjan(blk);
         for (SyncB blk : blks)
             if (blk.valid) blk.fa.foreign = blk.fa;
@@ -129,14 +123,21 @@ public class Dojo {
         status = false;
         while (!status) {
             status = true;
-            for (int i = blks.size() - 1; i >= 0; --i)
-                status &= blks.get(i).checkForeign();
+            for (int i = blks.size() - 1; i >= 0; --i) status &= blks.get(i).opr.transValid();
+            for (int i = blks.size() - 1; i >= 0; --i) status &= blks.get(i).checkForeign();
         }
 
-        for (SyncB blk : blks)
-            if (blk.fa.foreign == blk.fa) blk.valid = true;
+//        status = false;
+//        while (!status) {
+//            status = true;
+//            for (int i = blks.size() - 1; i >= 0; --i)
+//                status &= blks.get(i).checkForeign();
+//        }
 
-        for (SyncB blk : blks) System.out.println(blk.req + " " + (blk.valid));
+        for (SyncB blk : blks)
+            if (blk.fa.foreign == blk.fa || blk.fa.valid) blk.valid = true;
+
+        for (SyncB blk : blks) System.out.println(blk.req + " " + (blk.valid) + " fa=" + blk.fa.req);
         System.out.println();
 
         status = false;
