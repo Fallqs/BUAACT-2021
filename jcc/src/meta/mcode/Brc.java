@@ -118,17 +118,19 @@ public class Brc extends Meta implements Flight, Virtual {
 
     @Override
     public Instr translate() {
+        return translate(true);
+    }
+
+    public Instr translate(boolean cond) {
         if (els == null) {
-            sync(then);
+            if (cond) sync(then);
             return new InstrJ(Op.j, then);
         }
-//        InstrB cnd = new InstrB(Op.beq, cond.get(Instr.V0), Instr.ZERO, els);
         pThen.pin = new Nop().toString(true);
-        sync(then);
+        if (cond) sync(then);
         new InstrJ(Op.j, then);
-//        cnd.label = new Nop().toString(true);
         pEls.pin = new Nop().toString(true);
-        sync(els);
+        if (cond) sync(els);
         new InstrJ(Op.j, els);
         return null;
     }

@@ -12,7 +12,7 @@ import meta.midt.MVar;
 
 import java.util.Arrays;
 
-public class PVal extends Meta implements Virtual {
+public class PVal extends Meta implements Virtual, Concrete {
     public Meta fr;
     public MVar var;
     protected Meta[] ms;
@@ -87,5 +87,10 @@ public class PVal extends Meta implements Virtual {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean be() {
+        return var.global;
     }
 }

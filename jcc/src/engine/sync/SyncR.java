@@ -86,16 +86,27 @@ public class SyncR implements Index {
         return ans;
     }
 
-    public boolean transMeta() {
+    public boolean transMeta(boolean concrete) {
         int siz = llive.size();
         Set<Meta> rlive = blk.opr.llive.keySet();
         for (Meta p : mp.values()) {
             if (!rlive.contains(p)) continue;
             p.valid = p == p.eqls();
+//            blk.valid |= p.valid && concrete;
             rlive.remove(p);
         }
         llive.addAll(rlive);
         return llive.size() == siz;
+    }
+
+    public void validate(Set<Meta> s) {
+        if (blk.valid) return;
+        for (Meta p : mp.values()) {
+            if (s.contains(p.eqls())) {
+                blk.valid = true;
+                break;
+            }
+        }
     }
 
     public void transLive() {

@@ -14,7 +14,12 @@ public class BrGoto extends Brc {
 
     @Override
     public Instr translate() {
-        sync(pThen.req);
+        return translate(true);
+    }
+
+    @Override
+    public Instr translate(boolean cond) {
+        if (cond) sync(pThen.req);
         return new InstrJ(Op.j, pThen.req);
     }
 

@@ -77,14 +77,14 @@ public class SyncO implements Index {
 
     public boolean transOpr() {
         boolean ans = true;
-        for (SyncR req : legendH) ans &= req.transOpr(this.mp);
-        for (SyncR req : legendL) ans &= req.transOpr(this.mp);
+        for (SyncR req : legendH) ans &= req.transOpr(new HashMap<>(this.mp));
+        for (SyncR req : legendL) ans &= req.transOpr(new HashMap<>(this.mp));
         return ans;
     }
 
     private void loadRlive(Set<SyncR> legend) {
         for (SyncR lgd : legend) {
-            if (lgd instanceof GlobalR && "main".equals(func.name))continue;
+            if (lgd instanceof GlobalR && "main".equals(func.name)) continue;
             rlive.addAll(lgd.llive);
             for (Meta p : lgd.mp.values())
                 if (p.valid) {
@@ -92,6 +92,19 @@ public class SyncO implements Index {
                     if (mp.containsKey(var)) rlive.add(mp.get(var).eqls());
                 }
         }
+    }
+
+    private void loadRPhi(Set<SyncR> legend) {
+        Set<Meta> validate = new HashSet<>();
+        for (SyncR lgd : legend) {
+            if (lgd instanceof GlobalR && "main".equals(func.name)) continue;
+            for (Meta p : lgd.mp.values())
+                if (p.valid && ((Phi) p).fr.size() > 1) {
+                    MVar var = ((Phi) p).var;
+                    if (mp.containsKey(var)) validate.add(mp.get(var).eqls());
+                }
+        }
+        rq.validate(validate);
     }
 
     public boolean transMeta() {
@@ -108,14 +121,43 @@ public class SyncO implements Index {
         for (int i = blk.ms.size() - 1; i >= 0; --i) {
             Meta m = blk.ms.get(i).eqls();
             if (!m.valid && !rlive.contains(m)) continue;
-            valid = m.valid = true;
+            m.valid = true;
             llive.remove(m);
             for (Meta n : m.prevs()) {
                 n.eqls().valid = true;
                 llive.putIfAbsent(n.eqls(), 0);
             }
         }
-        if (llive.size() != siz) blk.req.transMeta();
+        if (llive.size() != siz) blk.req.transMeta(false);
+        return llive.size() == siz;
+    }
+
+    public boolean transValid() {
+        int siz = llive.size();
+        if (!(end instanceof Ret) || !((Ret) end).func.name.equals("main")) {
+            loadRlive(legendH);
+            loadRlive(legendL);
+            loadRPhi(legendH);
+            loadRPhi(legendL);
+        }
+        if (end instanceof Concrete) for (Meta m : end.prevs()) {
+            m.eqls().valid = m.eqls().concrete = true;
+            llive.putIfAbsent(m.eqls(), 0);
+            blk.valid = true;
+        }
+        rlive.forEach(e -> llive.putIfAbsent(e, 0));
+        for (int i = blk.ms.size() - 1; i >= 0; --i) {
+            Meta m = blk.ms.get(i).eqls();
+            if (!( m.concrete || m instanceof Concrete && ((Concrete) m).be()) && !rlive.contains(m)) continue;
+            m.valid = m.concrete = true;
+            blk.valid |= rlive.contains(m);
+            llive.remove(m);
+            for (Meta n : m.prevs()) {
+                n.eqls().concrete = n.eqls().valid = true;
+                llive.putIfAbsent(n.eqls(), 0);
+            }
+        }
+        if (llive.size() != siz) blk.req.transMeta(true);
         return llive.size() == siz;
     }
 
@@ -166,12 +208,27 @@ public class SyncO implements Index {
         }
     }
 
+    private boolean go () {
+        if (blk.valid) return true;
+        boolean go = false;
+        for(SyncR lgd : legendH) {
+            SyncB v = lgd.blk;
+            if (v == null || v.fa == v.fa.foreign) {
+                go = true;
+                break;
+            }
+        }
+        return go;
+    }
+
     @Override
     public void translate() {
         if (indexCnt < 0) return;
         indexCnt = -1;
-        for (Meta m : blk.ms) if (m.valid) m.translate();
-        end.translate();
+        if (blk.valid)  for (Meta m : blk.ms) if (m.valid) m.translate();
+//        if (end instanceof Brc) ((Brc) end).translate(blk.valid);
+//        else end.translate();
+        if (blk.valid) end.translate();
         for (SyncR l : legendH) l.translate();
     }
 
@@ -198,4 +255,9 @@ public class SyncO implements Index {
             return Integer.compare(blk.id, q.blk.id);
         }
     }
+
+//    public void printMP() {
+//        System.out.println("MP::");
+//        for (Map.Entry<MVar, Meta> e : mp.entrySet()) if (e.getKey().name.equals("a")) System.out.println(e.getValue());
+//    }
 }

@@ -8,7 +8,7 @@ import engine.instr.Nop;
 import engine.instr.Op;
 import meta.Meta;
 
-public class Cin extends Meta {
+public class Cin extends Meta implements Concrete {
     public Cin() {
         valid = true;
     }
@@ -32,5 +32,10 @@ public class Cin extends Meta {
         if (reg >= 0) ret = new InstrR(Op.or, reg, Instr.V0, Instr.ZERO);
         else ret = new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
         return ret;
+    }
+
+    @Override
+    public boolean be() {
+        return true;
     }
 }

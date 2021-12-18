@@ -49,6 +49,7 @@ public class Psi extends Meta implements Virtual {
         fr = fr.eqls();
         if (fr instanceof Virtual) return null;
         if (fr instanceof Put) return loadVar(to, (Put) fr);
+        if (fr.spx < 0 || to.spx < 0) return null;
         if (to.reg >= 0 && fr.reg >= 0) return new InstrDual(Op.move, to.reg, fr.reg);
         if (to.reg >= 0) return new InstrLS(Op.lw, to.reg, fr.spx, Instr.SP);
         new InstrLS(Op.lw, Instr.V0, fr.spx, Instr.SP);

@@ -4,7 +4,7 @@ import engine.instr.*;
 import meta.Meta;
 import meta.midt.MStr;
 
-public class Cout extends Meta implements Virtual {
+public class Cout extends Meta implements Virtual, Concrete {
     private boolean isStr = false;
     private Meta m;
     private MStr s;
@@ -54,5 +54,10 @@ public class Cout extends Meta implements Virtual {
             new Nop("syscall", true);
         }
         return null;
+    }
+
+    @Override
+    public boolean be() {
+        return true;
     }
 }

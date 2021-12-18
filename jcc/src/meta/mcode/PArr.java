@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PArr extends Meta implements Virtual {
+public class PArr extends Meta implements Virtual, Concrete {
     public Meta[] fr;
     public boolean[] ban;
     public final MVar var;
@@ -75,5 +75,10 @@ public class PArr extends Meta implements Virtual {
     @Override
     public String toString() {
         return "PArr " + var.toString() + " " + id;
+    }
+
+    @Override
+    public boolean be() {
+        return var.global;
     }
 }

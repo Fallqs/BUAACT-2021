@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Ret extends Meta implements Flight, Virtual {
+public class Ret extends Meta implements Flight, Virtual, Concrete {
     private Meta vl;
     public boolean isVoid;
     public final MFunc func;
@@ -80,5 +80,10 @@ public class Ret extends Meta implements Flight, Virtual {
                 if (p.to instanceof Phi) func.writes.add(p.fr.eqls().save = ((Phi) p.to.eqls()).var);
             this.psi.removeIf(p -> p.fr instanceof Put && p.to instanceof Phi && ((Put)p.fr).var == ((Phi) p.to).var);
         }
+    }
+
+    @Override
+    public boolean be() {
+        return true;
     }
 }

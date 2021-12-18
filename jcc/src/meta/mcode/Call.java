@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Call extends Meta {
+public class Call extends Meta implements Concrete {
     public final MFunc func;
     public Meta[] params;
     public final Map<MVar, Meta> sync;
@@ -93,5 +93,10 @@ public class Call extends Meta {
         for (Meta m : preserve) if (m.reg >= 0 && !(m instanceof Virtual)) new InstrLS(Op.lw, m.reg, m.spx, Instr.SP);
 
         return ret;
+    }
+
+    @Override
+    public boolean be() {
+        return true;
     }
 }

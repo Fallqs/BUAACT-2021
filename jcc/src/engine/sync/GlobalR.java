@@ -32,6 +32,16 @@ public class GlobalR extends SyncR {
     }
 
     @Override
+    public boolean transPhi() {
+        return true;
+    }
+
+    @Override
+    public boolean transMeta(boolean concrete) {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Global_Req";
     }

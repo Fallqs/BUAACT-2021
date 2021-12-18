@@ -55,6 +55,40 @@ public class Dojo {
         if (curOpr != null) curOpr.upd(v, m);
     }
 
+    public static int tarjanT = 0;
+    public static final Stack<SyncB> stack = new Stack<>();
+
+    public static void tarjan(SyncB u) {
+        u.vis = 1;
+        u.dfn = u.low = ++tarjanT;
+        stack.push(u);
+        List<SyncR> lgd = new ArrayList<>(u.opr.legendH);
+        lgd.addAll(u.opr.legendL);
+        for (SyncR req : lgd) {
+            SyncB v = req.blk;
+            if (v == null) continue;
+            if (v.vis == 0) {
+                tarjan(v);
+                u.low = Math.min(u.low, v.low);
+            } else if (v.vis == 1) {
+                u.low = Math.min(u.low, v.dfn);
+            }
+        }
+        if (u.dfn == u.low) {
+            while (stack.peek() != u) {
+                SyncB v = stack.pop();
+                u.sizV += v.valid ? 1 : 0;
+                ++u.sizA;
+                v.fa = u;
+                v.vis = 2;
+            }
+            u.vis = 2;
+            u.sizV += u.valid ? 1 : 0;
+            ++u.sizA;
+            stack.pop();
+        }
+    }
+
     /**
      * Translating : sort(), index(), translate()
      */
@@ -81,6 +115,30 @@ public class Dojo {
             for (SyncB blk : blks) status &= blk.req.transPhi();
         }
 
+        for (SyncB blk : blks) blk.checkValid();
+        status = false;
+        while (!status) {
+            status = true;
+            for (int i = blks.size() - 1; i >= 0; --i) status &= blks.get(i).opr.transValid();
+        }
+
+        for (SyncB blk : blks) if (blk.vis == 0) tarjan(blk);
+        for (SyncB blk : blks)
+            if (blk.valid) blk.fa.foreign = blk.fa;
+
+        status = false;
+        while (!status) {
+            status = true;
+            for (int i = blks.size() - 1; i >= 0; --i)
+                status &= blks.get(i).checkForeign();
+        }
+
+        for (SyncB blk : blks)
+            if (blk.fa.foreign == blk.fa) blk.valid = true;
+
+        for (SyncB blk : blks) System.out.println(blk.req + " " + (blk.valid));
+        System.out.println();
+
         status = false;
         while (!status) {
             status = true;
@@ -88,6 +146,7 @@ public class Dojo {
         }
 
         for (SyncB blk : blks) {
+//            if (!blk.valid) continue;
             blk.req.transLive();
             blk.opr.transLive();
         }
