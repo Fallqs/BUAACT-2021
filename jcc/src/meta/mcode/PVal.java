@@ -91,6 +91,6 @@ public class PVal extends Meta implements Virtual, Concrete {
 
     @Override
     public boolean be() {
-        return var.global;
+        return true;
     }
 }

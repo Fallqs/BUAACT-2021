@@ -149,7 +149,8 @@ public class SyncO implements Index {
         rlive.forEach(e -> llive.putIfAbsent(e, 0));
         for (int i = blk.ms.size() - 1; i >= 0; --i) {
             Meta m = blk.ms.get(i).eqls();
-            if (!( m.concrete || m instanceof Concrete && ((Concrete) m).be()) && !rlive.contains(m)) continue;
+            if (!( m.concrete || m instanceof Concrete && ((Concrete) m).be()) &&
+                    !rlive.contains(m) && !(blk.fa.valid && m instanceof Brp)) continue;
             m.valid = m.concrete = true;
             blk.fa.valid |= rlive.contains(m);
             llive.remove(m);
@@ -211,10 +212,11 @@ public class SyncO implements Index {
 
     private boolean go () {
         if (blk.valid) return true;
+        if (end instanceof Brc) ((Brc) end).fr = blk.fa;
         boolean go = false;
         for(SyncR lgd : legendH) {
             SyncB v = lgd.blk;
-            if (v == null || v.fa == v.fa.foreign) {
+            if (v == null || blk.fa != v.fa) {
                 go = true;
                 break;
             }
@@ -229,7 +231,7 @@ public class SyncO implements Index {
         if (blk.valid)  for (Meta m : blk.ms) if (m.valid) m.translate();
 //        if (end instanceof Brc) ((Brc) end).translate(blk.valid);
 //        else end.translate();
-        if (blk.valid) end.translate();
+        if (go()) end.translate();
         for (SyncR l : legendH) l.translate();
     }
 

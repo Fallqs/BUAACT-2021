@@ -1,6 +1,7 @@
 package meta.mcode;
 
 import engine.instr.*;
+import engine.sync.SyncB;
 import engine.sync.SyncR;
 import meta.Meta;
 import meta.midt.MPin;
@@ -15,6 +16,7 @@ import java.util.Map;
  * j then
  */
 public class Brc extends Meta implements Flight, Virtual {
+    public SyncB fr = null;
     public SyncR then, els;
     public MPin pThen = new MPin(""), pEls = new MPin("");
     public Meta cond;
@@ -118,20 +120,26 @@ public class Brc extends Meta implements Flight, Virtual {
 
     @Override
     public Instr translate() {
-        return translate(true);
+        return translate(fr == null);
     }
 
     public Instr translate(boolean cond) {
         if (els == null) {
-            if (cond) sync(then);
-            return new InstrJ(Op.j, then);
+            if (cond || then.blk.fa != fr) {
+                sync(then);
+                return new InstrJ(Op.j, then);
+            } else return null;
         }
         pThen.pin = new Nop().toString(true);
-        if (cond) sync(then);
-        new InstrJ(Op.j, then);
+        if (cond || then.blk.fa != fr) {
+            sync(then);
+            new InstrJ(Op.j, then);
+        }
         pEls.pin = new Nop().toString(true);
-        if (cond) sync(els);
-        new InstrJ(Op.j, els);
+        if (cond || els.blk.fa != fr) {
+            sync(els);
+            new InstrJ(Op.j, els);
+        }
         return null;
     }
 }

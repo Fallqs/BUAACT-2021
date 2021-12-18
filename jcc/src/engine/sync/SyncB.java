@@ -38,7 +38,7 @@ public class SyncB implements Comparable<SyncB> {
         StringBuilder ret = new StringBuilder();
         if (req.func != null && req.func.req == req) ret.append('\n').append(req.func);
         ret.append('\n').append(req).append(":\n");
-        if (valid) {
+        {
             for (Meta m : req.mp.values())
                 if (m.valid) ret.append(m).append(": ")
                         .append(Instr.getReg(m.reg)).append('\n');
@@ -64,9 +64,9 @@ public class SyncB implements Comparable<SyncB> {
     }
 
     public boolean checkForeign() {
-        if (!fa.valid) return true;
-        boolean sat = fa.foreign != fa;
-        fa.foreign = fa;
+        boolean sat = fa.valid && fa.foreign != fa;
+        if (sat) fa.foreign = fa;
+        if (fa.foreign == null) return true;
         boolean ret = false;
         List<Index> prv = new ArrayList<>(req.oprH);
         prv.addAll(req.oprL);
