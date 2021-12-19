@@ -1,5 +1,6 @@
 package engine;
 
+import engine.instr.Instr;
 import engine.sync.*;
 import meta.Meta;
 import meta.mcode.Call;
@@ -155,6 +156,12 @@ public class Dojo {
             for (SyncB blk : blks)
                 for (Meta m : blk.ms)
                     if (m instanceof Call) status &= blk.req.func.updRegUse(((Call) m).func.malloc.used);
+        }
+
+        for (MFunc f : MTable.func) {
+            System.out.println(f);
+            for (Integer i : f.malloc.used) System.out.print(Instr.getReg(i) + ", ");
+            System.out.println();
         }
     }
 

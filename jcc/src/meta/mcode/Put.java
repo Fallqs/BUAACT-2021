@@ -43,6 +43,7 @@ public class Put extends Meta {
 
     public void setReg() {
         var.reg = reg;
+        spx = var.base;
     }
 
     @Override

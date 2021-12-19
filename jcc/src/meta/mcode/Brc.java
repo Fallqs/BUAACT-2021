@@ -60,30 +60,16 @@ public class Brc extends Meta implements Flight, Virtual {
         if (psi != null && psi.containsKey(req)) {
             List<Psi> list = psi.get(req);
             list.removeIf(e -> !e.to.valid);
-            RoundRobin.tar = new int[32];
-            RoundRobin.fa = new int[32];
-            RoundRobin.vis = new boolean[32];
-            Arrays.fill(RoundRobin.tar, -1);
-            Arrays.fill(RoundRobin.fa, -1);
+            RoundRobin.init();
             for (Psi p : list) {
                 p.to = p.to.eqls();
                 p.fr = p.fr.eqls();
                 if (p.fr == p.to) continue;
                 if (p.to.reg < 0) p.translate();
-                else if (p.fr.reg >= 0 && p.fr.reg != p.to.reg) RoundRobin.tar[p.fr.reg] = p.to.reg;
+                else if (p.fr.reg >= 0 && p.fr.reg != p.to.reg)
+                    RoundRobin.add(p.fr.reg, p.to.reg);
             }
-            Arrays.fill(RoundRobin.vis, false);
-            for (int x = 0; x < 32; ++x) if (RoundRobin.tar[x] != -1 && RoundRobin.fa[x] == -1) {
-                RoundRobin.fa[x] = x;
-                RoundRobin.dfs0(x, x);
-            }
-            for (int x = 0; x < 32; ++x)
-                if (RoundRobin.fa[x] == x) {
-                    if (!RoundRobin.dfs1(x)) {
-                        new InstrDual(Op.move, Instr.A0, x);
-                        RoundRobin.dfs2(x, Instr.A0);
-                    } else RoundRobin.dfs2(x, x);
-                }
+            RoundRobin.alloc();
             for (Psi p : list) if (p.fr.reg < 0) p.translate();
         }
     }

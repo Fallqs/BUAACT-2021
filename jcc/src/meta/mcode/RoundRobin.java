@@ -4,59 +4,67 @@ import engine.instr.Instr;
 import engine.instr.InstrDual;
 import engine.instr.Op;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class RoundRobin {
-    public static int[] tar, fa;
-    public static boolean[] vis;
+    private static int[] tar, fa = new int[32], deg = new int[32];
+    public static boolean[] vis = new boolean[32], in = new boolean[32];
+    private static final boolean[] knot = new boolean[32];
+    private static final List<Set<Integer>> G = new ArrayList<>();
 
-    public static void dfs0(int x, int f) {
-        if (tar[x] == -1) return;
-        if (fa[tar[x]] != -1) {
-            fa[tar[x]] = f;
-            return;
-        }
-        fa[tar[x]] = f;
-        dfs0(tar[x], f);
+    private static int cnt = 0;
+
+    public static void init() {
+        cnt = 0;
+        G.clear();
+        Arrays.fill(deg, 0);
+        for (int i = 0; i < 32; ++i) G.add(new HashSet<>());
     }
 
-    public static boolean dfs1(int x) {
-        if (tar[x] == -1) return true;
-        if (vis[tar[x]]) return false;
-        vis[x] = true;
-        boolean ans = dfs1(tar[x]);
-        vis[x] = false;
-        return ans;
+    public static void add(int u, int v) {
+        if (u == v) return;
+        G.get(u).add(v);
+        ++deg[v];
+        ++cnt;
     }
 
-    public static void dfs2(int x, int fr) {
-        vis[x] = true;
-        if (tar[x] == -1) return;
-        if (!vis[tar[x]]) dfs2(tar[x], tar[x]);
-        new InstrDual(Op.move, tar[x], fr);
+    public static void dfsC(int u) {
+        if (vis[u]) return;
+        vis[u] = in[u] = true;
+        for (Integer v : G.get(u)) {
+            if (!vis[v]) dfsC(v);
+            else if (in[v])
+                fa[u] = v;
+        }
+        in[u] = false;
     }
 
-    public static void sync(List<Integer> fr, List<Integer> to) {
-        tar = new int[32];
-        fa = new int[32];
-        vis = new boolean[32];
-        Arrays.fill(tar, -1);
-        Arrays.fill(fa, -1);
-        for (int i = 0; i<fr.size(); ++i) {
-            if (!fr.get(i).equals(to.get(i))) tar[fr.get(i)] = to.get(i);
-        }
-        Arrays.fill(vis, false);
-        for (int x = 0; x < 32; ++x) if (tar[x] != -1 && fa[x] == -1) {
-            fa[x] = x;
-            dfs0(x, x);
-        }
-        for (int x = 0; x < 32; ++x)
-            if (fa[x] == x) {
-                if (!dfs1(x)) {
-                    new InstrDual(Op.move, Instr.A0, x);
-                    dfs2(x, Instr.A0);
-                } else dfs2(x, x);
+    public static void dfs(int u) {
+        vis[u] = true;
+        for (Integer v : G.get(u)) {
+            if (v != fa[u]) {
+                dfs(v);
+                new InstrDual(Op.move, v, u);
+//                System.out.println(v + "<=" + u);
+            } else {
+                new InstrDual(Op.move, Instr.A0, u);
+//                System.out.println("X<=" + u);
             }
+        }
+        if (knot[u]) {
+            new InstrDual(Op.move, u, Instr.A0);
+//            System.out.println(u + "<=X");
+        }
+    }
+
+    public static void alloc() {
+        Arrays.fill(fa, -1);
+        Arrays.fill(vis, false);
+        Arrays.fill(knot, false);
+        for (int i = 0; i < 32; ++i) if (!vis[i]) dfsC(i);
+        for (int i = 0; i < 32; ++i) if (fa[i] != -1) knot[fa[i]] = true;
+        Arrays.fill(vis, false);
+        for (int i = 0; i < 32; ++i) if (!vis[i] && (deg[i] == 0 || knot[i])) dfs(i);
+//        System.out.println();
     }
 }

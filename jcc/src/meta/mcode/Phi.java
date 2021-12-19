@@ -52,10 +52,11 @@ public class Phi extends Meta {
         fr.removeIf(e -> e.eqls() == this);
         Set<Meta> eq = new HashSet<>();
         Set<Meta> ne = new HashSet<>();
-        for (Meta m : fr) if (m != m.eqls()) {
-            ne.add(m);
-            eq.add(m.eqls());
-        }
+        for (Meta m : fr)
+            if (m != m.eqls()) {
+                ne.add(m);
+                eq.add(m.eqls());
+            }
         fr.removeIf(ne::contains);
         fr.addAll(eq);
         if (fr.size() == 1) this.eqls = fr.iterator().next();
@@ -65,7 +66,7 @@ public class Phi extends Meta {
     @Override
     public Meta eqls() {
 //        shrink();
-        return eqls =  eqls == this ? this : eqls.eqls();
+        return eqls = eqls == this ? this : eqls.eqls();
     }
 
     @Override
@@ -81,10 +82,20 @@ public class Phi extends Meta {
     }
 
     @Override
+    public int gtag(int tmp) {
+        if (var.typ != MTyp.Int) {
+            if (var.param != null) return var.param.gtag(tmp);
+            return tmp;
+        }
+        return super.gtag(tmp);
+    }
+
+    @Override
     public int get(int tmp, int shift) {
         if (!fr.isEmpty() && var.typ == MTyp.Int) return super.get(tmp, shift);
         if (var.typ != MTyp.Int) {
             if (Instr.bsR(var) == Instr.GP) new InstrI(Op.addi, tmp, Instr.GP, var.base);
+            else if (var.param != null) return var.param.get(tmp, shift);
             else new InstrI(Op.addi, tmp, Instr.SP, var.base + shift);
         } else {
             if (Instr.bsR(var) == Instr.GP) new InstrLS(Op.lw, tmp, var.base, Instr.bsR(var));
