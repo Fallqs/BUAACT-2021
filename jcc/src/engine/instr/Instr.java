@@ -56,4 +56,8 @@ public class Instr {
     public static int bsR(MVar v) {
         return v.cnst || v.global ? GP : SP;
     }
+
+    public Op getOp() {
+        return op;
+    }
 }

@@ -4,4 +4,5 @@ public interface InstrBJ {
     String getPin();
     void setPin(String tar);
     void reMov();
+    Op getOp();
 }

@@ -15,7 +15,7 @@ public class Func extends Seg {
         Integer x = posp.get(tar);
         if (x == null) return tar;
         InstrBJ bj = posi.get(x);
-        if (!(bj instanceof InstrJ)) return tar;
+        if (!(bj instanceof InstrJ) || bj.getOp() == Op.jal) return tar;
         return find(bj.getPin());
     }
 
