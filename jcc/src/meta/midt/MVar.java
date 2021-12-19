@@ -3,6 +3,7 @@ package meta.midt;
 import engine.Dojo;
 import meta.Meta;
 import meta.mcode.PArr;
+import meta.mcode.Put;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ public class MVar implements MIdt, Comparable<MVar> {
     public boolean cnst = false, init = false, isParam = false, global;
     public int[] putc;
     public List<PArr> putv = new ArrayList<>();
+    public Put param = null;
 
     private static int cnt = 0;
     private final int id;

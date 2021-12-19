@@ -8,6 +8,8 @@ import engine.instr.Op;
 import meta.Meta;
 import meta.midt.MVar;
 
+import java.util.Arrays;
+
 /**
  * load value from HEAP
  */
@@ -50,7 +52,10 @@ public class GVal extends Meta {
 
     @Override
     public Meta[] prevs() {
-        return ms;
+        if (var.param == null) return ms;
+        Meta[] ret = Arrays.copyOf(ms, ms.length + 1);
+        ret[ret.length - 1] = var.param;
+        return ret;
     }
 
     private int fetch(int tar) {

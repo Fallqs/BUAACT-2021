@@ -46,8 +46,9 @@ public class PArr extends Meta implements Virtual, Concrete {
 
     @Override
     public Meta[] prevs() {
-        if (isCnst()) return new Meta[0];
+        if (isCnst()) return var.param != null ? new Meta[]{var.param} : new Meta[0];
         List<Meta> ret = new LinkedList<>();
+        if (var.param != null) ret.add(var.param);
         for (int i = 0; i < fr.length; ++i) if (!ban[i]) ret.add(fr[i]);
         return ret.toArray(new Meta[0]);
     }

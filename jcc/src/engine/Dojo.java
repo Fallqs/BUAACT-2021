@@ -97,7 +97,7 @@ public class Dojo {
         for (MVar v : MTable.global) globalReq.qry(v);
         for (MVar v : MTable.global) globalOpr.upd(v, new Put(v));
         for (MFunc f : MTable.func) {
-            for (MVar v : f.params) globalOpr.upd(v, new Put(v));
+            for (MVar v : f.params) globalOpr.upd(v, v.param = new Put(v));
             globalOpr.addLegend(f.req);
             f.req.setFunc(f);
         }
@@ -131,8 +131,8 @@ public class Dojo {
         for (SyncB blk : blks)
             if (blk.fa.foreign == blk.fa || blk.fa.valid) blk.valid = true;
 
-        for (SyncB blk : blks) System.out.println(blk.req + " " + (blk.valid) + " fa=" + blk.fa.req);
-        System.out.println();
+//        for (SyncB blk : blks) System.out.println(blk.req + " " + (blk.valid) + " fa=" + blk.fa.req);
+//        System.out.println();
 
         status = false;
         while (!status) {
@@ -147,7 +147,7 @@ public class Dojo {
         }
 
         for (MFunc f : MTable.func) f.memAlloc();
-//        globalOpr.setReg();
+        globalOpr.setReg();
 
         status = false;
         while (!status) {

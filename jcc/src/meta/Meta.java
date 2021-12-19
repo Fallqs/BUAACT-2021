@@ -5,6 +5,8 @@ import engine.instr.*;
 import engine.LgK;
 import meta.midt.MVar;
 
+import java.util.List;
+
 public class Meta implements Comparable<Meta> {
     public final int id;
     public int legend;
@@ -98,10 +100,11 @@ public class Meta implements Comparable<Meta> {
 
     public int get(int tmp, int shift) {
         if (this == Nop) return Instr.ZERO;
-//        if (this.isCnst()) {
-//            new InstrSI(Op.li, tmp, calc());
-//            return tmp;
-//        }
+        if (this.isCnst()) {
+            if (calc() == 0) return Instr.ZERO;
+            new InstrSI(Op.li, tmp, calc());
+            return tmp;
+        }
         if (reg >= 0) return reg;
         new InstrLS(Op.lw, tmp, spx + shift, Instr.SP);
         return tmp;

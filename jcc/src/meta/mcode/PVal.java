@@ -49,8 +49,9 @@ public class PVal extends Meta implements Virtual, Concrete {
 
     @Override
     public Meta[] prevs() {
-        Meta[] ret = Arrays.copyOf(ms, ms.length + 1);
+        Meta[] ret = Arrays.copyOf(ms, ms.length + (var.param != null ? 2 : 1));
         ret[ret.length - 1] = fr;
+        if (var.param != null) ret[ret.length - 2] = var.param;
         return ret;
     }
 

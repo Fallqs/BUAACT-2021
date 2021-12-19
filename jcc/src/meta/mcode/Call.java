@@ -64,12 +64,22 @@ public class Call extends Meta implements Concrete {
         for (Meta m : preserve) new InstrLS(Op.sw, m.reg, m.spx, Instr.SP);
 
         new InstrI(Op.addi, Instr.SP, Instr.SP, -func.stackSiz);
+        List<Integer> fr = new ArrayList<>(), to = new ArrayList<>();
         for (int i = 0; i < params.length; ++i) {
             Meta u = params[i].eqls();
             MVar v = func.params.get(i);
             if (v.reg == -1) new InstrLS(Op.sw, u.get(Instr.V0, func.stackSiz), v.base, Instr.SP);
-            else new InstrDual(Op.move, v.reg, u.get(Instr.V0, func.stackSiz));
+            else if (u.gtag(Instr.V0) == Instr.V0) new InstrDual(Op.move, v.reg, u.get(Instr.V0, func.stackSiz));
+            else {
+                fr.add(u.reg);
+                to.add(v.reg);
+            }
         }
+//        System.out.print(func.name + "(");
+//        for (int i = 0; i < fr.size(); ++i)
+//            System.out.print(Instr.getReg(fr.get(i)) + "->" + Instr.getReg(to.get(i)) + ", ");
+//        System.out.println(")");
+        RoundRobin.sync(fr, to);
 
         new InstrJ(Op.jal, func.req);
         Instr ret;
