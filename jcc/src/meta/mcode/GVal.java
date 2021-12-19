@@ -96,10 +96,11 @@ public class GVal extends Meta {
                     ret = var.isParam ? new InstrI(Op.addi, tar, Instr.bsR(var), var.base) :
                             new InstrLS(Op.lw, tar, var.base, Instr.SP);
                 } else if (ms.length == 1) {
+                    int base = Instr.V0;
                     if (!var.isParam) new InstrI(Op.addi, Instr.V0, Instr.bsR(var), var.base);
-                    else new InstrLS(Op.lw, Instr.V0, var.base, Instr.SP);
+                    else base = fetch(Instr.V0);
                     new InstrI(Op.sll, Instr.A0, ms[0].get(Instr.A0), var.lgt + 2);
-                    ret = new InstrR(Op.addu, tar, Instr.V0, Instr.A0);
+                    ret = new InstrR(Op.addu, tar, base, Instr.A0);
                 } else if (!var.isParam) {
                     new InstrI(Op.sll, Instr.V0, ms[0].get(Instr.A0), var.lgt + 2);
                     new InstrI(Op.sll, Instr.A0, ms[1].get(Instr.A0), 2);
