@@ -4,6 +4,7 @@ import engine.Dojo;
 import engine.instr.*;
 import meta.Meta;
 import meta.midt.MFunc;
+import meta.midt.MTyp;
 import meta.midt.MVar;
 
 import java.util.*;
@@ -81,9 +82,11 @@ public class Call extends Meta implements Concrete {
         }
 
         new InstrJ(Op.jal, func.req);
-        Instr ret;
-        if (reg >= 0) ret = new InstrR(Op.or, reg, Instr.V0, Instr.ZERO);
-        else ret = new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
+        Instr ret = null;
+        if (func.typ() != MTyp.Void) {
+            if (reg >= 0) ret = new InstrR(Op.or, reg, Instr.V0, Instr.ZERO);
+            else ret = new InstrLS(Op.sw, Instr.V0, spx, Instr.SP);
+        }
 
         for (Map.Entry<MVar, Meta> e : retrieve.entrySet()) {
             Meta m = e.getValue();

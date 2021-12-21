@@ -130,7 +130,7 @@ public class SyncR implements Index {
         if (++indexCnt < oprH.size()) return;
         indexCnt = -1;
         new Nop(toString());
-        if (func.req == this && !"main".equals(func.name))
+        if (func.req == this && !"main".equals(func.name) && !func.pure)
             new InstrLS(Op.sw, Instr.RA, func.stackSiz - 4, Instr.SP);
         if (func.req == this) {
             for (Meta p : mp.values()) if (p.valid) p.translate();

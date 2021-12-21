@@ -103,7 +103,14 @@ public class Dojo {
             f.req.setFunc(f);
         }
 
-        for (SyncB blk : blks) new DAG(blk.ms).shrink();
+        for (SyncB blk : blks) {
+            new DAG(blk.ms).shrink();
+            for (Meta m : blk.ms)
+                if (m instanceof Call) {
+                    blk.req.func.pure = false;
+                    break;
+                }
+        }
 
         boolean status = false;
         while (!status) {
@@ -132,8 +139,6 @@ public class Dojo {
         for (SyncB blk : blks)
             if (blk.fa.foreign == blk.fa || blk.fa.valid) blk.valid = true;
 
-//        for (SyncB blk : blks) System.out.println(blk.req + " " + (blk.valid) + " fa=" + blk.fa.req);
-//        System.out.println();
 
         status = false;
         while (!status) {
@@ -142,7 +147,6 @@ public class Dojo {
         }
 
         for (SyncB blk : blks) {
-//            if (!blk.valid) continue;
             blk.req.transLive();
             blk.opr.transLive();
         }

@@ -15,6 +15,7 @@ public class MFunc implements MIdt {
     public MTyp ret;
     public SyncR req;
     public MetaAlloc malloc;
+    public boolean pure = true;
     public final List<MVar> params = new ArrayList<>();
     public final Set<MVar> writes = new HashSet<>();
     public final Set<MVar> reads = new HashSet<>();

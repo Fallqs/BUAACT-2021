@@ -57,7 +57,7 @@ public class Ret extends Meta implements Flight, Virtual, Concrete {
             new Nop("syscall", true);
             return null;
         }
-        new InstrLS(Op.lw, Instr.RA, func.stackSiz - 4, Instr.SP);
+        if (!func.pure) new InstrLS(Op.lw, Instr.RA, func.stackSiz - 4, Instr.SP);
         for (Psi p : psi) {
             new InstrLS(Op.sw, p.fr.get(Instr.V0), ((Phi) p.to).var.base, Instr.bsR(((Phi) p.to).var));
         }
