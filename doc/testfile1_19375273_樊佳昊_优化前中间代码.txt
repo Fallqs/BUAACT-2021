@@ -1,0 +1,97 @@
+MFunc{name='main', ret=Int}
+$a1, $a2, $a3, $t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7, $s0, $s1, $s2, $s3, $s4, $s5, $s6, $s7, $t8, $t9, $fp, $v1, 
+MFunc{name='hhh', ret=Int}
+$a1, $a3, $t0, $t1, $t4, $t5, $t7, $s0, $s3, $s4, $s5, $s6, $t8, $t9, $fp, 
+
+
+MFunc{name='hhh', ret=Int}
+entry1:
+(1 -> T8): 16; $t7
+(T133 eql T8 -> T9): 18; $t7
+(beqz T9, 
+ ): 20; $0
+ Jmp : 22; $0
+ Branch entry3
+ Jmp entry2
+
+entry2:
+(1 -> T12): 24; $t7
+ Ret T12
+
+entry3:
+(2 -> T17): 34; $t7
+(T133 eql T17 -> T18): 36; $t7
+(beqz T18, 
+ ): 38; $0
+ Jmp : 40; $0
+ Branch entry5
+ Jmp entry4
+
+entry4:
+(2 -> T21): 42; $t7
+ Ret T21
+
+entry5:
+(1 -> T29): 58; $t7
+(T133 sub T29 -> T30): 60; $t7
+( push T30
+ Call hhh): 62; $t4
+(2 -> T32): 64; $t7
+(T133 sub T32 -> T33): 66; $t7
+( push T33
+ Call hhh): 68; $t7
+(T31 add T34 -> T35): 70; $t7
+ Ret T35
+
+MFunc{name='main', ret=Int}
+entry6:
+ cin >> T41: 82; $t3
+ cin >> T42: 84; $t7
+(T47 mult T48 -> T49): 98; $s4
+(3 -> T50): 100; $t7
+( push T50
+ Call hhh): 102; $t7
+( push T51
+ Call hhh): 104; $t7
+(T49 sub T52 -> T53): 106; $s4
+(T68 sub T85 -> T86): 172; $t7
+(T53 add T86 -> T87): 174; $s2
+(5 -> T89): 178; $a2
+(10 -> T91): 182; $s4
+(T91 lt T97 -> T98): 196; $t7
+(beqz T98, 
+ ): 198; $0
+ Jmp : 200; $0
+ Branch entry9
+ Jmp entry7
+
+entry7:
+ Phi105(n): $s4
+(1 -> T106): 212; $t7
+(T105 add T106 -> T107): 214; $s4
+ Jmp entry8
+
+entry8:
+(T89 mult T89 -> T112): 224; $t7
+(T112 mult T89 -> T113): 226; $t7
+(T113 mult T89 -> T114): 228; $t7
+(T114 mult T89 -> T115): 230; $t7
+(T115 mult T89 -> T116): 232; $t7
+(T107 lt T116 -> T117): 234; $t7
+(beqz T117, 
+ ): 236; $0
+ Jmp : 238; $0
+ Branch entry9
+ Jmp entry7
+
+entry9:
+ cout << T41: 242; $0
+ cout << str1 ', ': 244; $0
+ cout << T87: 248; $0
+ cout << str2 ', ': 250; $0
+ cout << T89: 254; $0
+ cout << str3 '\n': 256; $0
+(0 -> T129): 258; $t3
+ Ret T129
+
+

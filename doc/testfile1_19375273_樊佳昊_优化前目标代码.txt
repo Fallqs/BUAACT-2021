@@ -1,0 +1,137 @@
+.data 0x10008000
+var_d1: .word 4 
+str_1: .asciiz ", "
+str_2: .asciiz ", "
+str_3: .asciiz "\n"
+.text
+
+main:
+entry6:
+ori $v0, $0, 5
+syscall
+or $t3, $v0, $0
+ori $v0, $0, 5
+syscall
+or $t7, $v0, $0
+li $s4, 41440
+li $t7, 3
+sw $s4 12($sp)
+addi $sp, $sp, -32
+move $a3, $t7
+jal entry1
+or $t7, $v0, $0
+lw $s4 12($sp)
+sw $s4 12($sp)
+addi $sp, $sp, -32
+move $a3, $t7
+jal entry1
+or $t7, $v0, $0
+lw $s4 12($sp)
+subu $s4, $s4, $t7
+li $t7, -10091
+addu $s2, $s4, $t7
+li $a2, 5
+li $s4, 10
+li $t7, 1
+beq $t7, $0, entry9
+j entry7
+nop7:
+j entry7
+nop8:
+j entry9
+entry7:
+li $t7, 1
+addu $s4, $s4, $t7
+entry8:
+li $t7, 25
+li $t7, 125
+li $t7, 625
+li $t7, 3125
+li $t7, 15625
+slt $t7, $s4, $t7
+beq $t7, $0, entry9
+j entry7
+nop11:
+j entry7
+nop12:
+entry9:
+or $a0, $0, $t3
+ori $v0, $0, 1
+syscall
+addi $a0, $gp, 4
+ori $v0, $0, 4
+syscall
+or $a0, $0, $s2
+ori $v0, $0, 1
+syscall
+addi $a0, $gp, 7
+ori $v0, $0, 4
+syscall
+or $a0, $0, $a2
+ori $v0, $0, 1
+syscall
+addi $a0, $gp, 10
+ori $v0, $0, 4
+syscall
+li $t3, 0
+ori $v0, $0, 10
+syscall
+
+
+hhh:
+entry1:
+sw $ra 28($sp)
+li $t7, 1
+xor $t7, $a3, $t7
+sltiu $t7, $t7, 1
+beq $t7, $0, entry3
+j entry2
+nop23:
+j entry2
+nop24:
+j entry3
+entry2:
+li $t7, 1
+lw $ra 28($sp)
+or $v0, $t7, $0
+addi $sp, $sp, 32
+jr $ra
+entry3:
+li $t7, 2
+xor $t7, $a3, $t7
+sltiu $t7, $t7, 1
+beq $t7, $0, entry5
+j entry4
+nop27:
+j entry4
+nop28:
+j entry5
+entry4:
+li $t7, 2
+lw $ra 28($sp)
+or $v0, $t7, $0
+addi $sp, $sp, 32
+jr $ra
+entry5:
+li $t7, 1
+subu $t7, $a3, $t7
+sw $a3 24($sp)
+addi $sp, $sp, -32
+move $a3, $t7
+jal entry1
+or $t4, $v0, $0
+lw $a3 24($sp)
+li $t7, 2
+subu $t7, $a3, $t7
+sw $t4 12($sp)
+addi $sp, $sp, -32
+move $a3, $t7
+jal entry1
+or $t7, $v0, $0
+lw $t4 12($sp)
+addu $t7, $t4, $t7
+lw $ra 28($sp)
+or $v0, $t7, $0
+addi $sp, $sp, 32
+jr $ra
+
