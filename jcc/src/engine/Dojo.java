@@ -121,7 +121,18 @@ public class Dojo {
         status = false;
         while (!status) {
             status = globalReq.transPhi();
-            for (SyncB blk : blks) status &= blk.req.transPhi();
+            for (SyncB blk : blks) {
+                status &= blk.req.transPhi();
+            }
+        }
+
+        status = false;
+        while (!status) {
+            status = true;
+            for (SyncB blk : blks) {
+                status &= blk.req.slimPhi();
+                new DAG(blk.ms).shrink();
+            }
         }
 
         for (SyncB blk : blks) blk.checkValid();

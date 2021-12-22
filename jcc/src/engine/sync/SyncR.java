@@ -86,6 +86,24 @@ public class SyncR implements Index {
         return ans;
     }
 
+    public boolean slimPhi() {
+        boolean ans = true;
+//        mp.values().removeIf(e -> e.eqls() != e);
+        List<Meta> temp = new LinkedList<>(mp.values());
+        temp.removeIf(e -> e != e.eqls());
+        Meta[] table = temp.toArray(new Meta[0]);
+        for (int i = 1; i < table.length; ++i) {
+            for (int j = 0; j < i; ++j) if (((Phi) table[i]).chekEql((Phi) table[j])) {
+                table[i].eqls = table[j].eqls();
+                ans = false;
+                break;
+            }
+        }
+        for (Meta p : table)
+            ans &= ((Phi) p).shrank();
+        return ans;
+    }
+
     public boolean transMeta(boolean concrete) {
         int siz = llive.size();
         Set<Meta> rlive = blk.opr.llive.keySet();

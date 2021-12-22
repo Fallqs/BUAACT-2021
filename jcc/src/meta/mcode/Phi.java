@@ -34,18 +34,18 @@ public class Phi extends Meta {
         return cnst = false;
     }
 
-    @Override
-    public void shrink() {
-        if (fr.isEmpty()) return;
-        fr.removeIf(e -> e.eqls() == this);
-        boolean single = true;
-        for (Meta m : fr)
-            if (m.eqls() != fr.iterator().next().eqls()) {
-                single = false;
-                break;
-            }
-        if (single) this.eqls = fr.isEmpty() ? this : fr.iterator().next().eqls();
-    }
+//    @Override
+//    public void shrink() {
+//        if (fr.isEmpty()) return;
+//        fr.removeIf(e -> e.eqls() == this);
+//        boolean single = true;
+//        for (Meta m : fr)
+//            if (m.eqls() != fr.iterator().next().eqls()) {
+//                single = false;
+//                break;
+//            }
+//        if (single) this.eqls = fr.isEmpty() ? this : fr.iterator().next().eqls();
+//    }
 
     public boolean shrank() {
         boolean ans = (this.eqls == this);
@@ -65,8 +65,11 @@ public class Phi extends Meta {
 
     @Override
     public Meta eqls() {
-//        shrink();
         return eqls = eqls == this ? this : eqls.eqls();
+    }
+
+    public boolean chekEql(Phi p) {
+        return !fr.isEmpty() && fr.size() == p.fr.size() && fr.containsAll(p.fr);
     }
 
     @Override
